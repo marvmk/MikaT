@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Te-form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .card-back { transform: rotateY(180deg); }
+        .action-icon { font-size: 5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-teal-600 text-white p-4 shadow-md text-center">
+        <h1 class="text-xl font-bold">Te-form Training</h1>
+        <p class="text-sm opacity-90">Look at the icons and use "Te-form"</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-gray-200 p-1 rounded-lg w-full overflow-x-auto">
+            <button id="mode-permission" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition bg-white shadow-sm text-teal-600" onclick="switchMode('permission')">
+                Permission
+            </button>
+            <button id="mode-prohibition" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('prohibition')">
+                Prohibition
+            </button>
+            <button id="mode-state" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('state')">
+                ~Te imasu
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-600 mb-4 text-center text-lg font-medium">
+                May I ...? (~te mo ii desu ka)
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-80 relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-teal-100 p-8 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-4"></div>
+                        <div class="mt-auto text-[10px] text-gray-300">Tap to check the answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-teal-50 border-2 border-teal-400 p-8">
+                        <div id="answer-text" class="text-xl font-bold text-teal-800 text-center leading-relaxed"></div>
+                        <div class="mt-4 text-sm text-teal-600">Tap again for next</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full">
+                <button onclick="prevQuestion()" class="px-6 py-2 border-2 border-gray-300 rounded-full text-gray-500 hover:bg-gray-100 transition">Back</button>
+                <div class="flex items-center text-gray-500 font-mono">
+                    <span id="current-index">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="px-6 py-2 bg-teal-600 rounded-full text-white hover:bg-teal-700 transition shadow-lg">Next</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const permissionQuestions = [
+            { icon: "❄️📲", hint: "Air conditioner / Turn on", answer: "えあこんを つけても いいですか。" },
+            { icon: "✏️", hint: "Pencil / Use", answer: "えんぴつを つかっても いいですか。" },
+            { icon: "🪟", hint: "Window / Open", answer: "まどを あけても いいですか。" },
+            { icon: "📖", hint: "Catalog / Take (Get)", answer: "この かたろぐを もらっても いいですか。" },
+            { icon: "📸", hint: "Museum / Take photo", answer: "びじゅつかんで しゃしんを とっても いいですか。" },
+            { icon: "🗄️", hint: "Luggage / Put here", answer: "ここに にもつを おいても いいですか。" }
+        ];
+
+        const prohibitionQuestions = [
+            { icon: "🏞️🏊‍♂️❌", hint: "River / Do not enter", answer: "この かわで およいでは いけません。" },
+            { icon: "🚭🧒", hint: "Children / Do not smoke", answer: "こどもは たばこを すっては いけません。" },
+            { icon: "🏫🍶❌", hint: "Classroom / Do not drink", answer: "きょうしつで おさけを のんでは いけません。" },
+            { icon: "🚗🍺❌", hint: "Drive / Do not drink", answer: "おさけを のみましたから、くるまを うんてんしては いけません。" }
+        ];
+
+        const stateQuestions = [
+            { icon: "🎨🏫", hint: "Teach Art", answer: "こうこうで びじゅつを おしえています。" },
+            { icon: "🏫🏠", hint: "Live near school", answer: "がっこうの ちかくに すんでいます。" },
+            { icon: "💍", hint: "Married", answer: "けっこんして います。" },
+            { icon: "🏭⚡", hint: "Brother's company / Make electronics", answer: "あにの かいしゃは でんきせいひんを つくっています。" },
+            { icon: "🚲", hint: "Have a bicycle", answer: "てれーざちゃんは じてんしゃを もっています。" },
+            { icon: "🏢💻", hint: "Work for a company", answer: "らいねんから にほんの かいしゃで はたらきたいです。" }
+        ];
+
+        let currentMode = 'permission';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            const modes = ['permission', 'prohibition', 'state'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-teal-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-teal-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'permission') instr.innerText = "May I ...? (~te mo ii desu ka)";
+            else if(mode === 'prohibition') instr.innerText = "You must not... (~te wa ikemasen)";
+            else instr.innerText = "Occupation/State (~te imasu)";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { permission: permissionQuestions, prohibition: prohibitionQuestions, state: stateQuestions };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = '';
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+
+            promptContent.innerHTML = `
+                <div class="action-icon">${q.icon}</div>
+                <div class="text-gray-600 text-lg font-bold">${q.hint}</div>
+                <div class="text-teal-500 text-sm mt-2">Use "Te-form"</div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            const data = { permission: permissionQuestions, prohibition: prohibitionQuestions, state: stateQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { permission: permissionQuestions, prohibition: prohibitionQuestions, state: stateQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
