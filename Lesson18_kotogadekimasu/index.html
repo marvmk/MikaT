@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Speaking Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .card-back { transform: rotateY(180deg); }
+        .action-icon { font-size: 5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-indigo-600 text-white p-4 shadow-md text-center">
+        <h1 class="text-xl font-bold">Speak with Illustrations!</h1>
+        <p class="text-sm opacity-90">Look, Think, and Speak Japanese</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-gray-200 p-1 rounded-lg w-full overflow-x-auto">
+            <button id="mode-ability" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition bg-white shadow-sm text-indigo-600" onclick="switchMode('ability')">
+                Can do
+            </button>
+            <button id="mode-hobby" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('hobby')">
+                Hobby
+            </button>
+            <button id="mode-before" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('before')">
+                Before ~
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-600 mb-4 text-center text-lg font-medium">
+                Look at the icons and make a sentence.
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-80 relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-indigo-100 p-8 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-4"></div>
+                        <div class="mt-auto text-[10px] text-gray-300">Tap to check the answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-indigo-50 border-2 border-indigo-400 p-8">
+                        <div id="answer-text" class="text-xl font-bold text-indigo-800 text-center leading-relaxed"></div>
+                        <div class="mt-4 text-sm text-indigo-600">Tap again for next</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full">
+                <button onclick="prevQuestion()" class="px-6 py-2 border-2 border-gray-300 rounded-full text-gray-500 hover:bg-gray-100 transition">Back</button>
+                <div class="flex items-center text-gray-500 font-mono">
+                    <span id="current-index">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="px-6 py-2 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 transition shadow-lg">Next</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const abilityQuestions = [
+            { icon: "🏊‍♂️📏", hint: "How many meters?", answer: "なんめーとるぐらい およぐことが できますか。" },
+            { icon: "🧠❌", hint: "Can't remember Kanji", answer: "なかなか かんじを おぼえることが できません。" },
+            { icon: "🏫🎓", hint: "Enter university", answer: "いもうとは だいがくに はいることが できました。" },
+            { icon: "🏫👀", hint: "Visit from 10:00", answer: "あさ じゅうじから けんがくすることが できます。" },
+            { icon: "🗄️❌", hint: "Too small to place", answer: "せまいですから おくことが できません。" },
+            { icon: "🚲", hint: "Ride a bicycle", answer: "じてんしゃに のることが できます。" },
+            { icon: "🇫🇷👄", hint: "Speak French", answer: "ふらんすごを はなすことが できます。" }
+        ];
+
+        const hobbyQuestions = [
+            { icon: "🎤🎶", hint: "Mr. Yamada", answer: "やまださんの しゅみは うたを うたうことです。" },
+            { icon: "🎹", hint: "Ms. Ogawa", answer: "おがわさんの しゅみは ぴあのを ひくことです。" },
+            { icon: "🍳🍱", hint: "Mr. Santos", answer: "さんとすさんの しゅみは りょうりを つくることです。" },
+            { icon: "📬🌏", hint: "Me (stamps)", answer: "わたしの しゅみは がいこくの きってを あつめることです。" },
+            { icon: "📸🌸", hint: "Flower photos", answer: "わたしの しゅみは はなの しゃしんを とることです。" }
+        ];
+
+        const beforeQuestions = [
+            { icons: ["🚪", "💡📴"], hints: ["Exit", "Turn off light"], answer: "へやを でるまえに、でんきを けしてください。" },
+            { icons: ["🛌", "🙏"], hints: ["Sleep", "Pray"], answer: "ねるまえに、おいのりを します。" },
+            { icons: ["🚗💨", "🏠📍"], hints: ["Drive", "Check address"], answer: "うんてんするまえに、じゅうしょを かくにんしてください。" },
+            { icons: ["🍱", "🧼👐"], hints: ["Eat", "Wash hands"], answer: "たべるまえに、てを あらいます。" },
+            { icons: ["🌏🛫", "📖"], hints: ["Come to Japan", "Studied Japanese"], answer: "にほんへ くるまえに、にほんごを べんきょうしました。" },
+            { icons: ["💊", "🍚"], hints: ["Take medicine", "Eat meal"], answer: "ごはんを たべるまえに、くすりを のみます。" }
+        ];
+
+        let currentMode = 'ability';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            const modes = ['ability', 'hobby', 'before'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'ability') instr.innerText = "Say what you 'can' do.";
+            else if(mode === 'hobby') instr.innerText = "Talk about 'hobbies'.";
+            else instr.innerText = "Practice 'Before A, do B'.";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { ability: abilityQuestions, hobby: hobbyQuestions, before: beforeQuestions };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = '';
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+
+            if (currentMode !== 'before') {
+                promptContent.innerHTML = `<div class="action-icon">${q.icon}</div><div class="text-gray-600 text-lg font-bold">${q.hint}</div>`;
+            } else {
+                const container = document.createElement('div');
+                container.className = 'flex items-center space-x-4';
+                container.innerHTML = `
+                    <div class="flex flex-col items-center">
+                        <div class="text-[10px] text-gray-400 mb-1">First (B)</div>
+                        <div class="text-4xl bg-gray-50 p-4 rounded-full border">${q.icons[1]}</div>
+                        <div class="text-[10px] mt-1">${q.hints[1]}</div>
+                    </div>
+                    <div class="text-2xl text-indigo-300">←</div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-[10px] text-gray-400 mb-1">Later (A)</div>
+                        <div class="text-4xl bg-gray-50 p-4 rounded-full border">${q.icons[0]}</div>
+                        <div class="text-[10px] mt-1">${q.hints[0]}</div>
+                    </div>
+                `;
+                promptContent.appendChild(container);
+                promptContent.innerHTML += `<div class="text-indigo-500 font-bold mt-4">Before [A], do [B]</div>`;
+            }
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            const data = { ability: abilityQuestions, hobby: hobbyQuestions, before: beforeQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { ability: abilityQuestions, hobby: hobbyQuestions, before: beforeQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
