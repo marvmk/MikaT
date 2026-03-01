@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Nai-form & Deadlines</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .card-back { transform: rotateY(180deg); }
+        .action-icon { font-size: 5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-rose-600 text-white p-4 shadow-md text-center">
+        <h1 class="text-xl font-bold">Nai-form & Deadline</h1>
+        <p class="text-sm opacity-90">Must, Must not, and Deadlines</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-gray-200 p-1 rounded-lg w-full overflow-x-auto">
+            <button id="mode-not" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition bg-white shadow-sm text-rose-600" onclick="switchMode('not')">
+                Don't...
+            </button>
+            <button id="mode-must" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('must')">
+                Must
+            </button>
+            <button id="mode-dont-have-to" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('dont-have-to')">
+                No need
+            </button>
+            <button id="mode-deadline" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('deadline')">
+                Deadline
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-600 mb-4 text-center text-lg font-medium">
+                Please don't... (~nai de kudasai)
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-80 relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-rose-100 p-8 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-4"></div>
+                        <div class="mt-auto text-[10px] text-gray-300">Tap to check the answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-rose-50 border-2 border-rose-400 p-8">
+                        <div id="answer-text" class="text-xl font-bold text-rose-800 text-center leading-relaxed"></div>
+                        <div class="mt-4 text-sm text-rose-600">Tap again for next</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full">
+                <button onclick="prevQuestion()" class="px-6 py-2 border-2 border-gray-300 rounded-full text-gray-500 hover:bg-gray-100 transition">Back</button>
+                <div class="flex items-center text-gray-500 font-mono">
+                    <span id="current-index">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="px-6 py-2 bg-rose-600 rounded-full text-white hover:bg-rose-700 transition shadow-lg">Next</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const notQuestions = [
+            { icon: "🚭", hint: "Smoke", answer: "たばこを すわないで ください。" },
+            { icon: "🚫👟", hint: "Enter / Shoes", answer: "ここで くつを ぬがないで ください。" },
+            { icon: "🧠❌", hint: "Password / Forget", answer: "あんしょうばんごうを わすれないで ください。" },
+            { icon: "⚠️👋", hint: "Danger / Push", answer: "あぶないですから、うしろから おさないで ください。" },
+            { icon: "❄️🪟", hint: "AC is on / Open window", answer: "えあこんを つけましたから、まどを あけないで ください。" },
+            { icon: "㊙️📝", hint: "Kanji / Write in Hiragana", answer: "かんじが わかりませんから、ひらがなで かいてください。" }
+        ];
+
+        const mustQuestions = [
+            { icon: "📖🖋️", hint: "Test / Study", answer: "しけんが ありますから、べんきょうしなければ なりません。" },
+            { icon: "💊", hint: "Sick / Take medicine", answer: "びょうきですから、くすりを のまなければ なりません。" },
+            { icon: "📝📤", hint: "By tomorrow / Send report", answer: "あしたまでに れぽーとを ださなければ なりません。" },
+            { icon: "🕗🏃", hint: "8:00 / Wake up early", answer: "あさ はやく おきなければ なりません。" }
+        ];
+
+        const optionalQuestions = [
+            { icon: "🏃💨❌", hint: "No need to hurry", answer: "いそがなくても いいです。" },
+            { icon: "💰❌", hint: "Free / No need to pay", answer: "おかねを はらわなくても いいです。" },
+            { icon: "🤒🏠", hint: "Not well / Don't have to come", answer: "あしたは こなくても いいです。" },
+            { icon: "📱💳❌", hint: "This card only / No phone needed", answer: "この かーどだけで いいです。けいたいは なくても いいです。" }
+        ];
+
+        const deadlineQuestions = [
+            { icon: "🕘📝", hint: "9:00 / Finish report", answer: "くじまでに れぽーとを ださなければ なりません。" },
+            { icon: "📅📗", hint: "Friday / Return book", answer: "きんようびまでに ほんを かえしてください。" },
+            { icon: "🏠📍", hint: "Before driving / Check address", answer: "うんてんするまえに、じゅうしょを かくにんして ください。" },
+            { icon: "30th 💰", hint: "30th / Pay money", answer: "さんじゅうにちまでに おかねを はらってください。" }
+        ];
+
+        let currentMode = 'not';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            const modes = ['not', 'must', 'dont-have-to', 'deadline'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-rose-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-rose-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'not') instr.innerText = "Please don't... (~nai de kudasai)";
+            else if(mode === 'must') instr.innerText = "Must do... (~nakereba narimasen)";
+            else if(mode === 'dont-have-to') instr.innerText = "Don't have to... (~nakute mo ii)";
+            else instr.innerText = "By / Deadline (~made ni)";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { not: notQuestions, must: mustQuestions, 'dont-have-to': optionalQuestions, deadline: deadlineQuestions };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = '';
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+
+            promptContent.innerHTML = `
+                <div class="action-icon">${q.icon}</div>
+                <div class="text-gray-600 text-lg font-bold">${q.hint}</div>
+                <div class="text-rose-500 text-sm mt-2">Use "Nai-form" phrases</div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            const data = { not: notQuestions, must: mustQuestions, 'dont-have-to': optionalQuestions, deadline: deadlineQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { not: notQuestions, must: mustQuestions, 'dont-have-to': optionalQuestions, deadline: deadlineQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
