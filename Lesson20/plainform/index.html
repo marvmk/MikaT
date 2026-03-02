@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L20: Plain Form Sentence Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #0ea5e9;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #0284c7; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-sky-800 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L20 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Casual Conversation & Short Phrases</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full">
+            <button id="mode-conv" class="flex-1 py-3 rounded-lg font-bold transition bg-white shadow text-sky-800" onclick="switchMode('conv')">
+                Casual Talk
+            </button>
+            <button id="mode-short" class="flex-1 py-3 rounded-lg font-bold transition text-slate-600" onclick="switchMode('short')">
+                Sentences
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-slate-500 mb-4 text-center text-sm font-medium">
+                Make a casual sentence/question.
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[520px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- Front: Prompt / Context -->
+                    <div class="card-face card-front bg-white border-2 border-sky-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap to see Plain Form / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- Back: Plain Sentence + Romaji + Audio -->
+                    <div class="card-face card-back bg-sky-50 border-4 border-sky-600 text-center">
+                        <div class="text-[10px] text-sky-600 font-black uppercase tracking-[0.2em] mb-4">Plain Form (Futsu-kei)</div>
+                        
+                        <div id="answer-text" class="text-3xl font-black text-sky-950 mb-2 leading-tight"></div>
+                        <div id="romaji-text" class="text-lg font-bold text-sky-600 font-mono mb-4"></div>
+                        
+                        <!-- Manual Audio Button -->
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-sky-200 mb-6"></div>
+                        
+                        <div class="space-y-1">
+                            <div id="it-back" class="text-sky-800 font-bold"></div>
+                            <div id="en-back" class="text-slate-500 italic text-sm"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-sky-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white shadow-sm">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-sky-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-sky-700 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const convQuestions = [
+            { 
+                icon: "☕❓", 
+                prompt: "A: Drink coffee?", 
+                answer: "A：コーヒー、のむ？", 
+                romaji: "kōhī, nomu?", 
+                en: "Drink coffee?", 
+                it: "Bevi il caffè?" 
+            },
+            { 
+                icon: "☕👍", 
+                prompt: "B: Yes, I'll drink.", 
+                answer: "B：うん、のむ。", 
+                romaji: "un, nomu.", 
+                en: "Yeah, I'll drink.", 
+                it: "Sì, lo bevo." 
+            },
+            { 
+                icon: "☕👎", 
+                prompt: "B: No, I won't drink.", 
+                answer: "B：ううん、のまない。", 
+                romaji: "uun, nomanai.", 
+                en: "No, I won't drink.", 
+                it: "No, non lo bevo." 
+            },
+            { 
+                icon: "🏙️🏃❓", 
+                prompt: "A: Go to Tokyo tomorrow?", 
+                answer: "A：あした、とうきょうへ いく？", 
+                romaji: "ashita, tōkyō e iku?", 
+                en: "Are you going to Tokyo tomorrow?", 
+                it: "Vai a Tokyo domani?" 
+            },
+            { 
+                icon: "🍱😋❓", 
+                prompt: "A: This lunch box, is it good?", 
+                answer: "A：このおべんとう、おいしい？", 
+                romaji: "kono obentō, oishii?", 
+                en: "Is this lunch box delicious?", 
+                it: "È buono questo bento?" 
+            },
+            { 
+                icon: "⌚❓", 
+                prompt: "A: Do you have a watch?", 
+                answer: "A：とけい、もってる？", 
+                romaji: "tokei, motteru?", 
+                en: "Do you have a watch?", 
+                it: "Hai un orologio?" 
+            },
+            { 
+                icon: "📔🚫", 
+                prompt: "B: No, I don't have it.", 
+                answer: "B：ううん、もってない。", 
+                romaji: "uun, mottenai.", 
+                en: "No, I don't have it.", 
+                it: "No, non ce l'ho." 
+            }
+        ];
+
+        const shortQuestions = [
+            { 
+                icon: "🌧️❌", 
+                prompt: "It wasn't rain yesterday.", 
+                answer: "きのうは あめじゃなかった。", 
+                romaji: "kinō wa ame janakatta.", 
+                en: "It wasn't rain yesterday.", 
+                it: "Ieri non pioveva." 
+            },
+            { 
+                icon: "📖✨", 
+                prompt: "This book was interesting.", 
+                answer: "このほんは おもしろかった。", 
+                romaji: "kono hon wa omoshirokatta.", 
+                en: "This book was interesting.", 
+                it: "Questo libro era interessante." 
+            },
+            { 
+                icon: "🍎🚫", 
+                prompt: "I didn't eat breakfast.", 
+                answer: "あさごはんを たべなかった。", 
+                romaji: "asagohan o tabenakatta.", 
+                en: "I didn't eat breakfast.", 
+                it: "Non ho fatto colazione." 
+            },
+            { 
+                icon: "👨‍💻💪", 
+                prompt: "I am busy now.", 
+                answer: "いま、いそがしい。", 
+                romaji: "ima, isogashii.", 
+                en: "I'm busy now.", 
+                it: "Adesso sono occupato." 
+            },
+            { 
+                icon: "🏢✨", 
+                prompt: "That person is beautiful.", 
+                answer: "あのひとは きれいだ。", 
+                romaji: "ano hito wa kirei da.", 
+                en: "That person is beautiful.", 
+                it: "Quella persona è bella." 
+            },
+            { 
+                icon: "🏠🚪🏃", 
+                prompt: "I already went home.", 
+                answer: "もう、うちに かえった。", 
+                romaji: "mō, uchi ni kaetta.", 
+                en: "I already went home.", 
+                it: "Sono già tornato a casa." 
+            }
+        ];
+
+        let currentMode = 'conv';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            document.getElementById('mode-conv').className = "flex-1 py-3 rounded-lg font-bold transition text-slate-600";
+            document.getElementById('mode-short').className = "flex-1 py-3 rounded-lg font-bold transition text-slate-600";
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 py-3 rounded-lg font-bold transition bg-white shadow text-sky-800";
+
+            const instr = document.getElementById('instruction');
+            instr.innerText = mode === 'conv' ? "Casual Q&A Practice." : "Build short plain sentences.";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const questions = currentMode === 'conv' ? convQuestions : shortQuestions;
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-xs uppercase tracking-widest mb-2 font-bold">Context / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full">
+                    <div class="text-sm text-sky-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            const questions = currentMode === 'conv' ? convQuestions : shortQuestions;
+            const fullText = questions[currentIndex].answer;
+            
+            // --- AUDIO FIX: Strip the prefix "A：" or "B：" before speaking ---
+            // Handles both full-width "：" and half-width ":"
+            const speechText = fullText.replace(/^[A-Z][：:]\s*/, '');
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            
+            const voices = window.speechSynthesis.getVoices();
+            const jaVoice = voices.find(v => v.lang.startsWith('ja'));
+            if (jaVoice) ut.voice = jaVoice;
+
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const questions = currentMode === 'conv' ? convQuestions : shortQuestions;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const questions = currentMode === 'conv' ? convQuestions : shortQuestions;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        // Initialize voices for mobile browsers
+        window.speechSynthesis.getVoices();
+        updateView();
+    </script>
+</body>
+</html>
+
