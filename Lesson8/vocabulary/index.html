@@ -1,0 +1,209 @@
+]
+        .speaker-btn:active { transform: scale(0.9); background: #0284c7; }
+        .speaker-btn svg { width: 40px; height: 40px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-sky-900 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L08 Vocab: Trilingue 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Hiragana • Romaji • Audio • IT • EN</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Selector -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-na" class="flex-1 whitespace-nowrap px-4 py-3 rounded-lg font-bold transition bg-white shadow text-sky-800" onclick="switchMode('na')">NA-ADJ</button>
+            <button id="mode-i" class="flex-1 whitespace-nowrap px-4 py-3 rounded-lg font-bold transition text-slate-600" onclick="switchMode('i')">I-ADJ</button>
+            <button id="mode-noun" class="flex-1 whitespace-nowrap px-4 py-3 rounded-lg font-bold transition text-slate-600" onclick="switchMode('noun')">OTHERS</button>
+        </div>
+
+        <!-- Card Container -->
+        <div class="card-container w-full h-[500px] relative mb-8">
+            <div id="practice-card" class="card w-full h-full relative">
+                
+                <!-- Front Side -->
+                <div class="card-face card-front bg-white border-2 border-sky-50 p-8 text-center" onclick="flipCard()">
+                    <div id="prompt-content" class="flex flex-col items-center space-y-6"></div>
+                    <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">Tap to see Japanese / Tocca per il giapponese</div>
+                </div>
+
+                <!-- Back Side -->
+                <div class="card-face card-back bg-sky-50 border-4 border-sky-600 p-8 text-center">
+                    <div id="type-label" class="text-[10px] text-sky-600 font-black uppercase tracking-[0.2em] mb-4">Risposta</div>
+                    
+                    <div id="answer-text" class="text-5xl font-black text-sky-950 mb-1"></div>
+                    <div id="romaji-text" class="text-2xl font-bold text-sky-600 font-mono mb-8"></div>
+                    
+                    <!-- Manual Audio Trigger -->
+                    <button onclick="speakJapanese(event)" class="speaker-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        </svg>
+                    </button>
+                    
+                    <div class="w-16 h-1 bg-sky-200 mb-6 mx-auto"></div>
+                    
+                    <div class="flex flex-col items-center space-y-1">
+                        <div id="en-back" class="text-slate-500 italic"></div>
+                        <div id="it-back" class="text-lg text-sky-800 font-bold"></div>
+                    </div>
+
+                    <div class="mt-auto text-[10px] text-sky-400 font-bold uppercase tracking-widest cursor-pointer" onclick="nextQuestion()">Next / Prossimo →</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex justify-between w-full items-center px-4">
+            <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white">←</button>
+            <div class="text-slate-400 font-black text-lg"><span id="current-index" class="text-sky-700">1</span> / <span id="total-count">0</span></div>
+            <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-sky-700 text-white shadow-lg">→</button>
+        </div>
+    </main>
+
+    <script>
+        const naAdjList = [
+            { icon: "🤵✨", en: "handsome", it: "bello/attraente", answer: "はんさむ[な]", audio: "はんさむ", romaji: "hansamu" },
+            { icon: "🌸🧹", en: "beautiful / clean", it: "bello / pulito", answer: "きれい[な]", audio: "きれい", romaji: "kirei" },
+            { icon: "🤫🔇", en: "quiet", it: "silenzioso / calmo", answer: "しずか[な]", audio: "しずか", romaji: "shizuka" },
+            { icon: "🎡🕺", en: "lively", it: "vivace / animato", answer: "にぎやか[な]", audio: "にぎやか", romaji: "nigiyaka" },
+            { icon: "🗼✨", en: "famous", it: "famoso", answer: "ゆうめい[な]", audio: "ゆうめい", romaji: "yūmei" },
+            { icon: "🤝😇", en: "kind", it: "gentile", answer: "しんせつ[な]", audio: "しんせつ", romaji: "shinsetsu" },
+            { icon: "💪😄", en: "healthy / energetic", it: "energetico / in salute", answer: "げんき[な]", audio: "げんき", romaji: "genki" },
+            { icon: "🧪🥱", en: "free (time)", it: "libero", answer: "ひま[な]", audio: "ひま", romaji: "hima" },
+            { icon: "🏪🚲", en: "convenient", it: "comodo / conveniente", answer: "べんり[な]", audio: "べんり", romaji: "benri" },
+            { icon: "🌟🤩", en: "fine / wonderful", it: "splendido / bello", answer: "すてき[な]", audio: "すてき", romaji: "suteki" }
+        ];
+
+        const iAdjList = [
+            { icon: "🐘", en: "big / large", it: "grande", answer: "おおきい", audio: "おおきい", romaji: "ōkii" },
+            { icon: "🖱️", en: "small / little", it: "piccolo", answer: "ちいさい", audio: "ちいさい", romaji: "chiisai" },
+            { icon: "🆕👟", en: "new", it: "nuovo", answer: "あたらしい", audio: "あたらしい", romaji: "atarashii" },
+            { icon: "📜👴", en: "old (not of age)", it: "vecchio", answer: "ふるい", audio: "ふるい", romaji: "furui" },
+            { icon: "👍✨", en: "good", it: "buono", answer: "いい (よい)", audio: "いい", romaji: "ii (yoi)" },
+            { icon: "👎💨", en: "bad", it: "cattivo", answer: "わるい", audio: "わるい", romaji: "warui" },
+            { icon: "☀️🔥", en: "hot", it: "caldo", answer: "あつい", audio: "あつい", romaji: "atsui" },
+            { icon: "❄️🧣", en: "cold (weather)", it: "freddo (clima)", answer: "さむい", audio: "さむい", romaji: "samui" },
+            { icon: "🥤🧊", en: "cold (to touch)", it: "freddo (al tatto)", answer: "つめたい", audio: "つめたい", romaji: "tsumetai" },
+            { icon: "🧪🤯", en: "difficult", it: "difficile", answer: "むずかしい", audio: "むずかしい", romaji: "muzukashii" },
+            { icon: "🖍️😊", en: "easy / kind", it: "facile / semplice", answer: "やさしい", audio: "やさしい", romaji: "yasashii" },
+            { icon: "💎💰", en: "expensive / high", it: "costoso / alto", answer: "たかい", audio: "たかい", romaji: "takai" },
+            { icon: "🏷️📉", en: "cheap", it: "economico", answer: "やすい", audio: "やすい", romaji: "yasui" },
+            { icon: "📉📏", en: "low", it: "basso", answer: "ひくい", audio: "ひくい", romaji: "hikui" },
+            { icon: "🎬🤩", en: "interesting", it: "interessante", answer: "おもしろい", audio: "おもしろい", romaji: "omoshiroi" },
+            { icon: "🍰😋", en: "delicious", it: "delizioso", answer: "おいしい", audio: "おいしい", romaji: "oishii" },
+            { icon: "👨‍💻💨", en: "busy", it: "impegnato / occupato", answer: "いそがしい", audio: "いそがしい", romaji: "isogashii" },
+            { icon: "🎡💃", en: "fun", it: "divertente", answer: "たのしい", audio: "たのしい", romaji: "tanoshii" },
+            { icon: "⚪", en: "white", it: "bianco", answer: "しろい", audio: "しろい", romaji: "shiroi" },
+            { icon: "⚫", en: "black", it: "nero", answer: "くろい", audio: "くろい", romaji: "kuroi" },
+            { icon: "🔴", en: "red", it: "rosso", answer: "あかい", audio: "あかい", romaji: "akai" },
+            { icon: "🔵", en: "blue", it: "blu", answer: "あおい", audio: "あおい", romaji: "aoi" }
+        ];
+
+        const otherList = [
+            { icon: "🌸", en: "cherry blossom", it: "fiori di ciliegio", answer: "さくら", audio: "さくら", romaji: "sakura" },
+            { icon: "⛰️", en: "mountain", it: "montagna", answer: "やま", romaji: "yama" },
+            { icon: "🏙️", en: "town / city", it: "città", answer: "まち", romaji: "machi" },
+            { icon: "🍱", en: "food", it: "cibo", answer: "たべもの", romaji: "tabemono" },
+            { icon: "🚗", en: "car", it: "macchina / auto", answer: "くるま", romaji: "kuruma" },
+            { icon: "📍", en: "place", it: "posto / luogo", answer: "ところ", romaji: "tokoro" },
+            { icon: "🏢🛌", en: "dormitory", it: "dormitorio", answer: "りょう", romaji: "ryō" },
+            { icon: "📖👨‍🏫", en: "study", it: "studio", answer: "べんきょう", romaji: "benkyō" },
+            { icon: "🚶✨", en: "life", it: "vita / vivere", answer: "せいかつ", romaji: "seikatsu" },
+            { icon: "💼", en: "work / job", it: "lavoro", answer: "しごと", romaji: "shigoto" }
+        ];
+
+        let currentMode = 'na';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode; currentIndex = 0; isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            updateView();
+            const modes = ['na', 'i', 'noun'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.className = "flex-1 whitespace-nowrap px-4 py-3 rounded-lg font-bold transition bg-white shadow text-sky-800";
+                } else {
+                    btn.className = "flex-1 whitespace-nowrap px-4 py-3 rounded-lg font-bold transition text-slate-600";
+                }
+            });
+        }
+
+        function updateView() {
+            let list;
+            let typeLabel;
+            if(currentMode === 'na') { list = naAdjList; typeLabel = "NA-Adjective"; }
+            else if(currentMode === 'i') { list = iAdjList; typeLabel = "I-Adjective"; }
+            else { list = otherList; typeLabel = "Noun / Other"; }
+            
+            const item = list[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            promptContent.innerHTML = `
+                <div class="action-icon mb-2">${item.icon}</div>
+                <div class="space-y-4">
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-widest">English</div>
+                        <div class="text-xl text-slate-800 font-medium">${item.en}</div>
+                    </div>
+                    <div class="flex justify-center"><div class="h-px w-12 bg-slate-100"></div></div>
+                    <div>
+                        <div class="text-[10px] text-sky-500 font-bold uppercase mb-1 tracking-widest">Italiano</div>
+                        <div class="text-xl text-sky-700 font-bold">${item.it}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = list.length;
+            document.getElementById('answer-text').innerText = item.answer;
+            document.getElementById('romaji-text').innerText = item.romaji;
+            document.getElementById('en-back').innerText = item.en;
+            document.getElementById('it-back').innerText = item.it;
+            document.getElementById('type-label').innerText = typeLabel;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            let list = currentMode === 'na' ? naAdjList : (currentMode === 'i' ? iAdjList : otherList);
+            const word = list[currentIndex].audio; // Speak only the base word without [na]
+            const ut = new SpeechSynthesisUtterance(word);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const list = currentMode === 'na' ? naAdjList : (currentMode === 'i' ? iAdjList : otherList);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % list.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const list = currentMode === 'na' ? naAdjList : (currentMode === 'i' ? iAdjList : otherList);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + list.length) % list.length;
+                updateView();
+            }, 150);
+        }
+        
+        window.speechSynthesis.getVoices();
+        updateView();
+    </script>
+</body>
+</html>
+
