@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Comparisons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 3.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-4 shadow-md text-center">
+        <h1 class="text-xl font-bold">Comparison & Adjectives</h1>
+        <p class="text-sm opacity-90">Which is better? / The best one</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-gray-200 p-1 rounded-lg w-full overflow-x-auto">
+            <button id="mode-which" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition bg-white shadow-sm text-amber-600" onclick="switchMode('which')">
+                Which?
+            </button>
+            <button id="mode-best" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('best')">
+                The Best
+            </button>
+            <button id="mode-negative" class="flex-1 whitespace-nowrap px-2 py-2 rounded-md font-medium transition text-gray-600" onclick="switchMode('negative')">
+                Negative
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-600 mb-4 text-center text-lg font-medium">
+                Which one do you like? (~dochira ga suki?)
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-80 relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 p-8 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-4"></div>
+                        <div class="mt-auto text-[10px] text-gray-300">Tap to check the answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-2 border-amber-400 p-8">
+                        <div id="answer-text" class="text-xl font-bold text-amber-800 text-center leading-relaxed"></div>
+                        <div class="mt-4 text-sm text-amber-600">Tap again for next</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full">
+                <button onclick="prevQuestion()" class="px-6 py-2 border-2 border-gray-300 rounded-full text-gray-500 hover:bg-gray-100 transition">Back</button>
+                <div class="flex items-center text-gray-500 font-mono">
+                    <span id="current-index">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="px-6 py-2 bg-amber-500 rounded-full text-white hover:bg-amber-600 transition shadow-lg">Next</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const whichQuestions = [
+            { icons: ["☕", "🍵"], hint: "Coffee vs Tea / Like", answer: "こーひーと おちゃと、どちらが すきですか。" },
+            { icons: ["🍎", "🍊"], hint: "Apple vs Orange / Like", answer: "りんごと みかんと、どちらが すきですか。" },
+            { icons: ["☀️", "❄️"], hint: "Summer vs Winter / Like", answer: "なつと ふゆと、どちらが すきですか。" },
+            { icons: ["🚅", "🚌"], hint: "Shinkansen vs Bus / Fast", answer: "しんかんせんと ばすと、どちらが はやいですか。" },
+            { icons: ["🍱", "🍕"], hint: "Japanese food vs Pizza / Like", answer: "にほんりょうりと ぴざと、どちらが すきですか。" }
+        ];
+
+        const bestQuestions = [
+            { icons: ["🍎", "🍌", "🍇", "🍓"], hint: "Fruit / Like best", answer: "くだものの なかで なにが いちばん すきですか。" },
+            { icons: ["⚽", "⚾", "🎾", "🏊‍♂️"], hint: "Sports / Like best", answer: "すぽーつの なかで なにが いちばん すきですか。" },
+            { icons: ["🌸", "☀️", "🍂", "❄️"], hint: "Seasons / Like best", answer: "いちねんの なかで いつが いちばん すきですか。" },
+            { icons: ["👨‍👩‍👧‍👦"], hint: "Family / Good at singing", answer: "かぞくの なかで だれが いちばん うたが じょうずですか。" },
+            { icons: ["🗼", "🏯", "🌲"], hint: "Place in Japan / Want to go", answer: "にほんの なかで どこが いちばん いきたいですか。" }
+        ];
+
+        const negativeQuestions = [
+            { icon: "☕🔥", hint: "Is this coffee hot? (No...)", answer: "いいえ、あつくないです。" },
+            { icon: "🏫🏢", hint: "Is the school quiet? (No...)", answer: "いいえ、しずかじゃありません。" },
+            { icon: "🎬🥱", hint: "Was the movie fun? (No...)", answer: "いいえ、おもしろくなかったです。" },
+            { icon: "🧪🤯", hint: "Was the test easy? (No...)", answer: "いいえ、かんたんじゃありませんでした。" },
+            { icon: "🥳🍺", hint: "Was the party fun? (No...)", answer: "いいえ、たのしくなかったです。" }
+        ];
+
+        let currentMode = 'which';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            const modes = ['which', 'best', 'negative'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'which') instr.innerText = "Compare two things (~dochira ga...?)";
+            else if(mode === 'best') instr.innerText = "The #1 in a group (~ichiban...?)";
+            else instr.innerText = "Answer with 'No' (~kunai / ~janai)";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { which: whichQuestions, best: bestQuestions, negative: negativeQuestions };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = '';
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+
+            if (currentMode === 'which') {
+                promptContent.innerHTML = `
+                    <div class="flex items-center space-x-8">
+                        <div class="item-icon">${q.icons[0]}</div>
+                        <div class="text-2xl font-bold text-amber-300">VS</div>
+                        <div class="item-icon">${q.icons[1]}</div>
+                    </div>
+                    <div class="text-gray-600 text-lg font-bold mt-4">${q.hint}</div>
+                `;
+            } else if (currentMode === 'best') {
+                promptContent.innerHTML = `
+                    <div class="flex flex-wrap justify-center gap-4">
+                        ${q.icons.map(icon => `<div class="text-3xl bg-gray-50 p-2 rounded-lg">${icon}</div>`).join('')}
+                    </div>
+                    <div class="text-gray-600 text-lg font-bold mt-4">${q.hint}</div>
+                `;
+            } else {
+                promptContent.innerHTML = `
+                    <div class="item-icon">${q.icon}</div>
+                    <div class="text-gray-600 text-lg font-bold mt-4">${q.hint}</div>
+                    <div class="text-rose-500 text-sm font-bold">Answer with Negative form</div>
+                `;
+            }
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            const data = { which: whichQuestions, best: bestQuestions, negative: negativeQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { which: whichQuestions, best: bestQuestions, negative: negativeQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
