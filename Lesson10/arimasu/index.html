@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L10: Existence & Location Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #0ea5e9;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #0284c7; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-800">
+
+    <header class="bg-sky-800 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L10 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Existence (Arimasu/Imasu) & Locations</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto">
+            <button id="mode-exist" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-sky-800 text-xs" onclick="switchMode('exist')">
+                Exist (There is...)
+            </button>
+            <button id="mode-loc" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-xs" onclick="switchMode('loc')">
+                Location (N wa...)
+            </button>
+            <button id="mode-pos" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-xs" onclick="switchMode('pos')">
+                Positions
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <!-- Card Container -->
+            <div class="card-container w-full h-[540px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- Front Side -->
+                    <div class="card-face card-front bg-white border-2 border-sky-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap for Answer / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- Back Side -->
+                    <div class="card-face card-back bg-sky-50 border-4 border-sky-600 text-center">
+                        <div id="grammar-label" class="text-[10px] text-sky-600 font-black uppercase tracking-[0.2em] mb-4">Grammar Point</div>
+                        
+                        <div id="answer-text" class="text-3xl font-black text-sky-950 mb-2 leading-tight px-2"></div>
+                        <div id="romaji-text" class="text-lg font-bold text-sky-600 font-mono mb-4"></div>
+                        
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-sky-200 mb-6 mx-auto"></div>
+                        
+                        <div class="space-y-1 px-4">
+                            <div id="it-back" class="text-sky-800 font-bold"></div>
+                            <div id="en-back" class="text-slate-500 italic text-sm"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-sky-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white shadow-sm">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-sky-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-sky-800 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const existQuestions = [
+            { 
+                icon: "🏢🏪", 
+                prompt: "There is a convenience store.", 
+                answer: "コンビニが あります。", 
+                romaji: "Konbini ga arimasu.", 
+                en: "There is a convenience store.", 
+                it: "C'è un minimarket." 
+            },
+            { 
+                icon: "🌳🐈", 
+                prompt: "There is a cat in the garden.", 
+                answer: "にわに ねこが います。", 
+                romaji: "Niwa ni neko ga imasu.", 
+                en: "There is a cat in the garden.", 
+                it: "C'è un gatto nel giardino." 
+            },
+            { 
+                icon: "🏢❓", 
+                prompt: "A: What is in the building? B: There is an ATM.", 
+                answer: "A：ビルに なにが ありますか。 B：ATMが あります。", 
+                romaji: "A: Biru ni nani ga arimasu ka. B: ATM ga arimasu.", 
+                en: "A: What is in the building? B: There is an ATM.", 
+                it: "A: Cosa c'è nell'edificio? B: C'è un bancomat." 
+            },
+            { 
+                icon: "🧑‍🤝‍🧑❌", 
+                prompt: "There is no one in the room.", 
+                answer: "へやに だれも いません。", 
+                romaji: "Heya ni dare mo imasen.", 
+                en: "There is no one in the room.", 
+                it: "Non c'è nessuno nella stanza." 
+            },
+            { 
+                icon: "冷蔵庫🍹", 
+                prompt: "There are things like beer and juice in the fridge.", 
+                answer: "れいぞうこに ビールや ジュースなどが あります。", 
+                romaji: "Reizōko ni bīru ya jūsu nado ga arimasu.", 
+                en: "There are things like beer and juice in the fridge.", 
+                it: "Nel frigorifero ci sono cose come birra e succo." 
+            }
+        ];
+
+        const locQuestions = [
+            { 
+                icon: "🏢🏦", 
+                prompt: "The bank is over there.", 
+                answer: "ぎんこうは あそこに あります。", 
+                romaji: "Ginkō wa asoko ni arimasu.", 
+                en: "The bank is over there.", 
+                it: "La banca è laggiù." 
+            },
+            { 
+                icon: "👨‍💼❓", 
+                prompt: "Where is Mr. Miller?", 
+                answer: "ミラーさんは どこに いますか。", 
+                romaji: "Mirā-san wa doko ni imasu ka.", 
+                en: "Where is Mr. Miller?", 
+                it: "Dov'è il signor Miller?" 
+            },
+            { 
+                icon: "📸📦", 
+                prompt: "The photo is inside the box.", 
+                answer: "しゃしんは はこの なかに あります。", 
+                romaji: "Shashin wa hako no naka ni arimasu.", 
+                en: "The photo is inside the box.", 
+                it: "La foto è dentro la scatola." 
+            },
+            { 
+                icon: "👨‍👩‍👧‍👦🏠", 
+                prompt: "My family is in Italy.", 
+                answer: "かぞくは イタリアに います。", 
+                romaji: "Kazoku wa Itaria ni imasu.", 
+                en: "My family is in Italy.", 
+                it: "La mia famiglia è in Italia." 
+            }
+        ];
+
+        const posQuestions = [
+            { 
+                icon: "🪑🐈", 
+                prompt: "The cat is under the chair.", 
+                answer: "ねこは いすの したに います。", 
+                romaji: "Neko wa isu no shita ni imasu.", 
+                en: "The cat is under the chair.", 
+                it: "Il gatto è sotto la sedia." 
+            },
+            { 
+                icon: "🖥️📦", 
+                prompt: "The computer is on the desk.", 
+                answer: "コンピューターは つくえの うえに あります。", 
+                romaji: "Konpyūtā wa tsukue no ue ni arimasu.", 
+                en: "The computer is on the desk.", 
+                it: "Il computer è sopra la scrivania." 
+            },
+            { 
+                icon: "🏪🏢", 
+                prompt: "The convenience store is between the bank and the cafe.", 
+                answer: "コンビニは ぎんこうと きっさてんの あいだに あります。", 
+                romaji: "Konbini wa ginkō to kissaten no aida ni arimasu.", 
+                en: "The convenience store is between the bank and the cafe.", 
+                it: "Il minimarket è tra la banca e il bar." 
+            },
+            { 
+                icon: "🚶🏢", 
+                prompt: "There is a person in front of the building.", 
+                answer: "ビルの まえに ひとが います。", 
+                romaji: "Biru no mae ni hito ga imasu.", 
+                en: "There is a person in front of the building.", 
+                it: "C'è una persona davanti all'edificio." 
+            },
+            { 
+                icon: "🏢🏠", 
+                prompt: "Next to the station, there is a department store.", 
+                answer: "えきの となりに デパートが あります。", 
+                romaji: "Eki no tonari ni depāto ga arimasu.", 
+                en: "Next to the station, there is a department store.", 
+                it: "Accanto alla stazione c'è un grande magazzino." 
+            }
+        ];
+
+        let currentMode = 'exist';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            ['exist', 'loc', 'pos'].forEach(m => {
+                document.getElementById(`mode-${m}`).className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-xs";
+            });
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-sky-800 text-xs";
+
+            updateView();
+        }
+
+        function updateView() {
+            let questions;
+            let label;
+            if (currentMode === 'exist') { questions = existQuestions; label = "N1に N2が あります/います"; }
+            else if (currentMode === 'loc') { questions = locQuestions; label = "N2は N1に あります/います"; }
+            else { questions = posQuestions; label = "位置 (Position Words)"; }
+
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-[10px] uppercase tracking-widest mb-2 font-bold">Context / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight px-4">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full px-4">
+                    <div class="text-sm text-sky-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+            document.getElementById('grammar-label').innerText = label;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            let questions;
+            if (currentMode === 'exist') questions = existQuestions;
+            else if (currentMode === 'loc') questions = locQuestions;
+            else questions = posQuestions;
+
+            const fullText = questions[currentIndex].answer;
+            
+            // A: or B: の接頭辞を削除して再生 (正規表現で対応)
+            const speechText = fullText.replace(/^[A-Z][：:]\s*/g, '').replace(/[A-Z][：:]\s*/g, ' ');
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            
+            const voices = window.speechSynthesis.getVoices();
+            const jaVoice = voices.find(v => v.lang.startsWith('ja'));
+            if (jaVoice) ut.voice = jaVoice;
+
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const questions = currentMode === 'exist' ? existQuestions : (currentMode === 'loc' ? locQuestions : posQuestions);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const questions = currentMode === 'exist' ? existQuestions : (currentMode === 'loc' ? locQuestions : posQuestions);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        window.speechSynthesis.getVoices();
+        updateView();
+    </script>
+</body>
+</html>
+
