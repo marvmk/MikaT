@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L22: Noun Modification Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #f59e0b;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #d97706; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-800">
+
+    <header class="bg-amber-700 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L22 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Noun Modification / Relative Clauses</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-who" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-amber-800 text-[10px]" onclick="switchMode('who')">
+                THE PERSON WHO...
+            </button>
+            <button id="mode-what" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('what')">
+                THE THING I DID...
+            </button>
+            <button id="mode-time" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('time')">
+                TIME / APPTS
+            </button>
+        </div>
+
+        <!-- Practice Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div class="card-container w-full h-[540px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- Front Side -->
+                    <div class="card-face card-front bg-white border-2 border-amber-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap for Answer / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- Back Side -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-600 text-center">
+                        <div id="grammar-label" class="text-[10px] text-amber-600 font-black uppercase tracking-[0.2em] mb-4">Grammar Point</div>
+                        
+                        <div id="answer-text" class="text-2xl font-black text-amber-950 mb-2 leading-tight px-2"></div>
+                        <div id="romaji-text" class="text-sm font-bold text-amber-500 font-mono mb-4 italic"></div>
+                        
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-amber-200 mb-6 mx-auto"></div>
+                        
+                        <div class="space-y-1 px-4">
+                            <div id="it-back" class="text-amber-800 font-bold text-sm"></div>
+                            <div id="en-back" class="text-slate-500 italic text-xs"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-amber-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-amber-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-amber-700 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const whoQuestions = [
+            { 
+                icon: "👨‍💼☕️", 
+                prompt: "The person drinking coffee is Mr. Miller.", 
+                answer: "コーヒーを のんで いる ひとは ミラーさんです。", 
+                romaji: "Kōhī o nonde iru hito wa Mirā-san desu.", 
+                en: "The person drinking coffee is Mr. Miller.", 
+                it: "La persona che beve il caffè è il signor Miller." 
+            },
+            { 
+                icon: "👩‍🦰👗✨", 
+                prompt: "The person wearing the red dress is Maria.", 
+                answer: "あかい ワンピースを きて いる ひとは マリアさんです。", 
+                romaji: "Akai wanpīsu o kite iru hito wa Maria-san desu.", 
+                en: "The person wearing a red dress is Maria.", 
+                it: "La persona che indossa l'abito rosso è Maria." 
+            },
+            { 
+                icon: "🧔👓", 
+                prompt: "The person with glasses is Santos.", 
+                answer: "めがねを かけて いる ひとは サントスさんです。", 
+                romaji: "Megane o kakete iru hito wa Santosu-san desu.", 
+                en: "The person wearing glasses is Mr. Santos.", 
+                it: "La persona con gli occhiali è il signor Santos." 
+            },
+            { 
+                icon: "👩🏻‍💼💻", 
+                prompt: "The person working there is my sister.", 
+                answer: "あそこで はたらいて いる ひとは あねです。", 
+                romaji: "Asoko de hataraite iru hito wa ane desu.", 
+                en: "The person working over there is my older sister.", 
+                it: "La persona che lavora laggiù è mia sorella maggiore." 
+            }
+        ];
+
+        const whatQuestions = [
+            { 
+                icon: "🎂👨‍🍳✨", 
+                prompt: "This is a cake Mr. Miller made.", 
+                answer: "これは ミラーさんが つくった ケーキです。", 
+                romaji: "Kore wa Mirā-san ga tsukutta kēki desu.", 
+                en: "This is a cake that Mr. Miller made.", 
+                it: "Questa è la torta che ha fatto il signor Miller." 
+            },
+            { 
+                icon: "📖🛒🌫️", 
+                prompt: "I forgot the book I bought yesterday.", 
+                answer: "きのう かった ほんを わすれました。", 
+                romaji: "Kinō katta hon o wasuremashita.", 
+                en: "I forgot the book I bought yesterday.", 
+                it: "Ho dimenticato il libro che ho comprato ieri." 
+            },
+            { 
+                icon: "📸🎞️❤️", 
+                prompt: "I like the photos you took.", 
+                answer: "あなたが とった しゃしんが すきです。", 
+                romaji: "Anata ga totta shashin ga suki desu.", 
+                en: "I like the photos that you took.", 
+                it: "Mi piacciono le foto che hai scattato." 
+            },
+            { 
+                icon: "🏥👶✨", 
+                prompt: "This is the hospital where I was born.", 
+                answer: "ここは わたしが うまれた びょういんです。", 
+                romaji: "Koko wa watashi ga umareta byōin desu.", 
+                en: "This is the hospital where I was born.", 
+                it: "Questo è l'ospedale dove sono nato." 
+            }
+        ];
+
+        const timeQuestions = [
+            { 
+                icon: "🏦🏃‍♂️⏳❓", 
+                prompt: "Do you have time to go to the bank?", 
+                answer: "ぎんこうへ いく じかんが ありますか。", 
+                romaji: "Ginkō e iku jikan ga arimasu ka.", 
+                en: "Do you have time to go to the bank?", 
+                it: "Hai tempo di andare in banca?" 
+            },
+            { 
+                icon: "🤝🍽️🗓️", 
+                prompt: "I have an appointment to eat with a friend.", 
+                answer: "ともだちと ごはんを たべる やくそくが あります。", 
+                romaji: "Tomodachi to gohan o taberu yakusoku ga arimasu.", 
+                en: "I have an appointment to eat with a friend.", 
+                it: "Ho un appuntamento per mangiare con un amico." 
+            },
+            { 
+                icon: "🏠🛒🏃‍♂️🌫️", 
+                prompt: "I have no errands to do today.", 
+                answer: "きょうは すること（ようじ）が ありません。", 
+                romaji: "Kyō wa suru koto ga arimasen.", 
+                en: "I have nothing to do today.", 
+                it: "Non ho niente da fare oggi." 
+            },
+            { 
+                icon: "🏫🚶‍♂️☕️⏳", 
+                prompt: "I don't have time to drink coffee.", 
+                answer: "コーヒーを のむ じかんが ありません。", 
+                romaji: "Kōhī o nomu jikan ga arimasen.", 
+                en: "I don't have time to drink coffee.", 
+                it: "Non ho tempo di bere il caffè." 
+            }
+        ];
+
+        let currentMode = 'who';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            ['who', 'what', 'time'].forEach(m => {
+                document.getElementById(`mode-${m}`).className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]";
+            });
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-amber-800 text-[10px]";
+
+            updateView();
+        }
+
+        function updateView() {
+            let questions;
+            let label;
+            if (currentMode === 'who') { questions = whoQuestions; label = "N1は [RC] N2です (People)"; }
+            else if (currentMode === 'what') { questions = whatQuestions; label = "[RC] Nを V/すき (Things/Actions)"; }
+            else { questions = timeQuestions; label = "[V-plain] じかん/やくそく (Time/Appts)"; }
+
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-[10px] uppercase tracking-widest mb-2 font-bold">Concept / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight px-4">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full px-4">
+                    <div class="text-sm text-amber-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+            document.getElementById('grammar-label').innerText = label;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            let questions = currentMode === 'who' ? whoQuestions : (currentMode === 'what' ? whatQuestions : timeQuestions);
+            const fullText = questions[currentIndex].answer;
+            const speechText = fullText.replace(/^[A-Z][：:]\s*/g, '').replace(/[A-Z][：:]\s*/g, ' ');
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            let questions = currentMode === 'who' ? whoQuestions : (currentMode === 'what' ? whatQuestions : timeQuestions);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            let questions = currentMode === 'who' ? whoQuestions : (currentMode === 'what' ? whatQuestions : timeQuestions);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
