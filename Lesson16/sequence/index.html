@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L16: Te-form Connections Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #8b5cf6;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #7c3aed; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-800">
+
+    <header class="bg-violet-800 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L16 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Connecting Sentences & Attributes</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto">
+            <button id="mode-seq" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-violet-800 text-[10px]" onclick="switchMode('seq')">
+                Sequence
+            </button>
+            <button id="mode-after" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('after')">
+                After (...kara)
+            </button>
+            <button id="mode-attr" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('attr')">
+                N wa N ga
+            </button>
+            <button id="mode-conn" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('conn')">
+                Connecting
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <!-- Card Container -->
+            <div class="card-container w-full h-[540px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- Front Side -->
+                    <div class="card-face card-front bg-white border-2 border-violet-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap for Answer / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- Back Side -->
+                    <div class="card-face card-back bg-violet-50 border-4 border-violet-600 text-center">
+                        <div id="grammar-label" class="text-[10px] text-violet-600 font-black uppercase tracking-[0.2em] mb-4">Grammar Point</div>
+                        
+                        <div id="answer-text" class="text-2xl font-black text-violet-950 mb-2 leading-tight px-2"></div>
+                        <div id="romaji-text" class="text-sm font-bold text-violet-400 font-mono mb-4 italic"></div>
+                        
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-violet-200 mb-6 mx-auto"></div>
+                        
+                        <div class="space-y-1 px-4">
+                            <div id="it-back" class="text-violet-800 font-bold text-sm"></div>
+                            <div id="en-back" class="text-slate-500 italic text-xs"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-violet-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white shadow-sm">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-violet-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-violet-700 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const seqQuestions = [
+            { 
+                icon: "🚉🏃‍♂️🏢", 
+                prompt: "I go to the station, buy a ticket, and take the train.", 
+                answer: "えきへ いって、きっぷを かって、でんしゃに のります。", 
+                romaji: "Eki e itte, kippu o katte, densha ni norimasu.", 
+                en: "I go to the station, buy a ticket, and take the train.", 
+                it: "Vado in stazione, compro il biglietto e salgo sul treno." 
+            },
+            { 
+                icon: "🚿🛌", 
+                prompt: "I take a shower and then go to bed.", 
+                answer: "シャワーを あびて、ねます。", 
+                romaji: "Shawā o abite, nemasu.", 
+                en: "I take a shower and sleep.", 
+                it: "Faccio la doccia e dormo." 
+            },
+            { 
+                icon: "🏢🚶🍣", 
+                prompt: "I went to Shinjuku, met a friend, and ate sushi.", 
+                answer: "しんじゅくへ いって、ともだちに あって、すしを たべました。", 
+                romaji: "Shinjuku e itte, tomodachi ni atte, sushi o tabemashita.", 
+                en: "I went to Shinjuku, met a friend, and ate sushi.", 
+                it: "Sono andato a Shinjuku, ho incontrato un amico e ho mangiato sushi." 
+            }
+        ];
+
+        const afterQuestions = [
+            { 
+                icon: "🏃‍♂️💨🍱", 
+                prompt: "After work is finished, I eat dinner.", 
+                answer: "しごとが おわってから、ごはんを たべます。", 
+                romaji: "Shigoto ga owatte kara, gohan o tabemasu.", 
+                en: "After finishing work, I eat.", 
+                it: "Dopo aver finito il lavoro, mangio." 
+            },
+            { 
+                icon: "🏃‍♂️🏫", 
+                prompt: "After I go home, I study.", 
+                answer: "うちに かえってから、べんきょうします。", 
+                romaji: "Uchi e kaette kara, benkyō shimasu.", 
+                en: "After going home, I study.", 
+                it: "Dopo essere tornato a casa, studio." 
+            },
+            { 
+                icon: "💰🛒", 
+                prompt: "After withdrawing money, I go shopping.", 
+                answer: "おかねを おろしてから、かいものに いきます。", 
+                romaji: "Okane o oroshite kara, kaimono ni ikimasu.", 
+                en: "After withdrawing money, I go shopping.", 
+                it: "Dopo aver prelevato i soldi, vado a fare shopping." 
+            }
+        ];
+
+        const attrQuestions = [
+            { 
+                icon: "🐘🐘", 
+                prompt: "Elephants have long trunks (noses).", 
+                answer: "ぞうは はなが ながいです。", 
+                romaji: "Zō wa hana ga nagai desu.", 
+                en: "Elephants have long trunks.", 
+                it: "L'elefante ha il naso lungo." 
+            },
+            { 
+                icon: "🏙️✨", 
+                prompt: "Osaka has good food.", 
+                answer: "おおさかは たべものが おいしいです。", 
+                romaji: "Ōsaka wa tabemono ga oishii desu.", 
+                en: "Osaka has delicious food.", 
+                it: "A Osaka il cibo è buono." 
+            },
+            { 
+                icon: "👨‍💼✨", 
+                prompt: "Mr. Miller is tall.", 
+                answer: "ミラーさんは せが たかいです。", 
+                romaji: "Mirā-san wa se ga takai desu.", 
+                en: "Mr. Miller is tall.", 
+                it: "Il signor Miller è alto." 
+            },
+            { 
+                icon: "🇩🇪⛪", 
+                prompt: "Germany is cold in winter.", 
+                answer: "ドイツは ふゆが さむいです。", 
+                romaji: "Doitsu wa fuyu ga samui desu.", 
+                en: "Germany is cold in winter.", 
+                it: "In Germania l'inverno è freddo." 
+            }
+        ];
+
+        const connQuestions = [
+            { 
+                icon: "👨‍💼🧤✨", 
+                prompt: "Mr. Miller is young and energetic.", 
+                answer: "ミラーさんは わかくて、げんきです。", 
+                romaji: "Mirā-san wa wakakute, genki desu.", 
+                en: "Mr. Miller is young and energetic.", 
+                it: "Il signor Miller è giovane ed energico." 
+            },
+            { 
+                icon: "🏠✨💰", 
+                prompt: "The room is clean and wide.", 
+                answer: "このへやは きれいで、ひろいです。", 
+                romaji: "Kono heya wa kirei de, hiroi desu.", 
+                en: "This room is clean and spacious.", 
+                it: "Questa stanza è bella e spaziosa." 
+            },
+            { 
+                icon: "👩‍💼🏫👨‍🏫", 
+                prompt: "She is a student and he is a teacher.", 
+                answer: "かのじょは がくせいで、かれは せんせいです。", 
+                romaji: "Kanojo wa gakusei de, kare wa sensei desu.", 
+                en: "She is a student, and he is a teacher.", 
+                it: "Lei è una studentessa e lui è un insegnante." 
+            },
+            { 
+                icon: "🍜🏷️📉", 
+                prompt: "This food is cheap and delicious.", 
+                answer: "このたべものは やすくて、おいしいです。", 
+                romaji: "Kono tabemono wa yasukute, oishii desu.", 
+                en: "This food is cheap and delicious.", 
+                it: "Questo cibo è economico e buono." 
+            }
+        ];
+
+        let currentMode = 'seq';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            ['seq', 'after', 'attr', 'conn'].forEach(m => {
+                document.getElementById(`mode-${m}`).className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]";
+            });
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-violet-800 text-[10px]";
+
+            updateView();
+        }
+
+        function updateView() {
+            let questions;
+            let label;
+            if (currentMode === 'seq') { questions = seqQuestions; label = "Vて、Vて、Vます (Sequence)"; }
+            else if (currentMode === 'after') { questions = afterQuestions; label = "Vてから (After doing...)"; }
+            else if (currentMode === 'attr') { questions = attrQuestions; label = "N1は N2が Adj (Attributes)"; }
+            else { questions = connQuestions; label = "Adj/N Connection (くて / で)"; }
+
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-[10px] uppercase tracking-widest mb-2 font-bold">Concept / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight px-4">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full px-4">
+                    <div class="text-sm text-violet-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+            document.getElementById('grammar-label').innerText = label;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            let questions;
+            if (currentMode === 'seq') questions = seqQuestions;
+            else if (currentMode === 'after') questions = afterQuestions;
+            else if (currentMode === 'attr') questions = attrQuestions;
+            else questions = connQuestions;
+
+            const fullText = questions[currentIndex].answer;
+            
+            // Clean A: or B: prefixes
+            const speechText = fullText.replace(/^[A-Z][：:]\s*/g, '').replace(/[A-Z][：:]\s*/g, ' ');
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            
+            const voices = window.speechSynthesis.getVoices();
+            const jaVoice = voices.find(v => v.lang.startsWith('ja'));
+            if (jaVoice) ut.voice = jaVoice;
+
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            let questions;
+            if (currentMode === 'seq') questions = seqQuestions;
+            else if (currentMode === 'after') questions = afterQuestions;
+            else if (currentMode === 'attr') questions = attrQuestions;
+            else questions = connQuestions;
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            let questions;
+            if (currentMode === 'seq') questions = seqQuestions;
+            else if (currentMode === 'after') questions = afterQuestions;
+            else if (currentMode === 'attr') questions = attrQuestions;
+            else questions = connQuestions;
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        window.speechSynthesis.getVoices();
+        updateView();
+    </script>
+</body>
+</html>
+
