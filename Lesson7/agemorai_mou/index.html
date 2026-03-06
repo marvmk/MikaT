@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L7: Tools, Languages & Giving</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #0d9488;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(13, 148, 136, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #0f766e; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-800">
+
+    <header class="bg-teal-800 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L7 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Tools (De) • Languages • Give & Receive</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- モード選択 -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-tool" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-teal-800 text-[10px]" onclick="switchMode('tool')">
+                TOOLS & LANGS
+            </button>
+            <button id="mode-give" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('give')">
+                GIVING (AGERU)
+            </button>
+            <button id="mode-rece" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('rece')">
+                RECEIVING (MORAU)
+            </button>
+            <button id="mode-mou" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('mou')">
+                ALREADY (MOU)
+            </button>
+        </div>
+
+        <!-- 練習エリア -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div class="card-container w-full h-[540px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- 表面 (問題) -->
+                    <div class="card-face card-front bg-white border-2 border-teal-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- JSで注入 -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap for Answer / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- 裏面 (解答) -->
+                    <div class="card-face card-back bg-teal-50 border-4 border-teal-600 text-center">
+                        <div id="grammar-label" class="text-[10px] text-teal-600 font-black uppercase tracking-[0.2em] mb-4">Grammar Point</div>
+                        
+                        <div id="answer-text" class="text-2xl font-black text-teal-950 mb-2 leading-tight px-2"></div>
+                        <div id="romaji-text" class="text-sm font-bold text-teal-500 font-mono mb-4 italic"></div>
+                        
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-teal-200 mb-6 mx-auto"></div>
+                        
+                        <div class="space-y-1 px-4">
+                            <div id="it-back" class="text-teal-800 font-bold text-sm"></div>
+                            <div id="en-back" class="text-slate-500 italic text-xs"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-teal-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- コントロール -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-teal-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-teal-700 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const toolData = [
+            { 
+                icon: "🥢🍱", 
+                prompt: "I eat with chopsticks.", 
+                answer: "はしで たべます。", 
+                romaji: "Hashi de tabemasu.", 
+                en: "I eat with chopsticks.", 
+                it: "Mangio con le bacchette." 
+            },
+            { 
+                icon: "🖊️📝", 
+                prompt: "I write with a ballpoint pen.", 
+                answer: "ボールペンで かきます。", 
+                romaji: "Bōrupen de kakimasu.", 
+                en: "I write with a ballpoint pen.", 
+                it: "Scrivo con la penna a sfera." 
+            },
+            { 
+                icon: "✂️📄", 
+                prompt: "I cut with scissors.", 
+                answer: "はさみで きります。", 
+                romaji: "Hasami de kirimasu.", 
+                en: "I cut with scissors.", 
+                it: "Taglio con le forbici." 
+            },
+            { 
+                icon: "🇮🇹🗣️", 
+                prompt: "'Thank you' is 'Grazie' in Italian.", 
+                answer: "「ありがとう」は イタリアごで 「Grazie」です。", 
+                romaji: "'Arigatō' wa Itaria-go de 'Grazie' desu.", 
+                en: "'Arigato' is 'Grazie' in Italian.", 
+                it: "'Arigato' si dice 'Grazie' in italiano." 
+            }
+        ];
+
+        const giveData = [
+            { 
+                icon: "🎁👉👨‍💼", 
+                prompt: "I give a present to Mr. Miller.", 
+                answer: "わたしは ミラーさんに プレゼントを あげます。", 
+                romaji: "Watashi wa Mirā-san ni purezento o agemasu.", 
+                en: "I give a present to Mr. Miller.", 
+                it: "Do un regalo al signor Miller." 
+            },
+            { 
+                icon: "💐👉👩", 
+                prompt: "I gave flowers to my mother.", 
+                answer: "ははに はなを あげました。", 
+                romaji: "Haha ni hana o agemashita.", 
+                en: "I gave flowers to my mother.", 
+                it: "Ho regalato dei fiori a mia madre." 
+            },
+            { 
+                icon: "📧👉👨‍💼", 
+                prompt: "I send an email to the teacher.", 
+                answer: "せんせいに メー(めー)ルを おくります。", 
+                romaji: "Sensei ni mēru o okurimasu.", 
+                en: "I send an email to the teacher.", 
+                it: "Mando un'email all'insegnante." 
+            }
+        ];
+
+        const receData = [
+            { 
+                icon: "🎁👈👨‍💼", 
+                prompt: "I received a present from Mr. Miller.", 
+                answer: "わたしは ミラーさんに プレゼントを もらいました。", 
+                romaji: "Watashi wa Mirā-san ni purezento o moraimashita.", 
+                en: "I received a present from Mr. Miller.", 
+                it: "Ho ricevuto un regalo dal signor Miller." 
+            },
+            { 
+                icon: "⌚️👈👨", 
+                prompt: "I received a watch from my father.", 
+                answer: "ちちに とけいを もらいました。", 
+                romaji: "Chichi ni tokei o moraimashita.", 
+                en: "I received a watch from my father.", 
+                it: "Ho ricevuto un orologio da mio padre." 
+            },
+            { 
+                icon: "📞👈🤝", 
+                prompt: "I received a phone call from a friend.", 
+                answer: "ともだちに でんわを もらいました。", 
+                romaji: "Tomodachi ni denwa o moraimashita.", 
+                en: "I received a call from a friend.", 
+                it: "Ho ricevuto una chiamata da un amico." 
+            }
+        ];
+
+        const mouData = [
+            { 
+                icon: "🍱✅", 
+                prompt: "Have you already eaten lunch? - Yes, I have.", 
+                answer: "もう ひるごはんを たべましたか。 はい、もう たべました。", 
+                romaji: "Mō hirugohan o tabemashita ka. Hai, mō tabemashita.", 
+                en: "Have you already eaten lunch? Yes, I have.", 
+                it: "Hai già pranzato? Sì, ho già mangiato." 
+            },
+            { 
+                icon: "🍱❌", 
+                prompt: "Have you eaten? - No, not yet.", 
+                answer: "もう たべましたか。 いいえ、まだです。", 
+                romaji: "Mō tabemashita ka. Iie, mada desu.", 
+                en: "Have you eaten already? No, not yet.", 
+                it: "Hai già mangiato? No, non ancora." 
+            },
+            { 
+                icon: "📝✅", 
+                prompt: "Have you already sent the letter? - Yes.", 
+                answer: "もう てがみを おくりましたか。 はい、もう おくりました。", 
+                romaji: "Mō tegami o okurimashita ka. Hai, mō okurimashita.", 
+                en: "Have you already sent the letter? Yes, I have.", 
+                it: "Hai già spedito la lettera? Sì, l'ho già spedita." 
+            }
+        ];
+
+        let currentMode = 'tool';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            ['tool', 'give', 'rece', 'mou'].forEach(m => {
+                document.getElementById(`mode-${m}`).className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]";
+            });
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-teal-800 text-[10px]";
+
+            updateView();
+        }
+
+        function updateView() {
+            let questions;
+            let label;
+            if (currentMode === 'tool') { questions = toolData; label = "N(道具) で V / 言語 で N"; }
+            else if (currentMode === 'give') { questions = giveData; label = "人 に 物 を あげます (Giving)"; }
+            else if (currentMode === 'rece') { questions = receData; label = "人 に 物 を もらいます (Receiving)"; }
+            else { questions = mouData; label = "もう Vましたか / まだです"; }
+
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-[10px] uppercase tracking-widest mb-2 font-bold">Concept / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight px-4">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full px-4">
+                    <div class="text-sm text-teal-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+            document.getElementById('grammar-label').innerText = label;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            let questions;
+            if (currentMode === 'tool') questions = toolData;
+            else if (currentMode === 'give') questions = giveData;
+            else if (currentMode === 'rece') questions = receData;
+            else questions = mouData;
+
+            const fullText = questions[currentIndex].answer;
+            const speechText = fullText.replace(/^[A-Z][：:]\s*/g, '').replace(/[A-Z][：:]\s*/g, ' ').split('（')[0];
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            let questions;
+            if (currentMode === 'tool') questions = toolData;
+            else if (currentMode === 'give') questions = giveData;
+            else if (currentMode === 'rece') questions = receData;
+            else questions = mouData;
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            let questions;
+            if (currentMode === 'tool') questions = toolData;
+            else if (currentMode === 'give') questions = giveData;
+            else if (currentMode === 'rece') questions = receData;
+            else questions = mouData;
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
