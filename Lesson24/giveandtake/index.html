@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L24: Giving & Receiving Favors</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #0d9488;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(13, 148, 136, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #0f766e; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-800">
+
+    <header class="bg-teal-800 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L24 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Giving & Receiving (Kuremasu / ~te kuremasu)</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-kure" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-teal-800 text-[10px]" onclick="switchMode('kure')">
+                GIVE TO ME (Kuremasu)
+            </button>
+            <button id="mode-rece" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('rece')">
+                RECEIVE FAVOR (~te)
+            </button>
+            <button id="mode-give" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('give')">
+                GIVE FAVOR (~te)
+            </button>
+        </div>
+
+        <!-- Practice Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div class="card-container w-full h-[540px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- Front Side -->
+                    <div class="card-face card-front bg-white border-2 border-teal-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap for Answer / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- Back Side -->
+                    <div class="card-face card-back bg-teal-50 border-4 border-teal-600 text-center">
+                        <div id="grammar-label" class="text-[10px] text-teal-600 font-black uppercase tracking-[0.2em] mb-4">Grammar Point</div>
+                        
+                        <div id="answer-text" class="text-2xl font-black text-teal-950 mb-2 leading-tight px-2"></div>
+                        <div id="romaji-text" class="text-sm font-bold text-teal-500 font-mono mb-4 italic"></div>
+                        
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-teal-200 mb-6 mx-auto"></div>
+                        
+                        <div class="space-y-1 px-4">
+                            <div id="it-back" class="text-teal-800 font-bold text-sm"></div>
+                            <div id="en-back" class="text-slate-500 italic text-xs"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-teal-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-teal-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-teal-700 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const kureQuestions = [
+            { 
+                icon: "👩‍💼🎁👉🙋‍♂️", 
+                prompt: "Sato-san gave me a present.", 
+                answer: "さとうさんは わたしに プレゼントをくれました。", 
+                romaji: "Satō-san wa watashi ni purezento o kuremashita.", 
+                en: "Ms. Sato gave me a present.", 
+                it: "La signora Sato mi ha dato un regalo." 
+            },
+            { 
+                icon: "🧔‍♂️🎫👉🙋‍♂️", 
+                prompt: "The manager gave me a ticket.", 
+                answer: "ぶちょうは わたしに チケットをくれました。", 
+                romaji: "Buchō wa watashi ni chiketto o kuremashita.", 
+                en: "The manager gave me a ticket.", 
+                it: "Il capoufficio mi ha dato un biglietto." 
+            },
+            { 
+                icon: "🧑‍🦱🍎👉🏠", 
+                prompt: "Mr. Miller gave my sister some apples.", 
+                answer: "ミラーさんは いもうとに りんごをくれました。", 
+                romaji: "Mirā-san wa imōto ni ringo o kuremashita.", 
+                en: "Mr. Miller gave my younger sister some apples.", 
+                it: "Il signor Miller ha dato delle mele a mia sorella minore." 
+            }
+        ];
+
+        const receQuestions = [
+            { 
+                icon: "🚲🛠️🧔‍♂️", 
+                prompt: "Mr. Miller fixed my bicycle (I received the favor).", 
+                answer: "わたしは ミラーさんに じてんしゃを なおして もらいました。", 
+                romaji: "Watashi wa Mirā-san ni jitensha o naoshite moraimashita.", 
+                en: "I had Mr. Miller repair my bicycle.", 
+                it: "Mi sono fatto riparare la bicicletta dal signor Miller." 
+            },
+            { 
+                icon: "🗺️❓👩‍💼", 
+                prompt: "Sato-san showed me the way (Sato-san kindly did it for me).", 
+                answer: "さとうさんは わたしに みちを おしえて くれました。", 
+                romaji: "Satō-san wa watashi ni michi o oshiete kuremashita.", 
+                en: "Ms. Sato (kindly) showed me the way.", 
+                it: "La signora Sato mi ha indicato la strada (per gentilezza)." 
+            },
+            { 
+                icon: "☕️🤝🧑‍🍳", 
+                prompt: "The shopkeeper made coffee for me (Favor received).", 
+                answer: "みせの ひとは わたしに コーヒーを いれて くれました。", 
+                romaji: "Mise no hito wa watashi ni kōhī o irete kuremashita.", 
+                en: "The shopkeeper (kindly) made coffee for me.", 
+                it: "Il negoziante mi ha preparato il caffè (per gentilezza)." 
+            },
+            { 
+                icon: "🎒🤝👱‍♂️", 
+                prompt: "I had Yamada-san carry my luggage.", 
+                answer: "わたしは やまださんに にもつを もって もらいました。", 
+                romaji: "Watashi wa Yamada-san ni nimotsu o motte moraimashita.", 
+                en: "I had Mr. Yamada carry my luggage.", 
+                it: "Mi sono fatto portare i bagagli dal signor Yamada." 
+            }
+        ];
+
+        const giveQuestions = [
+            { 
+                icon: "🍳🍱👉🤝", 
+                prompt: "I made dinner for my friend.", 
+                answer: "わたしは ともだちに ばんごはんを つくって あげました。", 
+                romaji: "Watashi wa tomodachi ni bangohan o tsukutte agemashita.", 
+                en: "I cooked dinner for my friend.", 
+                it: "Ho cucinato la cena per il mio amico." 
+            },
+            { 
+                icon: "🏥🚶‍♂️👉👵", 
+                prompt: "I took my grandmother to the hospital.", 
+                answer: "わたしは おばあさんを びょういんへ つれて いって あげました。", 
+                romaji: "Watashi wa obāsan o byōin e tsurete itte agemashita.", 
+                en: "I took my grandmother to the hospital.", 
+                it: "Ho accompagnato mia nonna all'ospedale." 
+            },
+            { 
+                icon: "📖🤝👉👧", 
+                prompt: "I lent a book to the girl.", 
+                answer: "わたしは おんなのこに ほんを かして あげました。", 
+                romaji: "Watashi wa onnanoko ni hon o kashite agemashita.", 
+                en: "I lent a book to the girl.", 
+                it: "Ho prestato un libro alla bambina." 
+            }
+        ];
+
+        let currentMode = 'kure';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            ['kure', 'rece', 'give'].forEach(m => {
+                document.getElementById(`mode-${m}`).className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]";
+            });
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-teal-800 text-[10px]";
+
+            updateView();
+        }
+
+        function updateView() {
+            let questions;
+            let label;
+            if (currentMode === 'kure') { questions = kureQuestions; label = "N1は わたしに N2をくれます (Give to me)"; }
+            else if (currentMode === 'rece') { questions = receQuestions; label = "〜てもらいます / 〜てくれます (Receive favor)"; }
+            else { questions = giveQuestions; label = "〜てあげます (Give favor)"; }
+
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-[10px] uppercase tracking-widest mb-2 font-bold">Context / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight px-4">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full px-4">
+                    <div class="text-sm text-teal-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+            document.getElementById('grammar-label').innerText = label;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            let questions = currentMode === 'kure' ? kureQuestions : (currentMode === 'rece' ? receQuestions : giveQuestions);
+            const fullText = questions[currentIndex].answer;
+            const speechText = fullText.replace(/^[A-Z][：:]\s*/g, '').replace(/[A-Z][：:]\s*/g, ' ');
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            let questions = currentMode === 'kure' ? kureQuestions : (currentMode === 'rece' ? receQuestions : giveQuestions);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            let questions = currentMode === 'kure' ? kureQuestions : (currentMode === 'rece' ? receQuestions : giveQuestions);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
