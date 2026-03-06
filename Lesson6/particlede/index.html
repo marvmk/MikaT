@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L6: Daily Actions & Invitations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #10b981;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #059669; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-800">
+
+    <header class="bg-emerald-800 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L6 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Verbs (O) • Place (De) • Invitations</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-obj" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-emerald-800 text-[10px]" onclick="switchMode('obj')">
+                OBJECT (~O)
+            </button>
+            <button id="mode-place" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('place')">
+                PLACE (~DE)
+            </button>
+            <button id="mode-invite" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('invite')">
+                INVITE / LET'S
+            </button>
+        </div>
+
+        <!-- Practice Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div class="card-container w-full h-[540px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- Front Side -->
+                    <div class="card-face card-front bg-white border-2 border-emerald-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap for Answer / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- Back Side -->
+                    <div class="card-face card-back bg-emerald-50 border-4 border-emerald-600 text-center">
+                        <div id="grammar-label" class="text-[10px] text-emerald-600 font-black uppercase tracking-[0.2em] mb-4">Grammar Point</div>
+                        
+                        <div id="answer-text" class="text-2xl font-black text-emerald-950 mb-2 leading-tight px-2"></div>
+                        <div id="romaji-text" class="text-sm font-bold text-emerald-400 font-mono mb-4 italic"></div>
+                        
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-emerald-200 mb-6 mx-auto"></div>
+                        
+                        <div class="space-y-1 px-4">
+                            <div id="it-back" class="text-emerald-800 font-bold text-sm"></div>
+                            <div id="en-back" class="text-slate-500 italic text-xs"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-emerald-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-emerald-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-emerald-700 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const objQuestions = [
+            { 
+                icon: "🍞😋", 
+                prompt: "I eat bread.", 
+                answer: "パンを たべます。", 
+                romaji: "Pan o tabemasu.", 
+                en: "I eat bread.", 
+                it: "Mangio il pane." 
+            },
+            { 
+                icon: "🍷🍷", 
+                prompt: "I drink wine.", 
+                answer: "ワインを のみます。", 
+                romaji: "Wain o nomimasu.", 
+                en: "I drink wine.", 
+                it: "Bevo il vino." 
+            },
+            { 
+                icon: "🚬❌", 
+                prompt: "I don't smoke tobacco (cigarettes).", 
+                answer: "たばこを すいません。", 
+                romaji: "Tabako o suimasen.", 
+                en: "I don't smoke cigarettes.", 
+                it: "Non fumo sigarette." 
+            },
+            { 
+                icon: "📖👀", 
+                prompt: "I read a book.", 
+                answer: "ほんを よみます。", 
+                romaji: "Hon o yomimasu.", 
+                en: "I read a book.", 
+                it: "Leggo un libro." 
+            },
+            { 
+                icon: "🤳📸", 
+                prompt: "I take a photo.", 
+                answer: "しゃしんを とります。", 
+                romaji: "Shashin o torimasu.", 
+                en: "I take a photo.", 
+                it: "Faccio una foto." 
+            },
+            { 
+                icon: "⚽️👟", 
+                prompt: "I play soccer.", 
+                answer: "サッカーを します。", 
+                romaji: "Sakkā o shimasu.", 
+                en: "I play soccer.", 
+                it: "Gioco a calcio." 
+            },
+            { 
+                icon: "🤝👨‍💼", 
+                prompt: "I meet a friend.", 
+                answer: "ともだちに あいます。", 
+                romaji: "Tomodachi ni aimasu.", 
+                en: "I meet a friend.", 
+                it: "Incontro un amico." 
+            },
+            { 
+                icon: "❓🥪", 
+                prompt: "What do you eat?", 
+                answer: "なにを たべますか。", 
+                romaji: "Nani o tabemasu ka.", 
+                en: "What do you eat?", 
+                it: "Cosa mangi?" 
+            }
+        ];
+
+        const placeQuestions = [
+            { 
+                icon: "🍴🍱", 
+                prompt: "I eat lunch at the canteen (dining hall).", 
+                answer: "しょくどうで ひるごはんを たべます。", 
+                romaji: "Shokudō de hirugohan o tabemasu.", 
+                en: "I eat lunch at the canteen.", 
+                it: "Mangio il pranzo in mensa." 
+            },
+            { 
+                icon: "🛒🍞", 
+                prompt: "Where do you buy bread? - I buy it at the supermarket.", 
+                answer: "どこで パンを かいますか。 スーパーで かいます。", 
+                romaji: "Doko de pan o kaimasu ka. Sūpā de kaimasu.", 
+                en: "Where do you buy bread? I buy it at the supermarket.", 
+                it: "Dove compri il pane? Lo compro al supermercato." 
+            },
+            { 
+                icon: "🏠📖", 
+                prompt: "I study at home.", 
+                answer: "うちで べんきょうします。", 
+                romaji: "Uchi de benkyō-shimasu.", 
+                en: "I study at home.", 
+                it: "Studio a casa." 
+            },
+            { 
+                icon: "🏞️🤳", 
+                prompt: "I take photos in the park.", 
+                answer: "こうえんで しゃしんを とります。", 
+                romaji: "Kōen de shashin o torimasu.", 
+                en: "I take photos in the park.", 
+                it: "Faccio foto al parco." 
+            }
+        ];
+
+        const inviteQuestions = [
+            { 
+                icon: "🍵🤝❓", 
+                prompt: "Won't you drink some tea? (Invitation)", 
+                answer: "おちゃを のみませんか。", 
+                romaji: "Ocha o nomimasen ka.", 
+                en: "Won't you have some tea?", 
+                it: "Ti andrebbe un tè?" 
+            },
+            { 
+                icon: "🎥🤝❓", 
+                prompt: "Won't you watch a movie with me?", 
+                answer: "いっしょに えいがを みませんか。", 
+                romaji: "Isshoni eiga o mimasen ka.", 
+                en: "Won't you watch a movie with me?", 
+                it: "Ti andrebbe di vedere un film insieme?" 
+            },
+            { 
+                icon: "🍱✨👍", 
+                prompt: "Let's eat lunch! (Suggestion)", 
+                answer: "ひるごはんを たべましょう。", 
+                romaji: "Hirugohan o tabemashō.", 
+                en: "Let's eat lunch.", 
+                it: "Mangiamo il pranzo!" 
+            },
+            { 
+                icon: "🍻✨👍", 
+                prompt: "Let's drink beer together!", 
+                answer: "いっしょに ビールを のみましょう。", 
+                romaji: "Isshoni bīru o nomimashō.", 
+                en: "Let's drink beer together.", 
+                it: "Beviamo una birra insieme!" 
+            }
+        ];
+
+        let currentMode = 'obj';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            ['obj', 'place', 'invite'].forEach(m => {
+                document.getElementById(`mode-${m}`).className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]";
+            });
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-emerald-800 text-[10px]";
+
+            updateView();
+        }
+
+        function updateView() {
+            let questions;
+            let label;
+            if (currentMode === 'obj') { questions = objQuestions; label = "N を V (Object of Action)"; }
+            else if (currentMode === 'place') { questions = placeQuestions; label = "場所 で V (Place of Action)"; }
+            else { questions = inviteQuestions; label = "Vませんか / Vましょう (Invitations)"; }
+
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-[10px] uppercase tracking-widest mb-2 font-bold">Concept / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight px-4">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full px-4">
+                    <div class="text-sm text-emerald-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+            document.getElementById('grammar-label').innerText = label;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            let questions = currentMode === 'obj' ? objQuestions : (currentMode === 'place' ? placeQuestions : inviteQuestions);
+            const fullText = questions[currentIndex].answer;
+            const speechText = fullText.replace(/^[A-Z][：:]\s*/g, '').replace(/[A-Z][：:]\s*/g, ' ').split('（')[0];
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            let questions = currentMode === 'obj' ? objQuestions : (currentMode === 'place' ? placeQuestions : inviteQuestions);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            let questions = currentMode === 'obj' ? objQuestions : (currentMode === 'place' ? placeQuestions : inviteQuestions);
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
