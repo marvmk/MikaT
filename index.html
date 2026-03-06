@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MikaT 練習メニュー</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #333; }
+        header { text-align: center; padding: 20px 0; }
+        .container { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 10px; padding: 15px; shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .lesson-num { font-weight: bold; color: #4A90E2; margin-bottom: 10px; border-bottom: 1px solid #eee; }
+        .btn-group { display: flex; gap: 10px; }
+        .btn { flex: 1; text-decoration: none; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-main { background: #4A90E2; } /* 練習用（青） */
+        .btn-vocab { background: #F5A623; } /* 単語用（オレンジ） */
+        .btn:hover { opacity: 0.8; transform: scale(1.02); }
+        .extra-btn { margin-top: 10px; background: #666; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>日本語練習アプリ</h1>
+    <p>学習するレッスンを選んでください</p>
+</header>
+
+<div class="container">
+    <div class="card">
+        <div class="lesson-num">Lesson 1</div>
+        <div class="btn-group">
+            <a href="Lesson1/introduce/" class="btn btn-main">🚀 GO</a>
+            <a href="Lesson1/vocabulary/" class="btn btn-vocab">📖 VOCAB</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="lesson-num">Lesson 2</div>
+        <div class="btn-group">
+            <a href="Lesson2/instructionword/" class="btn btn-main">🚀 GO</a>
+            <a href="Lesson2/vocabulary/" class="btn btn-vocab">📖 VOCAB</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="lesson-num">Lesson 3</div>
+        <div class="btn-group">
+            <a href="Lesson3/doko/" class="btn btn-main">🚀 GO</a>
+            <a href="Lesson3/vocabulary/" class="btn btn-vocab">📖 VOCAB</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="lesson-num">Lesson 4</div>
+        <div class="btn-group">
+            <a href="Lesson4/day/" class="btn btn-main">🚀 GO</a>
+            <a href="Lesson4/vocabulary/" class="btn btn-vocab">📖 VOCAB</a>
+        </div>
+        <a href="Lesson4/dayweekmonth/" class="btn extra-btn">📅 Day-Week-Month</a>
+    </div>
+
+    <div class="card">
+        <div class="lesson-num">Lesson 10</div>
+        <div class="btn-group">
+            <a href="Lesson10/arimasu/" class="btn btn-main">🚀 GO</a>
+            <a href="Lesson10/vocabulary/" class="btn btn-vocab">📖 VOCAB</a>
+        </div>
+    </div>
+
+    </div>
+
+</body>
+</html>
