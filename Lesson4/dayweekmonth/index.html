@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L4 Vocabulary: Time Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .action-icon { font-size: 4rem; }
+        
+        .speaker-btn {
+            background: #f59e0b;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #d97706; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-800 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L4 Vocab: Time Master 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Days • Weeks • Months • Years</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-4 max-w-2xl mx-auto w-full">
+        <!-- Category Selector -->
+        <div class="grid grid-cols-4 gap-1 mb-6 bg-slate-200 p-1 rounded-xl w-full shadow-inner">
+            <button id="mode-days" class="px-1 py-3 rounded-lg font-bold transition bg-white shadow text-amber-800 text-[10px]" onclick="switchMode('days')">DAYS</button>
+            <button id="mode-weeks" class="px-1 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('weeks')">WEEKS</button>
+            <button id="mode-months" class="px-1 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('months')">MONTHS</button>
+            <button id="mode-years" class="px-1 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('years')">YEARS</button>
+        </div>
+
+        <!-- Flashcard Area -->
+        <div class="card-container w-full h-[480px] relative mb-6">
+            <div id="practice-card" class="card w-full h-full relative">
+                
+                <!-- Front Side -->
+                <div class="card-face card-front bg-white border-2 border-amber-50 text-center" onclick="flipCard()">
+                    <div id="prompt-content" class="flex flex-col items-center space-y-4">
+                        <!-- Injected by JS -->
+                    </div>
+                    <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">Tap for Japanese / Tocca per il giapponese</div>
+                </div>
+
+                <!-- Back Side -->
+                <div class="card-face card-back bg-amber-50 border-4 border-amber-600 text-center">
+                    <div id="type-label" class="text-[10px] text-amber-600 font-black uppercase tracking-[0.2em] mb-2">Risposta</div>
+                    
+                    <div id="answer-text" class="text-4xl font-black text-amber-950 mb-1 leading-tight"></div>
+                    <div id="romaji-text" class="text-xl font-bold text-amber-500 font-mono mb-6"></div>
+                    
+                    <!-- Audio Button -->
+                    <button onclick="speakJapanese(event)" class="speaker-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        </svg>
+                    </button>
+                    
+                    <div class="w-16 h-1 bg-amber-200 mb-4 mx-auto"></div>
+                    
+                    <div class="flex flex-col items-center space-y-1 px-4">
+                        <div id="en-back" class="text-slate-500 italic text-sm"></div>
+                        <div id="it-back" class="text-lg text-amber-800 font-bold"></div>
+                    </div>
+
+                    <div class="mt-auto text-[10px] text-amber-400 font-bold uppercase tracking-widest cursor-pointer" onclick="nextQuestion()">Next / Prossimo →</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex justify-between w-full items-center px-4">
+            <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white shadow-sm">←</button>
+            <div class="text-slate-400 font-black text-lg"><span id="current-index" class="text-amber-700">1</span> / <span id="total-count">0</span></div>
+            <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-amber-600 text-white shadow-lg">→</button>
+        </div>
+    </main>
+
+    <script>
+        const data = {
+            days: [
+                { icon: "⏪⏪", en: "Day before yesterday", it: "L'altro ieri", answer: "おととい", romaji: "ototoi" },
+                { icon: "⏪", en: "Yesterday", it: "Ieri", answer: "きのう", romaji: "kinō" },
+                { icon: "📍", en: "Today", it: "Oggi", answer: "きょう", romaji: "kyō" },
+                { icon: "⏩", en: "Tomorrow", it: "Domani", answer: "あした", romaji: "ashita" },
+                { icon: "⏩⏩", en: "Day after tomorrow", it: "Dopodomani", answer: "あさって", romaji: "asatte" }
+            ],
+            weeks: [
+                { icon: "📅⏪", en: "Last week", it: "La settimana scorsa", answer: "せんしゅう", romaji: "senshū" },
+                { icon: "📅📍", en: "This week", it: "Questa settimana", answer: "こんしゅう", romaji: "konshū" },
+                { icon: "📅⏩", en: "Next week", it: "La settimana prossima", answer: "らいしゅう", romaji: "raishū" },
+                { icon: "📅⏩⏩", en: "Week after next", it: "La settimana dopo la prossima", answer: "さらいしゅう", romaji: "saraishū" }
+            ],
+            months: [
+                { icon: "🌙⏪", en: "Last month", it: "Il mese scorso", answer: "せんげつ", romaji: "sengetsu" },
+                { icon: "🌙📍", en: "This month", it: "Questo mese", answer: "こんげつ", romaji: "kongetsu" },
+                { icon: "🌙⏩", en: "Next month", it: "Il mese prossimo", answer: "らいげつ", romaji: "raigetsu" },
+                { icon: "🌙⏩⏩", en: "Month after next", it: "Il mese dopo il prossimo", answer: "さらいげつ", romaji: "saraigetsu" }
+            ],
+            years: [
+                { icon: "🗓️⏪", en: "Last year", it: "L'anno scorso", answer: "きょねん", romaji: "kyonen" },
+                { icon: "🗓️📍", en: "This year", it: "Quest'anno", answer: "ことし", romaji: "kotoshi" },
+                { icon: "🗓️⏩", en: "Next year", it: "L'anno prossimo", answer: "らいねん", romaji: "rainen" },
+                { icon: "🗓️⏩⏩", en: "Year after next", it: "L'anno dopo il prossimo", answer: "さらいねん", romaji: "sarainen" },
+                { icon: "🌍", en: "Year", it: "Anno", answer: "とし / ねん", romaji: "toshi / nen" }
+            ]
+        };
+
+        let currentMode = 'days';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode; currentIndex = 0; isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            updateView();
+            ['days', 'weeks', 'months', 'years'].forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.className = "px-1 py-3 rounded-lg font-bold transition bg-white shadow text-amber-800 text-[10px]";
+                } else {
+                    btn.className = "px-1 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]";
+                }
+            });
+        }
+
+        function updateView() {
+            const list = data[currentMode];
+            const item = list[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            promptContent.innerHTML = `
+                <div class="action-icon">${item.icon}</div>
+                <div class="space-y-4">
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-widest">English</div>
+                        <div class="text-xl text-slate-800 font-medium">${item.en}</div>
+                    </div>
+                    <div class="flex justify-center"><div class="h-px w-12 bg-slate-100"></div></div>
+                    <div>
+                        <div class="text-[10px] text-amber-500 font-bold uppercase mb-1 tracking-widest">Italiano</div>
+                        <div class="text-xl text-amber-700 font-bold">${item.it}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = list.length;
+            document.getElementById('answer-text').innerText = item.answer;
+            document.getElementById('romaji-text').innerText = item.romaji;
+            document.getElementById('en-back').innerText = item.en;
+            document.getElementById('it-back').innerText = item.it;
+            document.getElementById('type-label').innerText = currentMode.toUpperCase();
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            const word = data[currentMode][currentIndex].answer.split(' / ')[0];
+            const ut = new SpeechSynthesisUtterance(word);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const list = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % list.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const list = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + list.length) % list.length;
+                updateView();
+            }, 150);
+        }
+        
+        updateView();
+    </script>
+</body>
+</html>
+
