@@ -8,12 +8,14 @@
         body { font-family: sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #333; }
         header { text-align: center; padding: 20px 0; }
         .container { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .section-title { grid-column: 1 / -1; margin-top: 30px; padding: 12px; border-left: 5px solid #4A90E2; background: #e7eff7; font-weight: bold; border-radius: 0 8px 8px 0; }
         .card { background: white; border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
         .lesson-num { font-weight: bold; color: #4A90E2; margin-bottom: 10px; border-bottom: 1px solid #eee; }
         .btn-group { display: flex; gap: 10px; }
         .btn { flex: 1; text-decoration: none; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; color: white; transition: 0.2s; font-size: 0.9rem; }
         .btn-main { background: #4A90E2; }
         .btn-vocab { background: #F5A623; }
+        .btn-conjugation { background: #E91E63; flex: 1; }
         .btn:hover { opacity: 0.8; transform: scale(1.02); }
         .extra-btn { margin-top: 10px; background: #666; font-size: 0.8rem; text-decoration: none; color: white; text-align: center; padding: 8px; border-radius: 8px; }
     </style>
@@ -26,6 +28,24 @@
 </header>
 
 <div class="container">
+    <div class="section-title">🔥 Verb Conjugation (動詞の活用)</div>
+    
+    <div class="card">
+        <div class="lesson-num">て形 (Te-form)</div>
+        <div class="btn-group">
+            <a href="te-form/conjugation/" class="btn btn-conjugation">⚔️ START Practice</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="lesson-num">Conjugation 2</div>
+        <div class="btn-group">
+            <a href="te-form/conjugation/" class="btn btn-conjugation" style="background: #9C27B0;">⚔️ START Practice</a>
+        </div>
+    </div>
+
+    <div class="section-title">📘 Lessons</div>
+
     <div class="card"><div class="lesson-num">Lesson 1</div><div class="btn-group"><a href="Lesson1/introduce/" class="btn btn-main">🚀 GO</a><a href="Lesson1/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
     <div class="card"><div class="lesson-num">Lesson 2</div><div class="btn-group"><a href="Lesson2/instructionword/" class="btn btn-main">🚀 GO</a><a href="Lesson2/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
     <div class="card"><div class="lesson-num">Lesson 3</div><div class="btn-group"><a href="Lesson3/doko/" class="btn btn-main">🚀 GO</a><a href="Lesson3/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
@@ -65,4 +85,3 @@
 
 </body>
 </html>
-
