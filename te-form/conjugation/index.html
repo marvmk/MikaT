@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Te-form Specialist</title>
+    <title>Te-form Specialist (17 Questions)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
@@ -31,32 +31,30 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans flex flex-col items-center p-4">
+<body class="bg-slate-100 min-h-screen font-sans flex flex-col items-center p-4">
 
     <!-- Browser Check Warning -->
-    <div id="browser-warning" class="w-full max-w-md bg-amber-50 border-2 border-amber-400 p-4 rounded-2xl mb-4 text-xs font-bold text-amber-900 shadow-sm">
-        <div class="flex items-center mb-2">
-            <span class="text-xl mr-2">⚠️</span>
-            <span>Koderのプレビューでは音が出ません！</span>
-        </div>
-        <p class="font-normal">iPadの「ファイル」アプリからこのファイルを探して、<b>Safari</b>で開き直してください。マイクと音声が有効になります。</p>
-        <button onclick="testSound()" class="mt-3 w-full bg-amber-500 text-white py-2 rounded-lg font-black uppercase text-[10px] tracking-widest shadow-sm active:bg-amber-600">
-            Sound Test (音が出るか確認)
-        </button>
+    <div id="browser-warning" class="hidden w-full max-w-md bg-amber-50 border-2 border-amber-400 p-4 rounded-2xl mb-4 text-xs font-bold text-amber-900 shadow-sm">
+        <p>⚠️ Koderのプレビューでは音が出ません！Safari等で開き直してください。</p>
     </div>
 
-    <header class="w-full max-w-md bg-teal-700 text-white p-6 rounded-3xl shadow-xl mb-6 text-center">
+    <!-- Header -->
+    <header class="w-full max-w-md bg-teal-700 text-white p-6 rounded-3xl shadow-xl mb-4 text-center">
         <h1 class="text-2xl font-bold italic underline decoration-teal-300">Te-form Specialist 🎙️</h1>
-        <p class="text-xs opacity-80 mt-1 uppercase tracking-widest">Mastering verb connections</p>
-        <div class="mt-4 flex justify-around text-sm font-bold bg-teal-800/50 py-2 rounded-xl">
+        <div class="mt-4 flex justify-between px-2 text-sm font-bold bg-teal-800/50 py-2 rounded-xl">
+            <div>Progress: <span id="progress-val">1</span>/17</div>
             <div>Score: <span id="score-val">0</span></div>
-            <div>Streak: <span id="streak-val">0</span></div>
+        </div>
+        <!-- Progress Bar -->
+        <div class="w-full bg-teal-900/30 h-2 rounded-full mt-3 overflow-hidden">
+            <div id="progress-bar" class="bg-teal-300 h-full transition-all duration-300" style="width: 5.8%"></div>
         </div>
     </header>
 
+    <!-- Main Card -->
     <main id="game-card" class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 flex flex-col items-center transition-all border-b-8 border-teal-600">
-        <div id="target-group" class="bg-teal-100 text-teal-700 px-4 py-1 rounded-full text-[10px] font-black mb-3 uppercase tracking-tighter">Group 1</div>
-        <div class="text-slate-400 text-[10px] font-bold uppercase mb-1 tracking-widest italic">Conjugate this verb:</div>
+        <div id="target-group" class="bg-teal-100 text-teal-700 px-4 py-1 rounded-full text-[10px] font-black mb-3 uppercase">Group 1</div>
+        <div class="text-slate-400 text-[10px] font-bold uppercase mb-1 italic">Conjugate this verb:</div>
         <div id="base-verb-en" class="text-5xl font-black text-slate-800 mb-8 tracking-tight italic text-center">Wait</div>
         
         <div class="w-full flex items-center justify-center space-x-4 mb-6">
@@ -93,9 +91,15 @@
         </div>
     </main>
 
-    <footer class="mt-8 text-slate-400 text-[10px] font-bold uppercase tracking-widest text-center">
-        Te-form Specialist v4.1<br>Designed for Safari & Chrome
-    </footer>
+    <!-- Finished Screen (Hidden) -->
+    <div id="finish-screen" class="hidden w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 flex flex-col items-center text-center">
+        <div class="text-6xl mb-6">Finished‼️</div>
+        <div class="text-slate-500 font-bold uppercase tracking-widest mb-2 text-sm">Pratica completata!</div>
+        <div class="text-4xl font-black text-teal-700 mb-8">Score: <span id="final-score">0</span></div>
+        <button onclick="location.reload()" class="w-full py-5 bg-teal-600 text-white rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all">
+            RESTART / もう一度
+        </button>
+    </div>
 
     <script>
         const verbs = [
@@ -118,7 +122,10 @@
             { group: 3, en: "Come", it: "Venire", te: { kanji: "来て", kana: "きて" } }
         ];
 
-        let currentVerb, score = 0, streak = 0;
+        // Shuffle the questions
+        let shuffledVerbs = [...verbs].sort(() => Math.random() - 0.5);
+        let currentIndex = 0;
+        let score = 0;
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null, isListening = false;
 
@@ -127,17 +134,41 @@
             recognition.lang = 'ja-JP';
             recognition.onstart = () => { isListening = true; document.getElementById('mic-btn').classList.add('mic-active'); document.getElementById('listening-status').classList.remove('hidden'); };
             recognition.onend = () => { isListening = false; document.getElementById('mic-btn').classList.remove('mic-active'); document.getElementById('listening-status').classList.add('hidden'); };
-            recognition.onresult = (event) => { document.getElementById('user-input').value = event.results[0][0].transcript.replace(/[。、？！.?!]/g, ""); setTimeout(checkAnswer, 400); };
+            recognition.onresult = (event) => { 
+                let transcript = event.results[0][0].transcript.replace(/[。、？！.?! ]/g, "");
+                // Special Fix for "itte" (Go) - sometimes recognized as 言って, 言って
+                if (shuffledVerbs[currentIndex].en === "Go") {
+                    if (transcript === "いって" || transcript === "行って" || transcript === "言って") {
+                        transcript = "行って";
+                    }
+                }
+                document.getElementById('user-input').value = transcript;
+                setTimeout(checkAnswer, 400); 
+            };
+        } else {
+            document.getElementById('browser-warning').classList.remove('hidden');
         }
 
-        function toggleVoiceInput() { if (!recognition) { alert("ブラウザで開き直してください。"); return; } if (isListening) recognition.stop(); else recognition.start(); }
+        function toggleVoiceInput() { if (!recognition) return; if (isListening) recognition.stop(); else recognition.start(); }
 
         function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= 17) {
+                showFinish();
+                return;
+            }
             document.getElementById('feedback').classList.add('hidden');
             document.getElementById('input-container').classList.remove('hidden');
             document.getElementById('user-input').value = "";
             document.getElementById('user-input').focus();
-            currentVerb = verbs[Math.floor(Math.random() * verbs.length)];
+            
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const currentVerb = shuffledVerbs[currentIndex];
+            document.getElementById('progress-val').innerText = currentIndex + 1;
+            document.getElementById('progress-bar').style.width = ((currentIndex + 1) / 17 * 100) + "%";
             document.getElementById('target-group').innerText = `Group ${currentVerb.group}`;
             document.getElementById('base-verb-en').innerText = currentVerb.en;
         }
@@ -145,27 +176,35 @@
         function checkAnswer() {
             const userInput = document.getElementById('user-input').value.trim();
             if (!userInput && !isListening) return;
+            
+            const currentVerb = shuffledVerbs[currentIndex];
             const correctData = currentVerb.te;
-            const isCorrect = (userInput === correctData.kanji || userInput === correctData.kana);
+            
+            // Logic for matching (including homophones for "itte")
+            let isCorrect = (userInput === correctData.kanji || userInput === correctData.kana);
+            
+            // Forgiving logic for "Go"
+            if (currentVerb.en === "Go" && (userInput === "いって" || userInput === "行って" || userInput === "言って")) {
+                isCorrect = true;
+            }
 
             if (isCorrect) {
-                score += 10; streak++;
+                score += 10;
                 document.getElementById('result-icon').innerText = "✅";
-                document.getElementById('result-msg').innerText = "Excellent!";
-                document.getElementById('result-msg').className = "font-black text-xl text-green-600 uppercase tracking-tighter";
+                document.getElementById('result-msg').innerText = "Correct!";
+                document.getElementById('result-msg').className = "font-black text-xl text-green-600 uppercase";
                 document.getElementById('game-card').classList.add('correct-pop');
                 setTimeout(() => document.getElementById('game-card').classList.remove('correct-pop'), 400);
-                speak(correctData.kana);
+                const ut = new SpeechSynthesisUtterance(correctData.kana); ut.lang = 'ja-JP'; window.speechSynthesis.speak(ut);
             } else {
-                streak = 0;
                 document.getElementById('result-icon').innerText = "❌";
-                document.getElementById('result-msg').innerText = "Try Again";
-                document.getElementById('result-msg').className = "font-black text-xl text-red-600 uppercase tracking-tighter";
+                document.getElementById('result-msg').innerText = "Incorrect";
+                document.getElementById('result-msg').className = "font-black text-xl text-red-600 uppercase";
                 document.getElementById('game-card').classList.add('shake');
                 setTimeout(() => document.getElementById('game-card').classList.remove('shake'), 500);
             }
+            
             document.getElementById('score-val').innerText = score;
-            document.getElementById('streak-val').innerText = streak;
             document.getElementById('display-kanji').innerText = correctData.kanji;
             document.getElementById('display-kana').innerText = correctData.kana;
             document.getElementById('meanings-it').innerText = `Italian: ${currentVerb.it}`;
@@ -173,17 +212,23 @@
             document.getElementById('input-container').classList.add('hidden');
         }
 
-        function speak(text) {
-            if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel();
-            const ut = new SpeechSynthesisUtterance(text);
-            ut.lang = 'ja-JP'; ut.rate = 0.8; window.speechSynthesis.speak(ut);
+        function showFinish() {
+            document.getElementById('game-card').classList.add('hidden');
+            document.getElementById('finish-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            const ut = new SpeechSynthesisUtterance("お疲れ様でした！練習が終わりました。");
+            ut.lang = 'ja-JP';
+            window.speechSynthesis.speak(ut);
         }
 
-        function testSound() { speak("準備ができました。て形の練習をしましょう。"); alert("音声テストを開始しました。聞こえますか？"); }
-
-        document.getElementById('user-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('feedback').classList.contains('hidden') ? checkAnswer() : nextQuestion(); });
-        window.onload = nextQuestion;
+        document.getElementById('user-input').addEventListener('keypress', (e) => { 
+            if (e.key === 'Enter') {
+                if (document.getElementById('feedback').classList.contains('hidden')) checkAnswer();
+                else nextQuestion();
+            }
+        });
+        
+        window.onload = updateDisplay;
     </script>
 </body>
 </html>
