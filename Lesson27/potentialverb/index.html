@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L27: Potential Verbs & States</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #f59e0b;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #d97706; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-800">
+
+    <header class="bg-amber-700 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L27 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">Potential • Miemasu • Dekimasu • Shika</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- モード選択 -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-kano" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-amber-800 text-[10px]" onclick="switchMode('kano')">
+                POTENTIAL (〜える)
+            </button>
+            <button id="mode-mieru" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('mieru')">
+                SEE/HEAR (見える)
+            </button>
+            <button id="mode-deki" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('deki')">
+                COMPLETED (できる)
+            </button>
+            <button id="mode-shika" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('shika')">
+                ONLY/BUT (しか/は)
+            </button>
+        </div>
+
+        <!-- 練習エリア -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div class="card-container w-full h-[540px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- 表面 (問題) -->
+                    <div class="card-face card-front bg-white border-2 border-amber-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- JSで注入 -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap for Answer / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- 裏面 (解答) -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-600 text-center">
+                        <div id="grammar-label" class="text-[10px] text-amber-600 font-black uppercase tracking-[0.2em] mb-4">Grammar Point</div>
+                        
+                        <div id="answer-text" class="text-2xl font-black text-slate-900 mb-2 leading-tight px-2"></div>
+                        <div id="romaji-text" class="text-sm font-bold text-amber-500 font-mono mb-4 italic"></div>
+                        
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-amber-200 mb-6 mx-auto"></div>
+                        
+                        <div class="space-y-1 px-4">
+                            <div id="it-back" class="text-amber-800 font-bold text-sm"></div>
+                            <div id="en-back" class="text-slate-500 italic text-xs"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-amber-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- コントロール -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-amber-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-amber-700 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const kanoData = [
+            { 
+                icon: "📖🇯🇵", 
+                prompt: "I can read Kanji.", 
+                answer: "わたしは 漢字が 読めます。", 
+                romaji: "Watashi wa Kanji ga yomemasu.", 
+                en: "I can read Kanji.", 
+                it: "Riesco a leggere i Kanji." 
+            },
+            { 
+                icon: "🏊‍♂️", 
+                prompt: "Can you swim 200 meters?", 
+                answer: "200メートル 泳げますか。", 
+                romaji: "Nihyaku me-toru oyogemasu ka.", 
+                en: "Can you swim 200 meters?", 
+                it: "Riesci a nuotare per 200 metri?" 
+            },
+            { 
+                icon: "🚗💨", 
+                prompt: "I can drive a car.", 
+                answer: "車の 運転が できます。", 
+                romaji: "Kuruma no unten ga dekimasu.", 
+                en: "I can drive a car.", 
+                it: "So guidare la macchina." 
+            },
+            { 
+                icon: "🍣🥢", 
+                prompt: "I can eat raw fish.", 
+                answer: "なまざかなが 食べられます。", 
+                romaji: "Namazakana ga taberaremasu.", 
+                en: "I can eat raw fish.", 
+                it: "Posso mangiare il pesce crudo." 
+            }
+        ];
+
+        const mieruData = [
+            { 
+                icon: "🪟🏔️", 
+                prompt: "Mount Fuji can be seen from the window.", 
+                answer: "窓から 富士山が 見えます。", 
+                romaji: "Mado kara Fujisan ga miemasu.", 
+                en: "Mt. Fuji is visible from the window.", 
+                it: "Dalla finestra si vede il Monte Fuji." 
+            },
+            { 
+                icon: "🔊🎶", 
+                prompt: "I can hear the sound of the piano.", 
+                answer: "ピアノの 音が 聞こえます。", 
+                romaji: "Piano no oto ga kikoemasu.", 
+                en: "The sound of the piano is audible.", 
+                it: "Si sente il suono del piano." 
+            },
+            { 
+                icon: "🐦🌳", 
+                prompt: "The birds' singing can be heard.", 
+                answer: "鳥の 声が 聞こえます。", 
+                romaji: "Tori no koe ga kikoemasu.", 
+                en: "I can hear the birds' voices.", 
+                it: "Si sentono le voci degli uccelli." 
+            }
+        ];
+
+        const dekiData = [
+            { 
+                icon: "🏢✨", 
+                prompt: "A new building was completed in front of the station.", 
+                answer: "駅の 前に 新しい ビルが できました。", 
+                romaji: "Eki no mae ni atarashii biru ga dekimashita.", 
+                en: "A new building was built/finished.", 
+                it: "È stato completato un nuovo edificio davanti alla stazione." 
+            },
+            { 
+                icon: "👗✅", 
+                prompt: "Has your dress been repaired?", 
+                answer: "服の 修理が できましたか。", 
+                romaji: "Fuku no shuuri ga dekimashita ka.", 
+                en: "Is the dress repair done?", 
+                it: "La riparazione del vestito è finita?" 
+            },
+            { 
+                icon: "🛫🇯🇵", 
+                prompt: "A new airport was built in Kansai.", 
+                answer: "関西に 新しい 空港が できました。", 
+                romaji: "Kansai ni atarashii kuukou ga dekimashita.", 
+                en: "A new airport was constructed.", 
+                it: "È stato costruito un nuovo aeroporto nel Kansai." 
+            }
+        ];
+
+        const shikaData = [
+            { 
+                icon: "✍️🔤", 
+                prompt: "I can only write Hiragana. (Negative nuance)", 
+                answer: "ひらがなしか 書けません。", 
+                romaji: "Hiragana shika kakemasen.", 
+                en: "I can't write anything but Hiragana.", 
+                it: "So scrivere solo in Hiragana." 
+            },
+            { 
+                icon: "🍷✅🍺❌", 
+                prompt: "I drink wine, but I don't drink beer.", 
+                answer: "ワインは 飲みますが、ビールは 飲みません。", 
+                romaji: "Wain wa nomimasu ga, biiru wa nomimasen.", 
+                en: "I drink wine, but as for beer, I don't.", 
+                it: "Bevo il vino, ma non bevo la birra." 
+            },
+            { 
+                icon: "🚲✅🚗❌", 
+                prompt: "I can ride a bike, but not a car.", 
+                answer: "自転車には 乗れますが、車には 乗れません。", 
+                romaji: "Jitensha ni wa noremasu ga, kuruma ni wa noremasen.", 
+                en: "I can ride a bike, but I can't drive a car.", 
+                it: "So andare in bici, ma non so guidare la macchina." 
+            }
+        ];
+
+        let currentMode = 'kano';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function getQuestions() {
+            if (currentMode === 'kano') return kanoData;
+            if (currentMode === 'mieru') return mieruData;
+            if (currentMode === 'deki') return dekiData;
+            return shikaData;
+        }
+
+        function getLabel() {
+            if (currentMode === 'kano') return "可能動詞 (Potential: Can do)";
+            if (currentMode === 'mieru') return "見える / 聞こえる (Visible / Audible)";
+            if (currentMode === 'deki') return "できます (Completed / Built)";
+            return "しか + Neg / は (Contrast)";
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            ['kano', 'mieru', 'deki', 'shika'].forEach(m => {
+                document.getElementById(`mode-${m}`).className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]";
+            });
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-amber-800 text-[10px]";
+
+            updateView();
+        }
+
+        function updateView() {
+            const questions = getQuestions();
+            const label = getLabel();
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-[10px] uppercase tracking-widest mb-2 font-bold">Concept / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight px-4">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full px-4">
+                    <div class="text-sm text-amber-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+            document.getElementById('grammar-label').innerText = label;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            const questions = getQuestions();
+            const fullText = questions[currentIndex].answer;
+            
+            // 文頭の「A：」や「B：」を削除し、改行をスペースに
+            const speechText = fullText.replace(/^[AB][：:]/gm, '').replace(/\n/g, ' ');
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const questions = getQuestions();
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const questions = getQuestions();
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
