@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L30: Resultant States & Preparation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .emoji-icon { font-size: 5rem; margin-bottom: 1rem; }
+        
+        .speaker-btn {
+            background: #8b5cf6;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.4);
+            transition: all 0.2s ease;
+            margin: 1.5rem 0;
+        }
+        .speaker-btn:active { transform: scale(0.9); background: #7c3aed; }
+        .speaker-btn svg { width: 35px; height: 35px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-800">
+
+    <header class="bg-violet-800 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">L30 Sentence Trainer 🔊</h1>
+        <p class="text-xs opacity-80 uppercase tracking-widest">~te arimasu • ~te okimasu • mada ~te imasu</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- モード選択 -->
+        <div class="flex space-x-1 mb-6 bg-slate-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-arimasu" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-violet-800 text-[10px]" onclick="switchMode('arimasu')">
+                RESULT (~てあります)
+            </button>
+            <button id="mode-okimasu" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('okimasu')">
+                PREP (~ておきます)
+            </button>
+            <button id="mode-mada" class="flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]" onclick="switchMode('mada')">
+                STILL (まだ ~てい)
+            </button>
+        </div>
+
+        <!-- 練習エリア -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div class="card-container w-full h-[540px] relative mb-8">
+                <div id="practice-card" class="card w-full h-full relative">
+                    
+                    <!-- 表面 (問題) -->
+                    <div class="card-face card-front bg-white border-2 border-violet-50 text-center" onclick="flipCard()">
+                        <div id="prompt-content" class="flex flex-col items-center w-full">
+                            <!-- JSで注入 -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                            Tap for Answer / Tocca per la risposta
+                        </div>
+                    </div>
+
+                    <!-- 裏面 (解答) -->
+                    <div class="card-face card-back bg-violet-50 border-4 border-violet-600 text-center">
+                        <div id="grammar-label" class="text-[10px] text-violet-600 font-black uppercase tracking-[0.2em] mb-4">Grammar Point</div>
+                        
+                        <div id="answer-text" class="text-2xl font-black text-slate-900 mb-2 leading-tight px-2"></div>
+                        <div id="romaji-text" class="text-sm font-bold text-violet-500 font-mono mb-4 italic"></div>
+                        
+                        <button onclick="speakJapanese(event)" class="speaker-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        
+                        <div class="w-16 h-px bg-violet-200 mb-6 mx-auto"></div>
+                        
+                        <div class="space-y-1 px-4">
+                            <div id="it-back" class="text-violet-800 font-bold text-sm"></div>
+                            <div id="en-back" class="text-slate-500 italic text-xs"></div>
+                        </div>
+
+                        <div class="mt-auto text-[10px] text-violet-400 font-bold uppercase cursor-pointer" onclick="nextQuestion()">
+                            Next / Prossimo →
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- コントロール -->
+            <div class="flex justify-between w-full items-center px-4">
+                <button onclick="prevQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-slate-300 text-slate-400 bg-white">←</button>
+                <div class="text-slate-400 font-black text-lg">
+                    <span id="current-index" class="text-violet-700">1</span> / <span id="total-count">0</span>
+                </div>
+                <button onclick="nextQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full bg-violet-700 text-white shadow-lg">→</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const arimasuData = [
+            { 
+                icon: "🗺️🧱", 
+                prompt: "A map is hung on the wall.", 
+                answer: "壁に 地図が 掛けて あります。", 
+                romaji: "Kabe ni chizu ga kakete arimasu.", 
+                en: "A map has been hung on the wall (and remains there).", 
+                it: "C'è una mappa appesa al muro." 
+            },
+            { 
+                icon: "🗓️🏠", 
+                prompt: "A calendar is put in the room.", 
+                answer: "部屋に カレンダーが 置いて あります。", 
+                romaji: "Heya ni karendā ga oite arimasu.", 
+                en: "A calendar is placed in the room.", 
+                it: "C'è un calendario messo nella stanza." 
+            },
+            { 
+                icon: "🛍️🖋️", 
+                prompt: "The name is written on the bag.", 
+                answer: "袋に 名前が 書いて あります。", 
+                romaji: "Fukuro ni namae ga kaite arimasu.", 
+                en: "The name is written on the bag.", 
+                it: "Il nome è scritto sul sacchetto." 
+            },
+            { 
+                icon: "🥃🧊", 
+                prompt: "Juice is put in the refrigerator.", 
+                answer: "冷蔵庫に ジュースが 入れて あります。", 
+                romaji: "Reizōko ni jūsu ga irete arimasu.", 
+                en: "Juice is kept in the fridge.", 
+                it: "Il succo è messo nel frigorifero." 
+            }
+        ];
+
+        const okimasuData = [
+            { 
+                icon: "🎟️✈️", 
+                prompt: "I will buy tickets before the trip.", 
+                answer: "旅行の 前に 切符を 買って おきます。", 
+                romaji: "Ryokō no mae ni kippu o katte okimasu.", 
+                en: "I'll buy tickets in advance for the trip.", 
+                it: "Comprerò i biglietti in anticipo per il viaggio." 
+            },
+            { 
+                icon: "🧹🏠", 
+                prompt: "I will clean the room before the guests come.", 
+                answer: "客が 来る 前に 部屋を 掃除して おきます。", 
+                romaji: "Kyaku ga kuru mae ni heya o sōji shite okimasu.", 
+                en: "I'll clean the room beforehand.", 
+                it: "Pulirò la stanza prima che arrivino gli ospiti." 
+            },
+            { 
+                icon: "🪟🔓", 
+                prompt: "Please leave the window open.", 
+                answer: "窓を 開けたままに して おいて ください。", 
+                romaji: "Mado o aketa mama ni shite oite kudasai.", 
+                en: "Please leave the window open as it is.", 
+                it: "Per favore, lasci la finestra aperta." 
+            },
+            { 
+                icon: "🛠️📥", 
+                prompt: "Put the tools back in the drawer when finished.", 
+                answer: "使ったら、引き出しに しまって おいて ください。", 
+                romaji: "Tsukattara, hikidashi ni shimatte oite kudasai.", 
+                en: "Put them away in the drawer (for next time).", 
+                it: "Dopo l'uso, li metta via nel cassetto." 
+            }
+        ];
+
+        const madaData = [
+            { 
+                icon: "⛈️☔️", 
+                prompt: "It's still raining.", 
+                answer: "まだ 雨が 降って います。", 
+                romaji: "Mada ame ga futte imasu.", 
+                en: "It is still raining.", 
+                it: "Sta ancora piovendo." 
+            },
+            { 
+                icon: "👨‍💻⏰", 
+                prompt: "I am still using the computer.", 
+                answer: "まだ コンピューターを 使って います。", 
+                romaji: "Mada konpyūtā o tsukatte imasu.", 
+                en: "I am still using the computer.", 
+                it: "Sto ancora usando il computer." 
+            },
+            { 
+                icon: "🍱❓", 
+                prompt: "Are you still eating? - Yes, I'm still eating.", 
+                answer: "A：まだ 食べて いますか。\nB：はい、まだ 食べて います。", 
+                romaji: "Mada tabete imasu ka. Hai, mada tabete imasu.", 
+                en: "Are you still eating? Yes, I am.", 
+                it: "Stai ancora mangiando? Sì, sto ancora mangiando." 
+            }
+        ];
+
+        let currentMode = 'arimasu';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function getQuestions() {
+            if (currentMode === 'arimasu') return arimasuData;
+            if (currentMode === 'okimasu') return okimasuData;
+            return madaData;
+        }
+
+        function getLabel() {
+            if (currentMode === 'arimasu') return "他動詞 〜てあります (State/Result)";
+            if (currentMode === 'okimasu') return "〜ておきます (Preparation/Retention)";
+            return "まだ 〜ています (Still Doing)";
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            
+            ['arimasu', 'okimasu', 'mada'].forEach(m => {
+                document.getElementById(`mode-${m}`).className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition text-slate-600 text-[10px]";
+            });
+            
+            const activeBtn = document.getElementById(`mode-${mode}`);
+            activeBtn.className = "flex-1 whitespace-nowrap px-3 py-3 rounded-lg font-bold transition bg-white shadow text-violet-800 text-[10px]";
+
+            updateView();
+        }
+
+        function updateView() {
+            const questions = getQuestions();
+            const label = getLabel();
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            promptContent.innerHTML = `
+                <div class="emoji-icon">${q.icon}</div>
+                <div class="text-slate-400 text-[10px] uppercase tracking-widest mb-2 font-bold">Concept / Hint</div>
+                <div class="text-2xl font-black text-slate-800 mb-6 leading-tight px-4">${q.prompt}</div>
+                <div class="flex flex-col items-center space-y-2 border-t border-slate-100 pt-6 w-full px-4">
+                    <div class="text-sm text-violet-600 font-bold uppercase tracking-wide">${q.it}</div>
+                    <div class="text-sm text-slate-400 italic font-medium">${q.en}</div>
+                </div>
+            `;
+
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            document.getElementById('answer-text').innerText = q.answer;
+            document.getElementById('romaji-text').innerText = q.romaji;
+            document.getElementById('it-back').innerText = q.it;
+            document.getElementById('en-back').innerText = q.en;
+            document.getElementById('grammar-label').innerText = label;
+        }
+
+        function flipCard() {
+            if (isFlipped) return;
+            document.getElementById('practice-card').classList.add('is-flipped');
+            isFlipped = true;
+        }
+
+        function speakJapanese(event) {
+            if (event) event.stopPropagation();
+            const questions = getQuestions();
+            const fullText = questions[currentIndex].answer;
+            
+            // 文頭の「A：」や「B：」を削除
+            const speechText = fullText.replace(/^[AB][：:]/gm, '').replace(/\n/g, ' ');
+            
+            const ut = new SpeechSynthesisUtterance(speechText);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const questions = getQuestions();
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const questions = getQuestions();
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
