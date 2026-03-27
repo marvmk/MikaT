@@ -49,6 +49,8 @@
         
         .btn-main { background: #4A90E2; }
         .btn-vocab { background: #F5A623; }
+        .btn-master { background: #10b981; flex: 1; padding: 15px 5px; }
+        .btn-master-plain { background: #312e81; flex: 1; padding: 15px 5px; }
         .btn-conjugation { background: #E91E63; flex: 1; padding: 15px 5px; }
         .btn-conjugation-alt { background: #9C27B0; flex: 1; padding: 15px 5px; }
 
@@ -82,63 +84,72 @@
 </header>
 
 <div class="container">
-    <!-- 活用形セクション -->
-    <div class="section-title">🔥 Verb Conjugation (動詞の活用)</div>
+    <!-- MASTER & SPECIAL SECTION -->
+    <div class="section-title">🏆 Special Master Drills</div>
     
+    <div class="card">
+        <div class="lesson-num">丁寧体マスター (Polite)</div>
+        <div class="btn-group">
+            <a href="polite-master/" class="btn btn-master">👑 MASTER<small>L1-L25 丁寧体</small></a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="lesson-num">普通体マスター (Plain)</div>
+        <div class="btn-group">
+            <a href="plain-master/" class="btn btn-master-plain">👑 MASTER<small>L1-L25 普通体</small></a>
+        </div>
+    </div>
+
     <div class="card">
         <div class="lesson-num">て形 (Te-form)</div>
         <div class="btn-group">
-            <a href="te-form/conjugation/" class="btn btn-conjugation">⚔️ START Practice<small>て形 活用練習</small></a>
+            <a href="te-form/conjugation/" class="btn btn-conjugation">⚔️ START<small>て形 活用練習</small></a>
         </div>
     </div>
 
     <div class="card">
         <div class="lesson-num">ない形 (Nai-form)</div>
         <div class="btn-group">
-            <a href="nai-form/conjugation/" class="btn btn-conjugation-alt">⚔️ START Practice<small>ない形 活用練習</small></a>
+            <a href="nai-form/conjugation/" class="btn btn-conjugation-alt">⚔️ START<small>ない形 活用練習</small></a>
         </div>
     </div>
 
-    <!-- 通常レッスンセクション -->
+    <!-- LESSONS SECTION -->
     <div class="section-title">📘 Lessons (第1課〜第25課)</div>
 
-    <div class="card"><div class="lesson-num">Lesson 1</div><div class="btn-group"><a href="Lesson1/introduce/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson1/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 2</div><div class="btn-group"><a href="Lesson2/instructionword/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson2/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 3</div><div class="btn-group"><a href="Lesson3/doko/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson3/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card">
-        <div class="lesson-num">Lesson 4</div>
-        <div class="btn-group">
-            <a href="Lesson4/day/" class="btn btn-main">🚀 GO<small>Practice</small></a>
-            <a href="Lesson4/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a>
-        </div>
-        <a href="Lesson4/dayweekmonth/" class="extra-btn">📅 Day-Week-Month</a>
-    </div>
+    <!-- Lesson Cards -->
+    <div class="card"><div class="lesson-num">Lesson 1</div><div class="btn-group"><a href="Lesson1/introduce/" class="btn btn-main">🚀 GO</a><a href="Lesson1/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 2</div><div class="btn-group"><a href="Lesson2/instructionword/" class="btn btn-main">🚀 GO</a><a href="Lesson2/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 3</div><div class="btn-group"><a href="Lesson3/doko/" class="btn btn-main">🚀 GO</a><a href="Lesson3/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 4</div><div class="btn-group"><a href="Lesson4/day/" class="btn btn-main">🚀 GO</a><a href="Lesson4/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card" style="grid-column: 1 / -1; background: none; box-shadow: none; padding: 0;"><a href="Lesson4/dayweekmonth/" class="extra-btn">📅 Lesson 4: Day-Week-Month Special</a></div>
 
-    <div class="card"><div class="lesson-num">Lesson 5</div><div class="btn-group"><a href="Lesson5/bytransportation/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson5/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 6</div><div class="btn-group"><a href="Lesson6/particlede/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson6/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 7</div><div class="btn-group"><a href="Lesson7/agemorai_mou/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson7/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 8</div><div class="btn-group"><a href="Lesson8/adjective/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson8/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 9</div><div class="btn-group"><a href="Lesson9/gasukidesu/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson9/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 5</div><div class="btn-group"><a href="Lesson5/bytransportation/" class="btn btn-main">🚀 GO</a><a href="Lesson5/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 6</div><div class="btn-group"><a href="Lesson6/particlede/" class="btn btn-main">🚀 GO</a><a href="Lesson6/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 7</div><div class="btn-group"><a href="Lesson7/agemorai_mou/" class="btn btn-main">🚀 GO</a><a href="Lesson7/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 8</div><div class="btn-group"><a href="Lesson8/adjective/" class="btn btn-main">🚀 GO</a><a href="Lesson8/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 9</div><div class="btn-group"><a href="Lesson9/gasukidesu/" class="btn btn-main">🚀 GO</a><a href="Lesson9/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
 
-    <div class="card"><div class="lesson-num">Lesson 10</div><div class="btn-group"><a href="Lesson10/arimasu/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson10/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 11</div><div class="btn-group"><a href="Lesson11/vocabulary/" class="btn btn-vocab" style="flex:1">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 12</div><div class="btn-group"><a href="Lesson12/comparison/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson12/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 10</div><div class="btn-group"><a href="Lesson10/arimasu/" class="btn btn-main">🚀 GO</a><a href="Lesson10/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 11</div><div class="btn-group"><a href="Lesson10/arimasu/" class="btn btn-main">🚀 GO</a><a href="Lesson11/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 12</div><div class="btn-group"><a href="Lesson12/comparison/" class="btn btn-main">🚀 GO</a><a href="Lesson12/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
 
-    <div class="card"><div class="lesson-num">Lesson 13</div><div class="btn-group"><a href="Lesson13/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson13/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 14</div><div class="btn-group"><a href="Lesson14/teform/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson14/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 15</div><div class="btn-group"><a href="Lesson15/temoiidesuka/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson15/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 16</div><div class="btn-group"><a href="Lesson16/sequence/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson16/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 13</div><div class="btn-group"><a href="Lesson13/" class="btn btn-main">🚀 GO</a><a href="Lesson13/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 14</div><div class="btn-group"><a href="Lesson14/teform/" class="btn btn-main">🚀 GO</a><a href="Lesson14/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 15</div><div class="btn-group"><a href="Lesson15/temoiidesuka/" class="btn btn-main">🚀 GO</a><a href="Lesson15/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 16</div><div class="btn-group"><a href="Lesson16/sequence/" class="btn btn-main">🚀 GO</a><a href="Lesson16/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
 
-    <div class="card"><div class="lesson-num">Lesson 17</div><div class="btn-group"><a href="Lesson17/nai/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson17/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 18</div><div class="btn-group"><a href="Lesson18/kotogadekimasu/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson18/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 19</div><div class="btn-group"><a href="Lesson19/takotogaarimasu/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson19/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 20</div><div class="btn-group"><a href="Lesson20/plainform/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson20/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 17</div><div class="btn-group"><a href="Lesson17/nai/" class="btn btn-main">🚀 GO</a><a href="Lesson17/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 18</div><div class="btn-group"><a href="Lesson18/kotogadekimasu/" class="btn btn-main">🚀 GO</a><a href="Lesson18/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 19</div><div class="btn-group"><a href="Lesson19/takotogaarimasu/" class="btn btn-main">🚀 GO</a><a href="Lesson19/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 20</div><div class="btn-group"><a href="Lesson20/plainform/" class="btn btn-main">🚀 GO</a><a href="Lesson20/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
 
-    <div class="card"><div class="lesson-num">Lesson 21</div><div class="btn-group"><a href="Lesson21/opinions&quotes/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson21/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 22</div><div class="btn-group"><a href="Lesson22/relativeclauses/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson22/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 23</div><div class="btn-group"><a href="Lesson23/toki/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson23/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 24</div><div class="btn-group"><a href="Lesson24/giveandtake/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson24/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
-    <div class="card"><div class="lesson-num">Lesson 25</div><div class="btn-group"><a href="Lesson25/taratemo/" class="btn btn-main">🚀 GO<small>Practice</small></a><a href="Lesson25/vocabulary/" class="btn btn-vocab">📖 VOCAB<small>Vocabulary</small></a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 21</div><div class="btn-group"><a href="Lesson21/opinions%26quotes/" class="btn btn-main">🚀 GO</a><a href="Lesson21/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 22</div><div class="btn-group"><a href="Lesson22/relativeclauses/" class="btn btn-main">🚀 GO</a><a href="Lesson22/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 23</div><div class="btn-group"><a href="Lesson23/toki/" class="btn btn-main">🚀 GO</a><a href="Lesson23/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 24</div><div class="btn-group"><a href="Lesson24/giveandtake/" class="btn btn-main">🚀 GO</a><a href="Lesson24/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
+    <div class="card"><div class="lesson-num">Lesson 25</div><div class="btn-group"><a href="Lesson25/taratemo/" class="btn btn-main">🚀 GO</a><a href="Lesson25/vocabulary/" class="btn btn-vocab">📖 VOCAB</a></div></div>
 </div>
 
 <footer>
@@ -147,4 +158,6 @@
 
 </body>
 </html>
+
+
 
