@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 33 Comprehensive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L33: Reporting & Commands</h1>
+        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
+            <button id="mode-commands" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('commands')">
+                Commands
+            </button>
+            <button id="mode-meanings" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('meanings')">
+                Meanings
+            </button>
+            <button id="mode-messages" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('messages')">
+                Messages
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Imperative and Prohibition
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[480px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        <div class="h-px w-16 bg-amber-200 mx-auto mb-8"></div>
+                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center px-2">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-400 font-black text-lg">
+                        <span id="current-index" class="text-amber-600 font-black">1</span> 
+                        <span class="text-gray-200">/</span> 
+                        <span id="total-count">17</span>
+                    </div>
+                </div>
+                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Finished‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 33 Complete Mastery.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao
+    </footer>
+
+    <script>
+        // Mode 1: Commands (Commands & Prohibition)
+        const commandsData = [
+            { icon: "🛑", en: "Stop!", it: "Fermati!", kanji: "止まれ！", kana: "とまれ！" },
+            { icon: "🏃", en: "Run!", it: "Corri!", kanji: "走れ！", kana: "はしれ！" },
+            { icon: "⚡", en: "Hurry up!", it: "Sbrigati!", kanji: "急げ！", kana: "いそげ！" },
+            { icon: "🛌", en: "Sleep!", it: "Dormi!", kanji: "寝ろ！", kana: "ねろ！" },
+            { icon: "📖", en: "Read!", it: "Leggi!", kanji: "読め！", kana: "よめ！" },
+            { icon: "✍️", en: "Write!", it: "Scrivi!", kanji: "書け！", kana: "かけ！" },
+            { icon: "🏥", en: "Go to the hospital!", it: "Vai in ospedale!", kanji: "病院へ行け！", kana: "びょういんへ いけ！" },
+            { icon: "📚", en: "Study!", it: "Studia!", kanji: "勉強しろ！", kana: "べんきょうしろ！" },
+            { icon: "🧍", en: "Stand up!", it: "Alzati!", kanji: "立て！", kana: "たて！" },
+            { icon: "🚫", en: "Don't enter!", it: "Non entrare!", kanji: "入るな！", kana: "はいるな！" },
+            { icon: "🚬🚫", en: "Don't smoke!", it: "Non fumare!", kanji: "吸うな！", kana: "すうな！" },
+            { icon: "🧠🚫", en: "Don't forget!", it: "Non dimenticare!", kanji: "忘れるな！", kana: "わすれるな！" },
+            { icon: "🤳🚫", en: "Don't take photos!", it: "Non fare foto!", kanji: "撮るな！", kana: "とるな！" },
+            { icon: "🖐️🚫", en: "Don't touch!", it: "Non toccare!", kanji: "触るな！", kana: "さわるな！" },
+            { icon: "🗣️🚫", en: "Don't speak!", it: "Non parlare!", kanji: "話すな！", kana: "はなすな！" },
+            { icon: "🥤🚫", en: "Don't drink!", it: "Non bere!", kanji: "飲むな！", kana: "のむな！" },
+            { icon: "🚪🚫", en: "Don't open!", it: "Non aprire!", kanji: "開けるな！", kana: "あけるな！" }
+        ];
+
+        // Mode 2: Meanings (~to kaite arimasu / ~to iu imi desu)
+        const meaningsData = [
+            { icon: "🛑", en: "It says 'Stop'.", it: "C'è scritto 'Fermati'.", kanji: "「止まれ」と書いてあります。", kana: "「とまれ」と かいてあります。" },
+            { icon: "🚭", en: "It says 'No Smoking'.", it: "C'è scritto 'Vietato fumare'.", kanji: "「禁煙」と書いてあります。", kana: "「きんえん」と かいてあります。" },
+            { icon: "🚪", en: "It says 'Entrance'.", it: "C'è scritto 'Entrata'.", kanji: "「入口」と書いてあります。", kana: "「いりぐち」と かいてあります。" },
+            { icon: "🚮", en: "What does this mean?", it: "Cosa significa questo?", kanji: "これはどういう意味ですか。", kana: "これは どういう いみですか。" },
+            { icon: "㊙️", en: "It means 'Secret'.", it: "Significa 'Segreto'.", kanji: "「秘密」という意味です。", kana: "「ひみつ」という いみです。" },
+            { icon: "🆓", en: "It means it's free of charge.", it: "Significa che è gratuito.", kanji: "「無料」という意味です。", kana: "「むりょう」という いみです。" },
+            { icon: "📶", en: "It means you can use the internet.", it: "Significa che puoi usare internet.", kanji: "ネットが使えるという意味です。", kana: "ねっとが つかえるという いみです。" },
+            { icon: "📦", en: "It says 'Fragile'.", it: "C'è scritto 'Fragile'.", kanji: "「こわれもの」と書いてあります。", kana: "「こわれもの」と かいてあります。" },
+            { icon: "🚲❌", en: "It means 'No Parking'.", it: "Significa 'Divieto di sosta'.", kanji: "「駐車禁止」という意味です。", kana: "「ちゅうしゃきんし」という いみです。" },
+            { icon: "⚠️", en: "It means 'Danger'.", it: "Significa 'Pericolo'.", kanji: "「危険」という意味です。", kana: "「きけん」という いみです。" },
+            { icon: "🚻", en: "It means 'Toilet'.", it: "Significa 'Toilette'.", kanji: "「お手洗い」という意味です。", kana: "「おてあらい」という いみです。" },
+            { icon: "🔄", en: "It means 'Recycle'.", it: "Significa 'Riciclo'.", kanji: "「リサイクル」という意味です。", kana: "「りさいくる」という いみです。" },
+            { icon: "📖", en: "It says 'Open'.", it: "C'è scritto 'Aperto'.", kanji: "「営業中」と書いてあります。", kana: "「えいぎょうちゅう」と かいてあります。" },
+            { icon: "🔐", en: "It means you can't enter.", it: "Significa che non puoi entrare.", kanji: "入れないという意味です。", kana: "はいれないという いみです。" },
+            { icon: "🎫", en: "It means you need a ticket.", it: "Significa che serve un biglietto.", kanji: "切符が必要だという意味です。", kana: "きっぷが ひつようだと いう いみです。" },
+            { icon: "🆘", en: "It means 'Emergency'.", it: "Significa 'Emergenza'.", kanji: "「緊急」という意味です。", kana: "「きんきゅう」という いみです。" },
+            { icon: "☕", en: "It says 'Break Time'.", it: "C'è scritto 'Pausa'.", kanji: "「休憩」と書いてあります。", kana: "「きゅうけい」と かいてあります。" }
+        ];
+
+        // Mode 3: Messages (~to itte imashita / ~to tsutaete...)
+        const messagesData = [
+            { icon: "👨‍💼", en: "Tanaka-san said he'll be late.", it: "Il signor Tanaka ha detto che farà tardi.", kanji: "田中さんは遅れると言っていました。", kana: "たなかさんは おくれると いっていました。" },
+            { icon: "🎂", en: "She said the party starts at 6.", it: "Ha detto che la festa inizia alle 6.", kanji: "パーティーは６時からだと言っていました。", kana: "ぱーてぃーは ろくじからだと いっていました。" },
+            { icon: "🏢", en: "He said he is busy today.", it: "Ha detto che oggi è occupato.", kanji: "今日は忙しいと言っていました。", kana: "きょうは いそがしいと いっていました。" },
+            { icon: "📞", en: "Please tell him to call me.", it: "Per favore gli dica di chiamarmi.", kanji: "電話をくれるように伝えてください。", kana: "でんわを くれるように つたえてください。" },
+            { icon: "👩‍🏫", en: "Could you tell her I'll be absent?", it: "Potrebbe riferirle che sarò assente?", kanji: "休むと伝えていただけませんか。", kana: "やすむと つたえて いただけませんか。" },
+            { icon: "🍽️", en: "Could you tell them I'll go at 7?", it: "Potrebbe riferire che andrò alle 7?", kanji: "７時に行くと伝えていただけませんか。", kana: "ななじに いくと つたえて いただけませんか。" },
+            { icon: "✉️", en: "He said he already sent the mail.", it: "Ha detto di aver già inviato la mail.", kanji: "メールを送ったと言っていました。", kana: "めーるを おくったと いっていました。" },
+            { icon: "🌨️", en: "She said it's snowing in London.", it: "Ha detto che a Londra sta nevicando.", kanji: "ロンドンは雪だと言っていました。", kana: "ろんどんは ゆきだと いっていました。" },
+            { icon: "🎬", en: "They said the movie was fun.", it: "Hanno detto che il film era divertente.", kanji: "映画は楽しかったと言っていました。", kana: "えいがは たのしかったと いっていました。" },
+            { icon: "🛒", en: "Please tell her to buy some milk.", it: "Per favore le dica di comprare il latte.", kanji: "牛乳を買うように伝えてください。", kana: "ぎゅうにゅうを かうように つたえてください。" },
+            { icon: "🗣️", en: "He said he doesn't know the answer.", it: "Ha detto di non sapere la risposta.", kanji: "答えを知らないと言っていました。", kana: "こたえを しらないと いっていました。" },
+            { icon: "🚪", en: "Could you tell him to wait here?", it: "Potrebbe dirgli di aspettare qui?", kanji: "ここで待つように伝えていただけませんか。", kana: "ここで まつように つたえて いただけませんか。" },
+            { icon: "📅", en: "She said the meeting is tomorrow.", it: "Ha detto che la riunione è domani.", kanji: "会議は明日だと言っていました。", kana: "かいぎは あしただと いっていました。" },
+            { icon: "👔", en: "Could you tell him I can't go?", it: "Potrebbe riferirgli che non posso andare?", kanji: "行けないと伝えていただけませんか。", kana: "いけないと つたえて いただけませんか。" },
+            { icon: "🥪", en: "He said he already ate lunch.", it: "Ha detto di aver già pranzato.", kanji: "昼ご飯を食べたと言っていました。", kana: "ひるごはんを たべたと いっていました。" },
+            { icon: "🚕", en: "Please tell them to call a taxi.", it: "Per favore dica loro di chiamare un taxi.", kanji: "タクシーを呼ぶように伝えてください。", kana: "たくしーを よぶように つたえてください。" },
+            { icon: "🚶", en: "She said she'll come back soon.", it: "Ha detto che tornerà presto.", kanji: "すぐ戻るとと言っていました。", kana: "すぐ もどると いっていました。" }
+        ];
+
+        let currentMode = 'commands';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['commands', 'meanings', 'messages'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'commands') instr.innerText = "Imperative and Prohibition";
+            else if(mode === 'meanings') instr.innerText = "Reporting signs and meanings";
+            else instr.innerText = "Reporting speech and passing messages";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { commands: commandsData, meanings: meaningsData, messages: messagesData };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Scenario</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+                speakJapanese();
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { commands: commandsData, meanings: meaningsData, messages: messagesData };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = (currentMode === 'commands') ? 0.85 : 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { commands: commandsData, meanings: meaningsData, messages: messagesData };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                speakFinish();
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { commands: commandsData, meanings: meaningsData, messages: messagesData };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function speakFinish() {
+            const ut = new SpeechSynthesisUtterance("お疲れ様でした！練習が終わりました。");
+            ut.lang = 'ja-JP';
+            window.speechSynthesis.speak(ut);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
