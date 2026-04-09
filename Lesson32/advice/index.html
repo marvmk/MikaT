@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 32 Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L32: Advice & Probability</h1>
+        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-advice" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-sm" onclick="switchMode('advice')">
+                Advice
+            </button>
+            <button id="mode-deshou" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-sm" onclick="switchMode('deshou')">
+                Probability
+            </button>
+            <button id="mode-kamo" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-sm" onclick="switchMode('kamo')">
+                Possibility
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Give Advice using ~hou ga ii desu
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[450px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-4xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-2xl font-bold text-amber-500 mb-8"></div>
+                        <div class="h-px w-16 bg-amber-200 mx-auto mb-8"></div>
+                        <div id="answer-it" class="text-lg text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex items-center space-x-2 text-gray-400 font-black text-lg">
+                    <span id="current-index" class="text-amber-600 font-black">1</span> 
+                    <span class="text-gray-200">/</span> 
+                    <span id="total-count">17</span>
+                </div>
+                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View (Uniform Style) -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Finished‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic">Great job on Lesson 32!</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao
+    </footer>
+
+    <script>
+        const adviceQuestions = [
+            { icon: "🥗", en: "Eat more vegetables.", it: "Faresti meglio a mangiare più verdura.", kanji: "野菜を食べたほうがいいです。", kana: "やさいを たべたほうが いいです。" },
+            { icon: "🍷❌", en: "Don't drink alcohol.", it: "Faresti meglio a non bere alcolici.", kanji: "お酒を飲まないほうがいいです。", kana: "おさけを のまないほうが いいです。" },
+            { icon: "🏥", en: "Go to the hospital.", it: "Sarebbe meglio andare in ospedale.", kanji: "病院へ行ったほうがいいです。", kana: "びょういんへ いったほうが いいです。" },
+            { icon: "🛌", en: "Take a rest.", it: "Faresti meglio a riposarti.", kanji: "休みを取ったほうがいいです。", kana: "やすみを とったほうが いいです。" },
+            { icon: "🏢❌", en: "Don't work too much.", it: "Faresti meglio a non lavorare troppo.", kanji: "働きすぎないほうがいいです。", kana: "はたらきすぎないほうが いいです。" },
+            { icon: "🧥", en: "Wear a coat.", it: "Faresti meglio a metterti il cappotto.", kanji: "コートを着たほうがいいです。", kana: "こーとを きたほうが いいです。" },
+            { icon: "💧", en: "Drink more water.", it: "Faresti meglio a bere più acqua.", kanji: "水を飲んだほうがいいです。", kana: "みずを のんだほうが いいです。" },
+            { icon: "🚭", en: "Don't smoke.", it: "Faresti meglio a non fumare.", kanji: "たばこを吸わないほうがいいです。", kana: "たばこを すわないほうが いいです。" },
+            { icon: "🦷", en: "Brush your teeth.", it: "Faresti meglio a lavarti i denti.", kanji: "歯を磨いたほうがいいです。", kana: "はを みがいたほうが いいです。" },
+            { icon: "⏰", en: "Go to bed early.", it: "Faresti meglio a dormire presto.", kanji: "早く寝たほうがいいです。", kana: "はやく ねたほうが いいです。" },
+            { icon: "☔", en: "Don't forget the umbrella.", it: "Faresti meglio a non dimenticare l'ombrello.", kanji: "傘を忘れないほうがいいです。", kana: "かさを わすれないほうが いいです。" },
+            { icon: "🏃", en: "Exercise every day.", it: "Faresti meglio a fare esercizio ogni giorno.", kanji: "毎日運動したほうがいいです。", kana: "まいにち うんどうしたほうが いいです。" },
+            { icon: "🍕❌", en: "Don't eat too much.", it: "Faresti meglio a non mangiare troppo.", kanji: "食べすぎないほうがいいです。", kana: "たべすぎないほうが いいです。" },
+            { icon: "📖", en: "Study hard.", it: "Faresti meglio a studiare sodo.", kanji: "一生懸命勉強したほうがいいです。", kana: "いっしょうけんめい べんきょうしたほうが いいです。" },
+            { icon: "🌃❌", en: "Don't stay up late.", it: "Faresti meglio a non stare alzato fino a tardi.", kanji: "夜更かししないほうがいいです。", kana: "よふかし しないほうが いいです。" },
+            { icon: "🧼", en: "Wash your hands.", it: "Faresti meglio a lavarti le mani.", kanji: "手を洗ったほうがいいです。", kana: "てを あらったほうが いいです。" },
+            { icon: "👨‍⚕️", en: "See a doctor.", it: "Sarebbe meglio farsi vedere da un medico.", kanji: "医者に診てもらったほうがいいです。", kana: "いしゃに みてもらったほうが いいです。" }
+        ];
+
+        const deshouQuestions = [
+            { icon: "🌧️", en: "It will probably rain.", it: "Probabilmente pioverà.", kanji: "雨が降るでしょう。", kana: "あめが ふるでしょう。" },
+            { icon: "🔥", en: "It will probably be hot.", it: "Farà probabilmente caldo.", kanji: "暑くなるでしょう。", kana: "あつくなるでしょう。" },
+            { icon: "🧪", en: "The test will be hard.", it: "L'esame sarà probabilmente difficile.", kanji: "試験は難しいでしょう。", kana: "しけんは むずかしいでしょう。" },
+            { icon: "☀️", en: "It will be sunny tomorrow.", it: "Domani probabilmente ci sarà il sole.", kanji: "明日は晴れるでしょう。", kana: "あしたは はれるでしょう。" },
+            { icon: "💹", en: "Prices will go up.", it: "Probabilmente i prezzi aumenteranno.", kanji: "物価が上がるでしょう。", kana: "ぶっかが あがるでしょう。" },
+            { icon: "❄️", en: "It will probably snow.", it: "Probabilmente nevicherà.", kanji: "雪が降るでしょう。", kana: "ゆきが ふるでしょう。" },
+            { icon: "🌙", en: "Tonight will be cold.", it: "Stasera farà probabilmente freddo.", kanji: "今夜は寒いでしょう。", kana: "こんやは さむいでしょう。" },
+            { icon: "⚽", en: "Japan will win.", it: "Il Giappone probabilmente vincerà.", kanji: "日本が勝つでしょう。", kana: "にほんが かつでしょう。" },
+            { icon: "🌸", en: "Sakura will bloom soon.", it: "I ciliegi fioriranno probabilmente presto.", kanji: "桜はすぐ咲くでしょう。", kana: "さくらは すぐ さくでしょう。" },
+            { icon: "💼", en: "He will probably succeed.", it: "Probabilmente avrà successo.", kanji: "彼は成功するでしょう。", kana: "かれは せいこうするでしょう。" },
+            { icon: "🚂", en: "The train will be late.", it: "Il treno sarà probabilmente in ritardo.", kanji: "電車は遅れるでしょう。", kana: "でんしゃは おくれるでしょう。" },
+            { icon: "📈", en: "The economy will recover.", it: "L'economia probabilmente si riprenderà.", kanji: "景気は良くなるでしょう。", kana: "けいきは よく なるでしょう。" },
+            { icon: "🏔️", en: "The view will be beautiful.", it: "La vista sarà probabilmente bella.", kanji: "景色はきれいでしょう。", kana: "けしきは きれいでしょう。" },
+            { icon: "🏨", en: "The hotel will be quiet.", it: "L'hotel sarà probabilmente tranquillo.", kanji: "ホテルは静かでしょう。", kana: "ほてるは しずかでしょう。" },
+            { icon: "🍎", en: "The apples will be sweet.", it: "Le mele saranno probabilmente dolci.", kanji: "りんごは甘いでしょう。", kana: "りんごは あまいでしょう。" },
+            { icon: "🌉", en: "The bridge will be finished.", it: "Il ponte sarà probabilmente finito.", kanji: "橋は完成するでしょう。", kana: "はしは かんせいするでしょう。" },
+            { icon: "🎉", en: "The party will be fun.", it: "La festa sarà probabilmente divertente.", kanji: "パーティーは楽しいでしょう。", kana: "ぱーてぃーは たのしいでしょう。" }
+        ];
+
+        const kamoQuestions = [
+            { icon: "🌂", en: "It might rain.", it: "Potrebbe piovere.", kanji: "雨が降るかもしれません。", kana: "あめが ふるかもしれません。" },
+            { icon: "🕰️", en: "I might be late.", it: "Potrei arrivare in ritardo.", kanji: "時間に遅れるかもしれません。", kana: "じかんに おくれるかもしれません。" },
+            { icon: "💸", en: "It might be expensive.", it: "Potrebbe essere costoso.", kanji: "高いかもしれません。", kana: "たかいかもしれません。" },
+            { icon: "🤒", en: "I might have a fever.", it: "Potrei avere la febbre.", kanji: "熱があるかもしれません。", kana: "ねつが あるかもしれません。" },
+            { icon: "🤫", en: "It might be a secret.", it: "Potrebbe essere un segreto.", kanji: "秘密かもしれません。", kana: "ひみつかもしれません。" },
+            { icon: "💼", en: "He might quit the job.", it: "Potrebbe lasciare il lavoro.", kanji: "仕事を辞めるかもしれません。", kana: "しごとを やめるかもしれません。" },
+            { icon: "🎒", en: "I might travel next month.", it: "Potrei viaggiare il mese prossimo.", kanji: "来月旅行するかもしれません。", kana: "らいげつ りょこうするかもしれません。" },
+            { icon: "📝", en: "The test might be easy.", it: "L'esame potrebbe essere facile.", kanji: "試験は簡単かもしれません。", kana: "しけんは かんたんかもしれません。" },
+            { icon: "🏠", en: "He might be at home.", it: "Potrebbe essere a casa.", kanji: "彼は家にいるかもしれません。", kana: "かれは いえに いるかもしれません。" },
+            { icon: "🍲", en: "It might be delicious.", it: "Potrebbe essere delizioso.", kanji: "おいしいかもしれません。", kana: "おいしいかもしれません。" },
+            { icon: "🚉", en: "The train might be crowded.", it: "Il treno potrebbe essere affollato.", kanji: "電車は込んでいるかもしれません。", kana: "でんしゃは こんでいるかもしれません。" },
+            { icon: "🏢", en: "The meeting might be long.", it: "La riunione potrebbe essere lunga.", kanji: "会議は長いかもしれません。", kana: "かいぎは ながいかもしれません。" },
+            { icon: "📦", en: "The parcel might arrive today.", it: "Il pacco potrebbe arrivare oggi.", kanji: "荷物は今日着くかもしれません。", kana: "にもつは きょう つくかもしれません。" },
+            { icon: "🚲", en: "He might buy a bike.", it: "Potrebbe comprare una bici.", kanji: "自転車を買うかもしれません。", kana: "じてんしゃを かうかもしれません。" },
+            { icon: "📱", en: "The battery might die.", it: "La batteria potrebbe scaricarsi.", kanji: "電池が切れるかもしれません。", kana: "でんちが きれるかもしれません。" },
+            { icon: "🎸", en: "He might be a guitarist.", it: "Potrebbe essere un chitarrista.", kanji: "彼はギタリストかもしれません。", kana: "かれは ぎたりすと かもしれません。" },
+            { icon: "🍱", en: "I might make a bento.", it: "Potrei preparare un bento.", kanji: "お弁当を作るかもしれません。", kana: "おべんとうを つくる かもしれません。" }
+        ];
+
+        let currentMode = 'advice';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['advice', 'deshou', 'kamo'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'advice') instr.innerText = "Scenario: Give advice (~hou ga ii desu)";
+            else if(mode === 'deshou') instr.innerText = "Probability: ~deshou (Probably)";
+            else instr.innerText = "Possibility: ~kamoshiremasen (Might)";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { advice: adviceQuestions, deshou: deshouQuestions, kamo: kamoQuestions };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Situation</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+                speakJapanese();
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { advice: adviceQuestions, deshou: deshouQuestions, kamo: kamoQuestions };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.9;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { advice: adviceQuestions, deshou: deshouQuestions, kamo: kamoQuestions };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                speakFinish();
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { advice: adviceQuestions, deshou: deshouQuestions, kamo: kamoQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function speakFinish() {
+            const ut = new SpeechSynthesisUtterance("お疲れ様でした！練習が終わりました。");
+            ut.lang = 'ja-JP';
+            window.speechSynthesis.speak(ut);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
