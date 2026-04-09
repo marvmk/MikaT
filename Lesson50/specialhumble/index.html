@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 50 Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L50: Humble Honorifics</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System &bull; Final Lesson</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
+            <button id="mode-special" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('special')">
+                Special Humble
+            </button>
+            <button id="mode-standard" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('standard')">
+                Standard Humble
+            </button>
+            <button id="mode-polite" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('polite')">
+                Go-Humble / Polite
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Use special humble verbs (Kenjougo)...
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[480px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        
+                        <!-- Manual Audio Button -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-16 h-16 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
+                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center px-2">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-400 font-black text-lg">
+                        <span id="current-index" class="text-amber-600 font-black">1</span> 
+                        <span class="text-gray-200">/</span> 
+                        <span id="total-count">17</span>
+                    </div>
+                </div>
+                <button onclick="buttonNext()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Graduated‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Progetto Completato!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Mastery of All 50 Lessons Complete.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart Lesson 50
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao &bull; Final
+    </footer>
+
+    <script>
+        // Mode 1: Special Humble Verbs
+        const specialData = [
+            { icon: "🛫🚶", en: "I came from America.", it: "Sono venuto dall'America (umile).", kanji: "アメリカから参りました。", kana: "あめりかから まいりました。" },
+            { icon: "💼🤝", en: "My name is Miller.", it: "Mi chiamo Miller (umile).", kanji: "ミラーと申します。", kana: "みらーと もうします。" },
+            { icon: "🍱😋", en: "I'll have the meal. (Before eating)", it: "Ricevo il pasto (umile).", kanji: "いただきます。", kana: "いただきます。" },
+            { icon: "🏠🚶‍♂️", en: "I'll go to the office tomorrow.", it: "Domani andrò in ufficio (umile).", kanji: "明日、事務所へ参ります。", kana: "あした、じむしょへ まいります。" },
+            { icon: "🗣️💡", en: "I did it.", it: "L'ho fatto (umile).", kanji: "私がいたしました。", kana: "わたしたちが いたしました。" },
+            { icon: "🧠❓", en: "I know that person.", it: "Conosco quella persona (umile).", kanji: "あの方を存じております。", kana: "あのかたを ぞんじて おります。" },
+            { icon: "👨‍🏫🏠", en: "I am at home.", it: "Sono a casa (umile).", kanji: "うちに居ります。", kana: "うちに おります。" },
+            { icon: "👁️📜", en: "I'll see the report.", it: "Vedrò il rapporto (umile).", kanji: "レポートを拝見します。", kana: "れぽーとを はいけんします。" },
+            { icon: "🤝✨", en: "I met the president yesterday.", it: "Ho incontrato il presidente ieri (umile).", kanji: "昨日、社長にお目にかかりました。", kana: "きのう、しゃちょうに おめに かかりました。" },
+            { icon: "☕🥤", en: "I'll have some tea.", it: "Prendo un po' di tè (umile).", kanji: "お茶をいただきます。", kana: "おちゃを いただきます。" },
+            { icon: "🏙️🚶", en: "I went to Tokyo.", it: "Sono andato a Tokyo (umile).", kanji: "東京へ参りました。", kana: "とうきょうへ まいりました。" },
+            { icon: "🧠📍", en: "I know the way.", it: "Conosco la strada (umile).", kanji: "道を存じております。", kana: "みちを ぞんじて おります。" },
+            { icon: "🗣️👔", en: "I told the boss.", it: "L'ho detto al capo (umile).", kanji: "部長に申しました。", kana: "ぶちょうに もうしました。" },
+            { icon: "📸👁️", en: "I saw the photos.", it: "Ho visto le foto (umile).", kanji: "写真を拝見しました。", kana: "しゃしんを はいけんしました。" },
+            { icon: "🏢🤵", en: "I'll do the preparation.", it: "Farò io la preparazione (umile).", kanji: "準備をいたします。", kana: "じゅんびを いたします。" },
+            { icon: "🤝⛩️", en: "I am Tanaka from Osaka.", it: "Sono Tanaka di Osaka (umile).", kanji: "大阪の田中と申します。", kana: "おおさかの たなかと もうします。" },
+            { icon: "🚉🚶", en: "I am at the station now.", it: "Sono in stazione ora (umile).", kanji: "今駅に居ります。", kana: "いま えきに おります。" }
+        ];
+
+        // Mode 2: Standard Humble (O + V-stem + shimasu)
+        const standardData = [
+            { icon: "👜💼", en: "I'll carry your luggage.", it: "Le porto i bagagli (umile).", kanji: "お荷物をお持ちします。", kana: "おにもつを おもちします。" },
+            { icon: "📸🌳", en: "I'll take a photo for you.", it: "Le scatto una foto (umile).", kanji: "お写真を撮りします。", kana: "おしゃしんを おとりします。" },
+            { icon: "📍🔍", en: "I'll show you the way.", it: "Le mostro la strada (umile).", kanji: "道を案内します。(お案内します)", kana: "みちを あんないします。" },
+            { icon: "📩✍️", en: "I'll write the letter.", it: "Le scrivo la lettera (umile).", kanji: "手紙をお書きします。", kana: "てがみを おかきします。" },
+            { icon: "🚉🚗", en: "I'll drive you to the station.", it: "La porto in stazione in auto (umile).", kanji: "駅までお送りします。", kana: "えきまで おおくりします。" },
+            { icon: "📖💡", en: "I'll lend you this book.", it: "Le presto questo libro (umile).", kanji: "この本をお貸しします。", kana: "この ほんを おかしします。" },
+            { icon: "🧥🧼", en: "I'll clean your coat.", it: "Le pulisco il cappotto (umile).", kanji: "コートをお洗いします。", kana: "こーとを おあらいします。" },
+            { icon: "🍱🍳", en: "I'll make lunch.", it: "Le preparo il pranzo (umile).", kanji: "昼ご飯をお作りします。", kana: "ひるごはんを おつくりします。" },
+            { icon: "📞🤝", en: "I'll make a phone call.", it: "Le faccio una telefonata (umile).", kanji: "お電話します。", kana: "おでんわします。" },
+            { icon: "🧥✨", en: "I'll help you with your coat.", it: "L'aiuto con il cappotto (umile).", kanji: "お手伝いします。", kana: "おてつだいします。" },
+            { icon: "👁️📜", en: "I'll read it.", it: "Lo leggo (umile).", kanji: "お読みします。", kana: "およみします。" },
+            { icon: "🤝👔", en: "I'll introduce you to the boss.", it: "Le presento il capo (umile).", kanji: "部長をご紹介します。", kana: "ぶちょうを ごしょうかいします。" },
+            { icon: "🚪🗝️", en: "I'll open the door.", it: "Le apro la porta (umile).", kanji: "ドアをお開けします。", kana: "どあを おあけします。" },
+            { icon: "☕🥤", en: "I'll make some coffee.", it: "Le preparo il caffè (umile).", kanji: "コーヒーをおいれします。", kana: "こーひーを おいれします。" },
+            { icon: "📅🤝", en: "I'll check the schedule.", it: "Le controllo l'orario (umile).", kanji: "時間を確かめます。(お確かめします)", kana: "じかんを たしかめます。" },
+            { icon: "🏢🛋️", en: "I'll guide you to the room.", it: "La accompagno alla stanza (umile).", kanji: "部屋へご案内します。", kana: "へやへ ごあんないします。" },
+            { icon: "🧥👖", en: "I'll choose for you.", it: "Sceglierò per lei (umile).", kanji: "お選びします。", kana: "おえらびします。" }
+        ];
+
+        // Mode 3: Go-Humble / Polite (Go + Noun + shimasu)
+        const politeData = [
+            { icon: "🏢📍", en: "I'll guide you through the office.", it: "La guido in ufficio (umile).", kanji: "事務所をご案内します。", kana: "じむしょを ごあんないします。" },
+            { icon: "🗣️💬", en: "I'll explain the work.", it: "Le spiego il lavoro (umile).", kanji: "仕事をご説明します。", kana: "しごとを ごせつめいします。" },
+            { icon: "📞📩", en: "I'll contact you later.", it: "La contatterò più tardi (umile).", kanji: "後でご連絡します。", kana: "あとで ごれんらくします。" },
+            { icon: "👥🤝", en: "I'll introduce you to everyone.", it: "Vi presenterò a tutti (umile).", kanji: "皆さんをご紹介します。", kana: "みなさんを ごしょうかいします。" },
+            { icon: "🧥✨", en: "I'll help you.", it: "L'aiuto (umile).", kanji: "お手伝いします。", kana: "おてつだいします。" },
+            { icon: "🍱😋", en: "Thank you for the meal. (After)", it: "Grazie per il pasto (umile).", kanji: "ごちそうさまでした。", kana: "ごちそうさまでした。" },
+            { icon: "🙏✨", en: "I am very sorry.", it: "Chiedo profondamente scusa (umile).", kanji: "申し訳ございません。", kana: "もうしわけございません。" },
+            { icon: "👋🚪", en: "Excuse me (Entering).", it: "Permesso (Entrando - umile).", kanji: "失礼いたします。", kana: "しつれいいたします。" },
+            { icon: "🤝✨", en: "Nice to meet you.", it: "Piacere di conoscerla (umile).", kanji: "どうぞよろしくお願いいたします。", kana: "どうぞよろしく おねがいいたします。" },
+            { icon: "🏢👔", en: "I'll do my best.", it: "Farò del mio meglio (umile).", kanji: "一生懸命いたします。", kana: "いっしょうけんめい いたします。" },
+            { icon: "🚶💨", en: "I'll come back soon.", it: "Tornerò presto (umile).", kanji: "すぐ戻って参ります。", kana: "すぐ もどって まいります。" },
+            { icon: "🧠❓", en: "Do you know the answer?", it: "Conosce la risposta? (gentile).", kanji: "答えをご存じですか。(尊敬語復習)", kana: "こたえを ごぞんじですか。" },
+            { icon: "🧥🧤", en: "I'll keep your coat.", it: "Le custodisco il cappotto (umile).", kanji: "コートをお預かりします。", kana: "こーとを おあずかりします。" },
+            { icon: "🏨🏢", en: "I'm staying at a hotel in Shinjuku.", it: "Alloggio in un hotel a Shinjuku (umile).", kanji: "新宿のホテルに泊まって居ります。", kana: "しんじゅくの ほてるに とまって おります。" },
+            { icon: "🏢👋", en: "I've left the previous company.", it: "Ho lasciato la vecchia azienda (umile).", kanji: "前の会社を辞めました。(謙譲的文脈)", kana: "まえのかいしゃを やめました。" },
+            { icon: "🗣️💡", en: "I'll consult with the manager.", it: "Consulterò il manager (umile).", kanji: "課長にご相談します。", kana: "かちょうに ごそうだんします。" },
+            { icon: "🎓✨", en: "Congratulations on your graduation.", it: "Congratulazioni per la laurea (polite).", kanji: "ご卒業おめでとうございます。", kana: "ごそつぎょう おめでとうございます。" }
+        ];
+
+        let currentMode = 'special';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['special', 'standard', 'polite'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'special') instr.innerText = "Special Humble: Moushimasu, Mairimasu, Itashimasu";
+            else if(mode === 'standard') instr.innerText = "Standard Humble: O + V-masu + shimasu";
+            else instr.innerText = "Go-Humble / Polite: Go + Noun + shimasu & Polite Phrases";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { special: specialData, standard: standardData, polite: politeData };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Action</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { special: specialData, standard: standardData, polite: politeData };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { special: specialData, standard: standardData, polite: politeData };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { special: specialData, standard: standardData, polite: politeData };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function buttonNext() {
+            if (!isFlipped) {
+                flipCard();
+            } else {
+                nextQuestion();
+            }
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
