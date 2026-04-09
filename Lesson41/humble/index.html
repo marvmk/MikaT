@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 40 Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L40: Embedded Questions</h1>
+        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
+            <button id="mode-embed" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('embed')">
+                Embedded Q
+            </button>
+            <button id="mode-whether" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('whether')">
+                Whether or Not
+            </button>
+            <button id="mode-try" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('try')">
+                Try Doing
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Combine the sentences...
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[480px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        
+                        <!-- Manual Audio Button -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-16 h-16 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
+                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center px-2">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-400 font-black text-lg">
+                        <span id="current-index" class="text-amber-600 font-black">1</span> 
+                        <span class="text-gray-200">/</span> 
+                        <span id="total-count">17</span>
+                    </div>
+                </div>
+                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Finished‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 40 Mastery Complete.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao
+    </footer>
+
+    <script>
+        // Mode 1: Embedded Question (Interrogative + ka)
+        const embedData = [
+            { icon: "🛫❓", en: "Please tell me when the plane departs.", it: "Per favore mi dica quando parte l'aereo.", kanji: "飛行機がいつ出発するか教えてください。", kana: "ひこうきが いつ しゅっぱつするか おしえて ください。" },
+            { icon: "❓🎁", en: "I'll check what is inside the box.", it: "Controllerò cosa c'è dentro la scatola.", kanji: "箱の中に何があるか確かめます。", kana: "はこのなかに なにが あるか たしかめます。" },
+            { icon: "💰❓", en: "I don't know how much this costs.", it: "Non so quanto costi questo.", kanji: "これがいくらかわかりません。", kana: "これが いくらか わかりません。" },
+            { icon: "📍❓", en: "Do you know where the station is?", it: "Sa dov'è la stazione?", kanji: "駅がどこにあるか知っていますか。", kana: "えきが どこに あるか しっていますか。" },
+            { icon: "🤝❓", en: "I am counting how many people are coming.", it: "Sto contando quante persone vengono.", kanji: "何人来るか数えています。", kana: "なんにん くるか かぞえています。" },
+            { icon: "🗣️❓", en: "Please tell me what he said.", it: "Per favore mi dica cosa ha detto lui.", kanji: "彼が何と言ったか教えてください。", kana: "かれが なんといったか おしえて ください。" },
+            { icon: "⏰❓", en: "I don't know what time the meeting starts.", it: "Non so a che ora inizi la riunione.", kanji: "会議が何時に始まるか分かりません。", kana: "かいぎが なんじに はじまるか わかりません。" },
+            { icon: "🔧❓", en: "I'll ask how to use this.", it: "Chiederò come si usa questo.", kanji: "どうやって使うか聞きます。", kana: "どうやって つかうか ききます。" },
+            { icon: "🏃‍♂️❓", en: "I'm checking who won the race.", it: "Sto controllando chi ha vinto la gara.", kanji: "だれが優勝したか確かめています。", kana: "だれが ゆうしょうしたか たしかめています。" },
+            { icon: "📏❓", en: "Please measure how long it is.", it: "Per favore misuri quanto è lungo.", kanji: "長さがどれくらいか測ってください。", kana: "ながさが どれくらいか はかって ください。" },
+            { icon: "⚖️❓", en: "Do you know how much this weighs?", it: "Sa quanto pesa questo?", kanji: "重さがいくらか知っていますか。", kana: "おもさが いくらか しっていますか。" },
+            { icon: "🍷❓", en: "He is asking which wine is delicious.", it: "Lui sta chiedendo quale vino sia buono.", kanji: "どのワインがおいしいか聞いています。", kana: "どのわいんが おいしいか きいています。" },
+            { icon: "🤔❓", en: "I'll investigate why he didn't come.", it: "Indagherò perché lui non è venuto.", kanji: "なぜ彼が来なかったか調べます。", kana: "なぜ かれが こなかったか しらべます。" },
+            { icon: "🔑❓", en: "I forgot where I put the keys.", it: "Ho dimenticato dove ho messo le chiavi.", kanji: "鍵をどこに置いたか忘れました。", kana: "かぎを どこに おいたか わすれました。" },
+            { icon: "👟❓", en: "Please check what size this is.", it: "Per favore controlli che taglia sia questa.", kanji: "サイズがいくつか確かめてください。", kana: "さいずが いくつか たしかめて ください。" },
+            { icon: "🏨❓", en: "Tell me which hotel is good.", it: "Mi dica quale hotel sia buono.", kanji: "どのホテルがいいか教えてください。", kana: "どのほてるが いいか おしえて ください。" },
+            { icon: "⏳❓", en: "I'm measuring how long it takes.", it: "Sto misurando quanto tempo ci vuole.", kanji: "どのくらい時間がかかるか測っています。", kana: "どのくらい じかんが かかるか はかっています。" }
+        ];
+
+        // Mode 2: Whether or Not (~ka dōka)
+        const whetherData = [
+            { icon: "🚶‍♂️❓", en: "I don't know whether he will come or not.", it: "Non so se lui verrà o no.", kanji: "彼が来るかどうか分かりません。", kana: "かれが くるか どうか わかりません。" },
+            { icon: "✅❓", en: "Please check whether it's correct or not.", it: "Per favore controlli se sia corretto o no.", kanji: "正しいかどうか確かめてください。", kana: "ただしいか どうか たしかめて ください。" },
+            { icon: "👟❓", en: "I'll see whether the size fits or not.", it: "Vedrò se la taglia vada bene o no.", kanji: "サイズが合うかどうか見てみます。", kana: "さいずが あうか どうか みてみます。" },
+            { icon: "❌❓", en: "Please check whether there is a mistake.", it: "Per favore controlli se ci sia un errore.", kanji: "間違いがないかどうか確かめてください。", kana: "まちがいが ないか どうか たしかめて ください。" },
+            { icon: "🤒❓", en: "I don't know whether I have a fever or not.", it: "Non so se ho la febbre o no.", kanji: "熱があるかどうか分かりません。", kana: "ねつが あるか どうか わかりません。" },
+            { icon: "🌧️❓", en: "I'll check whether it's raining or not.", it: "Controllerò se stia piovendo o no.", kanji: "雨が降っているかどうか確かめます。", kana: "あめが ふっているか どうか たしかめます。" },
+            { icon: "🎂❓", en: "I don't know whether she likes cake or not.", it: "Non so se a lei piaccia la torta o no.", kanji: "彼女がケーキが好きかどうか知りません。", kana: "かのじょが けーきが すきか どうか しりません。" },
+            { icon: "🚪❓", en: "I'm checking whether I locked it or not.", it: "Sto controllando se l'ho chiuso a chiave o no.", kanji: "鍵をかけたかどうか確かめています。", kana: "かぎを かけたか どうか たしかめています。" },
+            { icon: "🎓❓", en: "I'm worried whether I can pass or not.", it: "Sono preoccupato se riuscirò a passare o no.", kanji: "合格できるかどうか心配です。", kana: "ごうかくできるか どうか しんぱいです。" },
+            { icon: "📦❓", en: "Check whether the luggage arrived.", it: "Controlla se il bagaglio sia arrivato.", kanji: "荷物が到着したかどうか確かめて。", kana: "にもつが とうちゃくしたか どうか たしかめて。" },
+            { icon: "🍽️❓", en: "I don't know if this food is safe or not.", it: "Non so se questo cibo sia sicuro o no.", kanji: "この食べ物が安全かどうか分かりません。", kana: "このたべものが あんぜんか どうか わかりません。" },
+            { icon: "🤝❓", en: "I'll check if he is free tomorrow.", it: "Controllerò se lui sia libero domani.", kanji: "明日彼が暇かどうか確かめます。", kana: "あした かれが ひまか どうか たしかめます。" },
+            { icon: "🎫❓", en: "I don't know if the ticket is available.", it: "Non so se il biglietto sia disponibile.", kanji: "切符があるかどうか分かりません。", kana: "きっぷが あるか どうか わかりません。" },
+            { icon: "👔❓", en: "Check whether he's wearing a tie.", it: "Controlla se lui porti la cravatta.", kanji: "ネクタイを締めているかどうか見て。", kana: "ねくたいを しめているか どうか みて。" },
+            { icon: "📜❓", en: "I'll see if the story is true.", it: "Vedrò se la storia sia vera.", kanji: "話が本当かどうか見てみます。", kana: "はなしが ほんとうか どうか みてみます。" },
+            { icon: "🚶‍♂️❓", en: "I don't know if he is still there.", it: "Non so se lui sia ancora lì.", kanji: "まだ彼がいるかどうか分かりません。", kana: "まだ かれが いるか どうか わかりません。" },
+            { icon: "🏠❓", en: "Please ask whether he is at home.", it: "Per favore chiedi se lui sia a casa.", kanji: "彼がうちにいるかどうか聞いてください。", kana: "かれが うちに いるか どうか きいて ください。" }
+        ];
+
+        // Mode 3: Try Doing (~te mimasu)
+        const tryData = [
+            { icon: "👖✨", en: "I'll try wearing these trousers.", it: "Proverò a indossare questi pantaloni.", kanji: "このズボンを履いてみます。", kana: "このずぼんを はいてみます。" },
+            { icon: "🍱😋", en: "I'll try eating this Japanese food.", it: "Proverò a mangiare questo cibo giapponese.", kanji: "この日本料理を食べてみます。", kana: "このにほんりょうりを たべてみます。" },
+            { icon: "🇯🇵🗣️", en: "I'll try speaking in Japanese.", it: "Proverò a parlare in giapponese.", kanji: "日本語で話してみます。", kana: "にほんごで はなしてみます。" },
+            { icon: "🍷🍇", en: "I'll try drinking this wine.", it: "Proverò a bere questo vino.", kanji: "このワインを飲んでみます。", kana: "このわいんを のんでみます。" },
+            { icon: "💻✨", en: "I'll try using this computer.", it: "Proverò a usare questo computer.", kanji: "このパソコンを使ってみます。", kana: "このぱそこんを つかってみます。" },
+            { icon: "👨‍🏫❓", en: "I'll try asking the teacher.", it: "Proverò a chiedere al professore.", kanji: "先生に聞いてみます。", kana: "せんせいに きいてみます。" },
+            { icon: "🚶‍♂️🗼", en: "I'll try going to Tokyo.", it: "Proverò ad andare a Tokyo.", kanji: "東京へ行ってみます。", kana: "とうきょうへ いってみます。" },
+            { icon: "🍳🍱", en: "I'll try making a bento.", it: "Proverò a preparare un bento.", kanji: "お弁当を作ってみます。", kana: "おべんとうを つくってみます。" },
+            { icon: "📞🤝", en: "I'll try calling my friend.", it: "Proverò a chiamare il mio amico.", kanji: "友達に電話してみます。", kana: "ともだちに でんわしてみます。" },
+            { icon: "📖💡", en: "I'll try reading this book.", it: "Proverò a leggere questo libro.", kanji: "この本を読んでみます。", kana: "このほんを よんでみます。" },
+            { icon: "✍️📄", en: "I'll try writing my name in Kanji.", it: "Proverò a scrivere il mio nome in Kanji.", kanji: "漢字で名前を書いてみます。", kana: "かんじで なまえを かいてみます。" },
+            { icon: "🎧🎶", en: "I'll try listening to this song.", it: "Proverò ad ascoltare questa canzone.", kanji: "この曲を聴いてみます。", kana: "このきょくを きいてみます。" },
+            { icon: "🔍✅", en: "I'll try checking it one more time.", it: "Proverò a controllare ancora una volta.", kanji: "もう一度確かめてみます。", kana: "もういちど たしかめてみます。" },
+            { icon: "🔢✨", en: "I'll try counting them by myself.", it: "Proverò a contarli da solo.", kanji: "一人で数えてみます。", kana: "ひとりで かぞえてみます。" },
+            { icon: "📏🛠️", en: "I'll try measuring the size.", it: "Proverò a misurare la taglia.", kanji: "サイズを測ってみます。", kana: "さいずを はかってみます。" },
+            { icon: "🤔💭", en: "I'll try thinking about it.", it: "Proverò a pensarci.", kanji: "それについて考えてみます。", kana: "それについて かんがえてみます。" },
+            { icon: "🕵️‍♂️💡", en: "I'll try investigating the cause.", it: "Proverò a indagare la causa.", kanji: "原因を調べてみます。", kana: "げんいんを しらべてみます。" }
+        ];
+
+        let currentMode = 'embed';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['embed', 'whether', 'try'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'embed') instr.innerText = "Embedded Questions: Question word + ka";
+            else if(mode === 'whether') instr.innerText = "Whether or Not: Verb/Adj + ka dōka";
+            else instr.innerText = "Try Doing: V-te mimasu (Attempt)";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Scenario</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
