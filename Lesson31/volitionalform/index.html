@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 31 Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold">L31: Intention & Plans</h1>
+        <p class="text-sm opacity-90 font-medium">意向形 / 〜と思っています / つもり / 予定</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (Amber Style) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner">
+            <button id="mode-vol" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600" onclick="switchMode('vol')">
+                Volitional
+            </button>
+            <button id="mode-think" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600" onclick="switchMode('think')">
+                Thinking
+            </button>
+            <button id="mode-plan" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600" onclick="switchMode('plan')">
+                Plans
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Change to Volitional Form
+            </div>
+
+            <!-- Card Container (Larger for bigger text) -->
+            <div class="card-container w-full h-[450px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-4xl font-black text-amber-900 leading-tight mb-4"></div>
+                        <div id="answer-kana" class="text-2xl font-bold text-amber-500 mb-8"></div>
+                        <div class="h-px w-16 bg-amber-200 mx-auto mb-8"></div>
+                        <div id="answer-it" class="text-lg text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex items-center space-x-2 text-gray-400 font-black text-lg">
+                    <span id="current-index" class="text-amber-600 font-black">1</span> 
+                    <span class="text-gray-200">/</span> 
+                    <span id="total-count">17</span>
+                </div>
+                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View (Uniform Style) -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Finished‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic">Great job on Lesson 31!</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Mode 1: Volitional (Word Level) - 17 Qs
+        const volQuestions = [
+            { icon: "🚶", en: "Go", it: "Andare", kanji: "行こう", kana: "いこう" },
+            { icon: "🥤", en: "Drink", it: "Bere", kanji: "飲もう", kana: "のもう" },
+            { icon: "🏠", en: "Return", it: "Tornare", kanji: "帰ろう", kana: "かえろう" },
+            { icon: "📖", en: "Read", it: "Leggere", kanji: "読もう", kana: "よもう" },
+            { icon: "✍️", en: "Write", it: "Scrivere", kanji: "書こう", kana: "かこう" },
+            { icon: "👂", en: "Listen", it: "Ascoltare", kanji: "聞こう", kana: "きこう" },
+            { icon: "🛒", en: "Buy", it: "Comprare", kanji: "買おう", kana: "かおう" },
+            { icon: "🤝", en: "Meet", it: "Incontrare", kanji: "会おう", kana: "あおう" },
+            { icon: "⌛", en: "Wait", it: "Aspettare", kanji: "待とう", kana: "まとう" },
+            { icon: "🗣️", en: "Speak", it: "Parlare", kanji: "話そう", kana: "はなそう" },
+            { icon: "🏊‍♂️", en: "Swim", it: "Nuotare", kanji: "泳ごう", kana: "およごう" },
+            { icon: "🍱", en: "Eat", it: "Mangiare", kanji: "食べよう", kana: "たべよう" },
+            { icon: "🎬", en: "See / Watch", it: "Vedere", kanji: "見よう", kana: "みよう" },
+            { icon: "🛌", en: "Sleep", it: "Dormire", kanji: "寝よう", kana: "ねよう" },
+            { icon: "🌅", en: "Get up", it: "Alzarsi", kanji: "起きよう", kana: "おきよう" },
+            { icon: "⚡", en: "Do", it: "Fare", kanji: "しよう", kana: "しよう" },
+            { icon: "🚶‍♂️⬅️", en: "Come", it: "Venire", kanji: "来よう", kana: "こよう" }
+        ];
+
+        // Mode 2: Thinking (Sentences) - 17 Qs
+        const thinkQuestions = [
+            { icon: "🏥", en: "Go to the hospital.", it: "Penso di andare in ospedale.", kanji: "病院へ 行こうと思っています。", kana: "びょういんへ いこうと おもっています。" },
+            { icon: "📷", en: "Buy a new camera.", it: "Penso di comprare una camera.", kanji: "カメラを 買おうと思っています。", kana: "かめらを かおうと おもっています。" },
+            { icon: "📧", en: "Write a letter.", it: "Penso di scrivere una lettera.", kanji: "手紙を 書こうと思っています。", kana: "てがみを かこうと おもっています。" },
+            { icon: "🇯🇵", en: "Study Japanese.", it: "Penso di studiare giapponese.", kanji: "日本語を 勉強しようと思っています。", kana: "にほんごを べんきょうしようと おもっています。" },
+            { icon: "🌆", en: "Eat at home tonight.", it: "Penso di mangiare a casa.", kanji: "今晩 うちで 食べようと思っています。", kana: "こんばん うちで たべようと おもっています。" },
+            { icon: "🖼️", en: "Take a photo.", it: "Penso di fare una foto.", kanji: "写真を 撮ろうと思っています。", kana: "しゃしんを とろうと おもっています。" },
+            { icon: "🍺", en: "Drink beer.", it: "Penso di bere birra.", kanji: "ビールを 飲もうと思っています。", kana: "びーるを のもうと おもっています。" },
+            { icon: "🌊", en: "Go to the sea.", it: "Penso di andare al mare.", kanji: "海へ 行こうと思っています。", kana: "うみへ いこうと おもっています。" },
+            { icon: "🎵", en: "Listen to music.", it: "Penso di ascoltare musica.", kanji: "音楽を 聞こうと思っています。", kana: "おんがくを きこうと おもっています。" },
+            { icon: "🤝", en: "Meet a friend.", it: "Penso di incontrare un amico.", kanji: "友達に 会おうと思っています。", kana: "ともだちに あおうと おもっています。" },
+            { icon: "📞", en: "Call my country.", it: "Penso di chiamare il mio paese.", kanji: "国へ 電話を かけようと思っています。", kana: "くにへ でんわを かけようと おもっています。" },
+            { icon: "🎂", en: "Make a cake.", it: "Penso di fare una torta.", kanji: "ケーキを 作ろうと思っています。", kana: "けーきを つくろうと おもっています。" },
+            { icon: "🧹", en: "Clean the room.", it: "Penso di pulire la stanza.", kanji: "部屋を 掃除しようと思っています。", kana: "へやを そうじしようと おもっています。" },
+            { icon: "🚶", en: "Take a walk.", it: "Penso di fare una passeggiata.", kanji: "散歩しようと思っています。", kana: "さんぽしようと おもっています。" },
+            { icon: "🚬", en: "Quit smoking.", it: "Penso di smettere di fumare.", kanji: "たばこを やめようと思っています。", kana: "たばこを やめようと おもっています。" },
+            { icon: "🧗", en: "Climb a mountain.", it: "Penso di scalare una montagna.", kanji: "山に 登ろうと思っています。", kana: "やまに のぼろうと おもっています。" },
+            { icon: "🏦", en: "Go to the bank.", it: "Penso di andare in banca.", kanji: "銀行へ 行こうと思っています。", kana: "ぎんこうへ いこうと おもっています。" }
+        ];
+
+        // Mode 3: Plans (Sentences) - 17 Qs
+        const planQuestions = [
+            { icon: "🛫", en: "Return home next year.", it: "Ho intenzione di tornare a casa.", kanji: "来年 国へ 帰るつもりです。", kana: "らいねん くにへ かえる つもりです。" },
+            { icon: "💍", en: "Get married.", it: "Ho in programma di sposarmi.", kanji: "結婚する 予定です。", kana: "けっこんする よていです。" },
+            { icon: "🚭", en: "Not to smoke.", it: "Ho intenzione di non fumare.", kanji: "たばこを 吸わないつもりです。", kana: "たばこを すわない つもりです。" },
+            { icon: "💼", en: "Go on a business trip.", it: "Ho in programma un viaggio di lavoro.", kanji: "出張する 予定です。", kana: "しゅっちょうする よていです。" },
+            { icon: "🏢", en: "Work until 6:00.", it: "Ho intenzione di lavorare fino alle 6.", kanji: "６時まで 働くつもりです。", kana: "ろくじまで はたらく つもりです。" },
+            { icon: "📝", en: "Take an exam.", it: "Ho in programma di fare un esame.", kanji: "試験を 受ける予定です。", kana: "しけんを うける よていです。" },
+            { icon: "🏠", en: "Buy a house.", it: "Ho intenzione di comprare casa.", kanji: "家を 買うつもりです。", kana: "いえを かう つもりです。" },
+            { icon: "🎹", en: "Learn piano.", it: "Ho intenzione di imparare il piano.", kanji: "ピアノを 習うつもりです。", kana: "ぴあのを ならう つもりです。" },
+            { icon: "🏨", en: "Stay at a hotel.", it: "Ho in programma di stare in hotel.", kanji: "ホテルに 泊まる予定です。", kana: "ほてるに とまる よていです。" },
+            { icon: "🏃", en: "Exercise every day.", it: "Ho intenzione di fare sport ogni giorno.", kanji: "毎日 運動するつもりです。", kana: "まいにち うんどうする つもりです。" },
+            { icon: "✈️", en: "Arrive at 10:00.", it: "Ho in programma di arrivare alle 10.", kanji: "１０時に 着く予定です。", kana: "じゅうじに つく よていです。" },
+            { icon: "💰", en: "Save money.", it: "Ho intenzione di risparmiare soldi.", kanji: "お金を 貯めるつもりです。", kana: "おかねを ためる つもりです。" },
+            { icon: "🚪", en: "Not to go out tonight.", it: "Ho intenzione di non uscire stasera.", kanji: "今晩 出かけないつもりです。", kana: "こんばん でかけない つもりです。" },
+            { icon: "🏫", en: "Enter a university.", it: "Ho in programma di entrare all'università.", kanji: "大学に 入る予定です。", kana: "だいがくに はいる よていです。" },
+            { icon: "🚗", en: "Get a license.", it: "Ho intenzione di prendere la patente.", kanji: "免許を 取るつもりです。", kana: "めんきょを とる つもりです。" },
+            { icon: "💼❌", en: "Quit the job.", it: "Ho in programma di lasciare il lavoro.", kanji: "仕事を 辞める予定です。", kana: "しごとを やめる よていです。" },
+            { icon: "🎒", en: "Travel in Japan.", it: "Ho intenzione di viaggiare in Giappone.", kanji: "日本を 旅行するつもりです。", kana: "にほんを りょこうする つもりです。" }
+        ];
+
+        let currentMode = 'vol';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['vol', 'think', 'plan'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'vol') instr.innerText = "Word level: Change to Volitional Form";
+            else if(mode === 'think') instr.innerText = "Scenario: What do you think you'll do?";
+            else instr.innerText = "Scenario: Plans and Intentions";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { vol: volQuestions, think: thinkQuestions, plan: planQuestions };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-3">Target English</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+                speakJapanese();
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { vol: volQuestions, think: thinkQuestions, plan: planQuestions };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.9;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { vol: volQuestions, think: thinkQuestions, plan: planQuestions };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                speakFinish();
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { vol: volQuestions, think: thinkQuestions, plan: planQuestions };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function speakFinish() {
+            const ut = new SpeechSynthesisUtterance("お疲れ様でした！練習が終わりました。");
+            ut.lang = 'ja-JP';
+            window.speechSynthesis.speak(ut);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
