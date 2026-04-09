@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 39 Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L39: Causes & Reasons</h1>
+        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
+            <button id="mode-feeling" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('feeling')">
+                Feelings (~te)
+            </button>
+            <button id="mode-cause" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('cause')">
+                Causes (~de)
+            </button>
+            <button id="mode-node" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('node')">
+                Because (~node)
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Express the reason for the feeling...
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[480px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        
+                        <!-- Manual Audio Button -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-16 h-16 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
+                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center px-2">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-400 font-black text-lg">
+                        <span id="current-index" class="text-amber-600 font-black">1</span> 
+                        <span class="text-gray-200">/</span> 
+                        <span id="total-count">17</span>
+                    </div>
+                </div>
+                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Finished‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 39 Causes & Reasons Mastery.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao
+    </footer>
+
+    <script>
+        // Mode 1: Reasons for Feelings (~te)
+        const feelingData = [
+            { icon: "😊👋", en: "I'm glad to see you.", it: "Sono felice di vederti.", kanji: "あなたに会えて、うれしいです。", kana: "あなたに あえて、うれしいです。" },
+            { icon: "📰😲", en: "I was surprised to hear the news.", it: "Sono rimasto sorpreso nel sentire la notizia.", kanji: "ニュースを聞いて、びっくりしました。", kana: "にゅーすを きいて、びっくりしました。" },
+            { icon: "😢💔", en: "I was sad to hear that story.", it: "Ero triste nel sentire quella storia.", kanji: "その話を聞いて、悲しかったです。", kana: "そのはなしを きいて、かなしかったです。" },
+            { icon: "❓😓", en: "I am troubled because I don't understand.", it: "Sono in difficoltà perché non capisco.", kanji: "わからなくて、困っています。", kana: "わからなくて、こまっています。" },
+            { icon: "📞😌", en: "I was relieved to hear your voice.", it: "Mi sono sollevato nel sentire la tua voce.", kanji: "あなたの声を聞いて、安心しました。", kana: "あなたの こえを きいて、あんしんしました。" },
+            { icon: "🐢😞", en: "I was disappointed because he was late.", it: "Ero deluso perché era in ritardo.", kanji: "彼が遅れて、がっかりしました。", kana: "かれが おくれて、がっかりしました。" },
+            { icon: "👨‍🏫😡", en: "I was scolded and feel embarrassed.", it: "Sono stato sgridato e mi vergogno.", kanji: "叱られて、恥ずかしいです。", kana: "しかられて、はずかしいです。" },
+            { icon: "🍱😋", en: "I'm happy to eat delicious food.", it: "Sono felice di mangiare cibo delizioso.", kanji: "おいしい物が食べられて、うれしいです。", kana: "おいしいものが たべられて、うれしいです。" },
+            { icon: "🏥😟", en: "I was worried to see him in hospital.", it: "Ero preoccupato di vederlo in ospedale.", kanji: "彼が入院して、心配しました。", kana: "かれが にゅういんして、しんぱいしました。" },
+            { icon: "🧩😵", en: "It's complex and I'm troubled.", it: "È complicato e sono in difficoltà.", kanji: "複雑で、困っています。", kana: "ふくざつで、こまっています。" },
+            { icon: "❌🤐", en: "I couldn't say it and it was painful.", it: "Non ho potuto dirlo ed è stato doloroso.", kanji: "言えなくて、つらかったです。", kana: "いえなくて、つらかったです。" },
+            { icon: "🎁😊", en: "I'm glad to receive a present.", it: "Sono felice di ricevere un regalo.", kanji: "プレゼントをもらって、うれしいです。", kana: "ぷれぜんとを もらって、うれしいです。" },
+            { icon: "🚶‍♂️🐢", en: "I'm troubled because I'm late.", it: "Sono in difficoltà perché sono in ritardo.", kanji: "遅れて、困っています。", kana: "おくれて、こまっています。" },
+            { icon: "🌧️❌", en: "I'm sad because I couldn't go out.", it: "Sono triste perché non sono potuto uscire.", kanji: "出かけられなくて、悲しいです。", kana: "でかけられなくて、かなしいです。" },
+            { icon: "👨‍👩‍👧‍👦✨", en: "I was glad to see my family.", it: "Ero felice di vedere la mia famiglia.", kanji: "家族に会えて、うれしかったです。", kana: "かぞくに あえて、うれしかったです。" },
+            { icon: "😱💨", en: "I was surprised by the big noise.", it: "Sono rimasto sorpreso dal grande rumore.", kanji: "大きな音を聞いて、びっくりしました。", kana: "おおきなおとを きいて、びっくりしました。" },
+            { icon: "🎓✅", en: "I'm relieved to pass the exam.", it: "Sono sollevato di aver passato l'esame.", kanji: "試験に合格して、安心しました。", kana: "しけんに ごうかくして、あんしんしました。" }
+        ];
+
+        // Mode 2: Causes (Nouns ~de)
+        const causeData = [
+            { icon: "🌍🏘️", en: "Buildings collapsed due to earthquake.", it: "Gli edifici sono crollati a causa del terremoto.", kanji: "地震でビルが倒れました。", kana: "じしんで びるが たおれました。" },
+            { icon: "🔥🏚️", en: "The house burned down due to fire.", it: "La casa è bruciata a causa dell'incendio.", kanji: "火事でうちが焼けました。", kana: "かじで うちが やけました。" },
+            { icon: "🌧️🐢", en: "I was late due to heavy rain.", it: "Ero in ritardo a causa della pioggia forte.", kanji: "大雨で遅れました。", kana: "おおあめで おくれました。" },
+            { icon: "🚗💥", en: "The road is closed due to accident.", it: "La strada è chiusa a causa di un incidente.", kanji: "事故で道が通れません。", kana: "じこで みちが とおれません。" },
+            { icon: "🤧❌", en: "I took a break from work due to a cold.", it: "Ho preso una pausa dal lavoro per un raffreddore.", kanji: "風邪で仕事を休みました。", kana: "かぜで しごとを やすみました。" },
+            { icon: "🌀🛤️", en: "Trains stopped due to typhoon.", it: "I treni si sono fermati per il tifone.", kanji: "台風で電車が止まりました。", kana: "たいふうで でんしゃが とまりました。" },
+            { icon: "雪💨", en: "I couldn't go out due to snow.", it: "Non sono potuto uscire per la neve.", kanji: "雪で出かけられませんでした。", kana: "ゆきで でかけられませんでした。" },
+            { icon: "🗣️😵", en: "The class was canceled due to illness.", it: "La lezione è stata annullata per malattia.", kanji: "病気でクラスが休みになりました。", kana: "びょうきで くらすが やすみに なりました。" },
+            { icon: "🔊👶", en: "The baby woke up due to noise.", it: "Il bambino si è svegliato per il rumore.", kanji: "音で赤ちゃんが起きました。", kana: "おとで あかちゃんが おきました。" },
+            { icon: "🌉❌", en: "The bridge is broken due to the flood.", it: "Il ponte è rotto a causa dell'alluvione.", kanji: "洪水で橋が壊れました。", kana: "こうずいで はしが こわれました。" },
+            { icon: "🐢🚉", en: "I was late due to train delay.", it: "Ero in ritardo per il ritardo del treno.", kanji: "電車の遅れで遅刻しました。", kana: "でんしゃのおくれで ちこくしました。" },
+            { icon: "🏭💨", en: "The air is dirty due to factories.", it: "L'aria è sporca a causa delle fabbriche.", kanji: "工場で空気が汚れています。", kana: "こうじょうで くうきが よごれています。" },
+            { icon: "🏥📉", en: "I am thin due to hospital life.", it: "Sono magro per la vita in ospedale.", kanji: "入院生活でやせました。", kana: "にゅういんせいかつで やせました。" },
+            { icon: "📈💹", en: "I am happy due to the bonus.", it: "Sono felice per il bonus.", kanji: "ボーナスでうれしいです。", kana: "ぼーなすで うれしいです。" },
+            { icon: "🤷‍♂️❌", en: "I'm troubled due to lack of money.", it: "Sono in difficoltà per mancanza di soldi.", kanji: "お金がなくて、困っています。(名詞:お金不足で)", kana: "おかねが なくて、こまっています。" },
+            { icon: "📞💤", en: "I was woken up by a phone call.", it: "Sono stato svegliato da una telefonata.", kanji: "電話で起こされました。", kana: "でんわで おこされました。" },
+            { icon: "📰😲", en: "I was surprised by the news.", it: "Sono rimasto sorpreso dalla notizia.", kanji: "ニュースでびっくりしました。", kana: "にゅーすで びっくりしました。" }
+        ];
+
+        // Mode 3: Because (~node)
+        const nodeData = [
+            { icon: "⏰🐢", en: "Because I'm late, I'll take a taxi.", it: "Siccome sono in ritardo, prenderò un taxi.", kanji: "遅れるので、タクシーで行きます。", kana: "おくれるので、たくしーで いきます。" },
+            { icon: "💼🤝", en: "Because I have business, I'll leave first.", it: "Siccome ho da fare, vado via prima.", kanji: "用事があるので、お先に失礼します。", kana: "ようじが あるので、おさきに しつれいします。" },
+            { icon: "💊😴", en: "Because I'm sleepy, I won't drive.", it: "Siccome ho sonno, non guiderò.", kanji: "眠いので、運転しません。", kana: "ねむいので、うんてんしません。" },
+            { icon: "🥵🌡️", en: "Because it's hot, I'll open the window.", it: "Siccome fa caldo, aprirò la finestra.", kanji: "暑いので、窓を開けます。", kana: "あついので、まどを あけます。" },
+            { icon: "🤐🤫", en: "Because it's a secret, don't tell anyone.", it: "Siccome è un segreto, non dirlo a nessuno.", kanji: "内緒なので、誰にも言わないでください。", kana: "ないしょなので、だれにも いわないで ください。" },
+            { icon: "🌧️🌂", en: "Because it's raining, take an umbrella.", it: "Siccome piove, prendi l'ombrello.", kanji: "雨が降っているので、傘を持って行ってください。", kana: "あめが ふっているので、かさを もっていって ください。" },
+            { icon: "📉💔", en: "Because it's broken, please repair it.", it: "Siccome è rotto, riparalo per favore.", kanji: "故障しているので、修理してください。", kana: "こしょうして いるので、しゅうりして ください。" },
+            { icon: "📖😵", en: "Because it's difficult, I can't understand.", it: "Siccome è difficile, non riesco a capire.", kanji: "難しいので、わかりません。", kana: "むずかしいので、わかりません。" },
+            { icon: "👨‍🏫💤", en: "Because I'm sick, I'll take a break.", it: "Siccome sono malato, mi riposerò.", kanji: "病気なので、休みます。", kana: "びょうきなので、やすみます。" },
+            { icon: "🏢❌", en: "Because it's dangerous, don't enter.", it: "Siccome è pericoloso, non entrare.", kanji: "危険なので、入らないでください。", kana: "きけんなので、はいらないで ください。" },
+            { icon: "💰❌", en: "Because I don't have money, I won't buy.", it: "Siccome non ho soldi, non comprerò.", kanji: "お金がないので、買いません。", kana: "おかねが ないので、かいません。" },
+            { icon: "🏙️✨", en: "Because it's beautiful, take a photo.", it: "Siccome è bello, scatta una foto.", kanji: "きれいなので、写真を撮りましょう。", kana: "きれいなので、しゃしんを とりましょう。" },
+            { icon: "👔🧠", en: "Because I forgot it, I'll go back.", it: "Siccome l'ho dimenticato, tornerò indietro.", kanji: "忘れたので、戻ります。", kana: "わすれたので、もどります。" },
+            { icon: "🏨🛌", en: "Because it's late, stay at the hotel.", it: "Siccome è tardi, resta in hotel.", kanji: "遅いので、ホテルに泊まってください。", kana: "おそいので、ほてるに とまって ください。" },
+            { icon: "🍱❌", en: "Because I'm full, I can't eat.", it: "Siccome sono pieno, non posso mangiare.", kanji: "お腹がいっぱいなので、食べられません。", kana: "おなかが いっぱいなので、たべられません。" },
+            { icon: "📞⚡", en: "Because I have a call, please wait.", it: "Siccome ho una chiamata, aspetta per favore.", kanji: "電話がかかってきたので、待ってください。", kana: "でんわが かかってきたので、まって ください。" },
+            { icon: "🚶🕰️", en: "Because time is up, let's finish.", it: "Siccome il tempo è finito, terminiamo.", kanji: "時間になったので、終わりましょう。", kana: "じかんに なったので、おわりましょう。" }
+        ];
+
+        let currentMode = 'feeling';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['feeling', 'cause', 'node'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'feeling') instr.innerText = "Feelings (~te): Reason for your emotion";
+            else if(mode === 'cause') instr.innerText = "Causes (~de): Accidents, Disasters, Situations";
+            else instr.innerText = "Because (~node): Polite reason/cause";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { feeling: feelingData, cause: causeData, node: nodeData };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Word</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { feeling: feelingData, cause: causeData, node: nodeData };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { feeling: feelingData, cause: causeData, node: nodeData };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { feeling: feelingData, cause: causeData, node: nodeData };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
