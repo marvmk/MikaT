@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 37 Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L37: Passive Voice</h1>
+        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
+            <button id="mode-form" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('form')">
+                Passive Form
+            </button>
+            <button id="mode-direct" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('direct')">
+                Direct Passive
+            </button>
+            <button id="mode-fact" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('fact')">
+                Adverse & Facts
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Change to Passive Form (Ukemi-kei)
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[480px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        
+                        <!-- Manual Audio Button -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-16 h-16 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
+                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center px-2">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-400 font-black text-lg">
+                        <span id="current-index" class="text-amber-600 font-black">1</span> 
+                        <span class="text-gray-200">/</span> 
+                        <span id="total-count">17</span>
+                    </div>
+                </div>
+                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Finished‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 37 Complete Mastery.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao
+    </footer>
+
+    <script>
+        // Mode 1: Passive Conjugation (17 Qs)
+        const formData = [
+            { icon: "✍️", en: "Write", it: "Essere scritto", kanji: "書かれます", kana: "かかれます" },
+            { icon: "📖", en: "Read", it: "Essere letto", kanji: "読まれます", kana: "よまれます" },
+            { icon: "🗣️", en: "Say / Tell", it: "Essere detto", kanji: "言われます", kana: "いわれます" },
+            { icon: "👂", en: "Listen / Ask", it: "Essere ascoltato", kanji: "聞かれます", kana: "きかれます" },
+            { icon: "👟", en: "Step on", it: "Essere calpestato", kanji: "踏まれます", kana: "ふまれます" },
+            { icon: "🛒", en: "Buy", it: "Essere comprato", kanji: "買われます", kana: "かわれます" },
+            { icon: "⌛", en: "Wait", it: "Essere aspettato", kanji: "待たれます", kana: "またれます" },
+            { icon: "🤝", en: "Invite", it: "Essere invitato", kanji: "招待されます", kana: "しょうたいされます" },
+            { icon: "😊", en: "Praise", it: "Essere lodato", kanji: "褒められます", kana: "ほめられます" },
+            { icon: "😡", en: "Scold", it: "Essere sgridato", kanji: "叱られます", kana: "しかられます" },
+            { icon: "🙏", en: "Ask / Request", it: "Essere richiesto", kanji: "頼まれます", kana: "たのまれます" },
+            { icon: "⚠️", en: "Warn / Caution", it: "Essere avvertito", kanji: "注意されます", kana: "ちゅういされます" },
+            { icon: "🕵️", en: "Find", it: "Essere trovato", kanji: "発見されます", kana: "はっけんされます" },
+            { icon: "🏗️", en: "Build", it: "Essere costruito", kanji: "建てられます", kana: "たてられます" },
+            { icon: "🎨", en: "Create", it: "Essere creato", kanji: "作られます", kana: "つくられます" },
+            { icon: "⚡", en: "Do", it: "Essere fatto", kanji: "されます", kana: "されます" },
+            { icon: "🚶‍♂️⬅️", en: "Come", it: "Essere venuto (avversativo)", kanji: "来られます", kana: "こられます" }
+        ];
+
+        // Mode 2: Direct Passive (17 Qs)
+        const directData = [
+            { icon: "👨‍🏫😊", en: "I was praised by the teacher.", it: "Sono stato lodato dal professore.", kanji: "先生に褒められました。", kana: "せんせいに ほめられました。" },
+            { icon: "👮🚔", en: "I was stopped by the police.", it: "Sono stato fermato dalla polizia.", kanji: "警察に止められました。", kana: "けいさつに とめられました。" },
+            { icon: "🤱😡", en: "I was scolded by my mother.", it: "Sono stato sgridato da mia madre.", kanji: "母に叱られました。", kana: "ははに しかられました。" },
+            { icon: "🤝🎂", en: "I was invited to the party.", it: "Sono stato invitato alla festa.", kanji: "パーティーに招待されました。", kana: "ぱーてぃーに しょうたいされました。" },
+            { icon: "🙏📁", en: "I was asked by the boss to do work.", it: "Mi è stato chiesto dal capo di lavorare.", kanji: "部長に仕事を頼まれました。", kana: "ぶちょうに しごとを たのまれました。" },
+            { icon: "👧🐕", en: "I was bitten by a dog.", it: "Sono stato morso da un cane.", kanji: "犬に噛まれました。", kana: "いぬに かまれました。" },
+            { icon: "👨‍💼🗣️", en: "I was told by Tanaka-san.", it: "Mi è stato detto dal signor Tanaka.", kanji: "田中さんに言われました。", kana: "たなかさんに いわれました。" },
+            { icon: "🚌💨", en: "I was splashed with water by a bus.", it: "Mi è stata schizzata acqua da un autobus.", kanji: "バスに水をかけられました。", kana: "ばすに みずを かけられました。" },
+            { icon: "👨‍🏫⚠️", en: "I was warned by the teacher.", it: "Sono stato avvertito dal professore.", kanji: "先生に注意されました。", kana: "せんせいに ちゅういされました。" },
+            { icon: "🤷‍♂️", en: "I was laughed at by everyone.", it: "Sono stato deriso da tutti.", kanji: "みんなに笑われました。", kana: "みんなに わらわれました。" },
+            { icon: "❓👧", en: "I was asked the way by a girl.", it: "Mi è stata chiesta la strada da una ragazza.", kanji: "女の子に道を聞かれました。", kana: "おんなのこに みちを きかれました。" },
+            { icon: "💼📧", en: "I was sent a mail by the company.", it: "Mi è stata inviata una mail dall'azienda.", kanji: "会社にメールを送られました。", kana: "かいしゃに めーるを おくられました。" },
+            { icon: "👋🏙️", en: "I was called by a stranger.", it: "Sono stato chiamato da uno sconosciuto.", kanji: "知らない人に呼ばれました。", kana: "しらないひとに よばれました。" },
+            { icon: "🎂🎁", en: "I was given a present by her.", it: "Mi è stato dato un regalo da lei.", kanji: "彼女にプレゼントをくれました(受身:渡されました)。", kana: "かのじょに ぷれぜんとを わたされました。" },
+            { icon: "🚶‍♂️🌧️", en: "I was caught in the rain.", it: "Sono stato sorpreso dalla pioggia.", kanji: "雨に降られました。", kana: "あめに ふられました。" },
+            { icon: "👶🍼", en: "I was cried at by the baby all night.", it: "Il bambino ha pianto tutto il tempo (subìto).", kanji: "一晩中赤ちゃんに泣かれました。", kana: "ひとばんじゅう あかちゃんに なかれました。" },
+            { icon: "👫🤝", en: "I was asked for a favor by a friend.", it: "Mi è stato chiesto un favore da un amico.", kanji: "友達に頼み事をされました。", kana: "ともだちに たのみごとを されました。" }
+        ];
+
+        // Mode 3: Adverse/Fact Passive (17 Qs)
+        const factData = [
+            { icon: "👟🦶", en: "I had my foot stepped on.", it: "Mi è stato calpestato il piede.", kanji: "足を踏まれました。", kana: "あしを ふまれました。" },
+            { icon: "🕵️‍♂️👜", en: "I had my bag stolen by a thief.", it: "Mi è stata rubata la borsa da un ladro.", kanji: "泥棒にバッグを盗まれました。", kana: "どろぼうに ばっぐを ぬすまれました。" },
+            { icon: "💻💢", en: "I had my PC broken by my brother.", it: "Mio fratello mi ha rotto il PC (subìto).", kanji: "弟にパソコンを壊されました。", kana: "おとうとに ぱそこんを こわされました。" },
+            { icon: "🧥☕", en: "I had my coat stained with coffee.", it: "Mi è stato macchiato il cappotto col caffè.", kanji: "コートにコーヒーをこぼされました。", kana: "こーとに こーひーを こぼされました。" },
+            { icon: "📄🗑️", en: "I had my document thrown away.", it: "Mi è stato buttato via il documento.", kanji: "書類を捨てられました。", kana: "しょるいを すてられました。" },
+            { icon: "📞💤", en: "I was woken up by a phone call.", it: "Sono stato svegliato da una telefonata.", kanji: "電話で起こされました。", kana: "でんわで おこされました。" },
+            { icon: "🏯🏗️", en: "This castle was built 400 years ago.", it: "Questo castello è stato costruito 400 anni fa.", kanji: "このお城は４００年前に建てられました。", kana: "このおしろは よんひゃくねんまえに たてられました。" },
+            { icon: "🇧🇷⚽", en: "The World Cup was held in Brazil.", it: "La Coppa del Mondo si è tenuta in Brasile.", kanji: "ブラジルでワールドカップが開かれました。", kana: "ぶらじるで わーるどかっぷが ひらかれました。" },
+            { icon: "📖💡", en: "This book is read all over the world.", it: "Questo libro è letto in tutto il mondo.", kanji: "この本は世界中で読まれています。", kana: "このほんは せかいじゅうで よまれています。" },
+            { icon: "🚗🏭", en: "Japanese cars are exported.", it: "Le auto giapponesi vengono esportate.", kanji: "日本車は輸出されています。", kana: "にほんしゃは ゆしゅつされています。" },
+            { icon: "🍶🌾", en: "Sake is made from rice.", it: "Il sake è fatto di riso.", kanji: "お酒は米から作られます。", kana: "おさけは こめから つくられます。" },
+            { icon: "🗼🕵️", en: "Tokyo Tower was designed by...", it: "La Tokyo Tower è stata progettata da...", kanji: "東京タワーは設計されました。", kana: "とうきょうたわーは せっけいされました。" },
+            { icon: "🧪🧬", en: "This was discovered by Dr. Tanaka.", it: "Questo è stato scoperto dal dottor Tanaka.", kanji: "これは田中博士によって発見されました。", kana: "これは たなかはかせに よって はっけんされました。" },
+            { icon: "🏛️🔥", en: "The temple was destroyed by fire.", it: "Il tempio è stato distrutto dal fuoco.", kanji: "お寺は火事で焼かれました。", kana: "おてらは かじで やかれました。" },
+            { icon: "🖼️🎭", en: "This picture was painted in France.", it: "Questo quadro è stato dipinto in Francia.", kanji: "この絵はフランスでかかれました。", kana: "このえは ふらんすで かかれました。" },
+            { icon: "📞⚡", en: "The telephone was invented by Bell.", it: "Il telefono è stato inventato da Bell.", kanji: "電話はベルによって発明されました。", kana: "でんわは べるに よって はつめいされました。" },
+            { icon: "🍱🗾", en: "Bento is loved by Japanese people.", it: "Il bento è amato dai giapponesi.", kanji: "お弁当は日本人に愛されています。", kana: "おべんとうは にほんじんに あいされています。" }
+        ];
+
+        let currentMode = 'form';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['form', 'direct', 'fact'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'form') instr.innerText = "Conjugation: Active to Passive";
+            else if(mode === 'direct') instr.innerText = "Direct Passive: Person A was ...ed by B";
+            else instr.innerText = "Adverse (Something happened to me) / Facts";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { form: formData, direct: directData, fact: factData };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Word</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { form: formData, direct: directData, fact: factData };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { form: formData, direct: directData, fact: factData };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { form: formData, direct: directData, fact: factData };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
