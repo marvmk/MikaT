@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 49 Vocabulary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 5.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L49: Vocabulary Master</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <div class="w-full bg-gray-200 rounded-full h-1.5 mb-8 overflow-hidden shadow-inner">
+            <div id="progress-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Guess the Japanese word...
+            </div>
+
+            <div class="card-container w-full h-[450px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4"></div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
+                    </div>
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-5xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-2xl font-bold text-amber-500 mb-8"></div>
+                        
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-20 h-20 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
+                        <div id="answer-it" class="text-lg text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next word</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between w-full items-center px-2">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-400 font-black text-lg">
+                        <span id="current-index" class="text-amber-600 font-black">1</span> 
+                        <span class="text-gray-200">/</span> 
+                        <span id="total-count">?</span>
+                    </div>
+                </div>
+                <button onclick="buttonNext()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+            </div>
+        </div>
+
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Lesson 49!</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Vocabolario completato!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">You have mastered the vocabulary.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const vocabData = [
+            { icon: "⏳🗓️", en: "spend (time)", it: "passare (il tempo)", kanji: "過ごします", kana: "すごします" },
+            { icon: "🏦🏃", en: "drop into (bank)", it: "fare un salto (in banca)", kanji: "よります [銀行に]", kana: "よります [ぎんこうに]" },
+            { icon: "👘🏮", en: "Japanese style hotel", it: "albergo in stile giapponese", kanji: "旅館", kana: "りょかん" },
+            { icon: "🏢👔", en: "work (for a company)", it: "lavorare (presso un'azienda)", kanji: "勤めます [会社に]", kana: "つとめます [かいしゃに]" },
+            { icon: "🌡️🤒", en: "run (a fever)", it: "avere (la febbre)", kanji: "出します [熱を]", kana: "だします [ねつを]" },
+            { icon: "🚏🚌", en: "bus stop", it: "fermata dell'autobus", kanji: "バスてい", kana: "ばすてい" },
+            { icon: "🚢📦", en: "trade", it: "commercio estero", kanji: "貿易", kana: "ぼうえき" }
+        ];
+
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function updateView() {
+            const q = vocabData[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = vocabData.length;
+            document.getElementById('progress-bar').style.width = ((currentIndex + 1) / vocabData.length * 100) + "%";
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">English Definition</div>
+                    <div class="text-4xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else { nextQuestion(); }
+        }
+
+        function speakJapanese() {
+            const text = vocabData[currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            if (isFlipped && currentIndex === vocabData.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                return;
+            }
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % vocabData.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + vocabData.length) % vocabData.length;
+                updateView();
+            }, 150);
+        }
+
+        function buttonNext() { if (!isFlipped) flipCard(); else nextQuestion(); }
+        updateView();
+    </script>
+</body>
+</html>
