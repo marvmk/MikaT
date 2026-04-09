@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 38 Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L38: Nominalization (~no)</h1>
+        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
+            <button id="mode-nom" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('nom')">
+                Nominalization
+            </button>
+            <button id="mode-act" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('act')">
+                Actions
+            </button>
+            <button id="mode-foc" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('foc')">
+                Focus
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                It is ... to do ...
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[480px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        
+                        <!-- Manual Audio Button -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-16 h-16 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
+                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center px-2">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-400 font-black text-lg">
+                        <span id="current-index" class="text-amber-600 font-black">1</span> 
+                        <span class="text-gray-200">/</span> 
+                        <span id="total-count">17</span>
+                    </div>
+                </div>
+                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Finished‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 38 Nominalization Mastery.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao
+    </footer>
+
+    <script>
+        // Mode 1: Nominalization (~no wa/ga adj desu)
+        const nomData = [
+            { icon: "⚽", en: "Playing soccer is fun.", it: "Giocare a calcio è divertente.", kanji: "サッカーをするのは楽しいです。", kana: "さっかーを するのは たのしいです。" },
+            { icon: "🚗", en: "Driving a car is difficult.", it: "Guidare l'auto è difficile.", kanji: "車を運転するのは難しいです。", kana: "くるまを うんてんするのは むずかしいです。" },
+            { icon: "📸", en: "Taking photos is my hobby.", it: "Scattare foto è il mio hobby.", kanji: "写真を撮るのが趣味です。", kana: "しゃしんを とるのが しゅみです。" },
+            { icon: "🏃", en: "Walking fast is good for health.", it: "Camminare velocemente fa bene alla salute.", kanji: "速く歩くのは体にいいです。", kana: "はやく あるくのは からだに いいです。" },
+            { icon: "🧹", en: "Cleaning the room is hard.", it: "Pulire la stanza è faticoso.", kanji: "部屋を掃除するのは大変です。", kana: "へやを そうじするのは たいへんです。" },
+            { icon: "🗣️🇯🇵", en: "Speaking Japanese is interesting.", it: "Parlare giapponese è interessante.", kanji: "日本語を話すのは面白いです。", kana: "にほんごを はなすのは おもしろいです。" },
+            { icon: "🎨", en: "Drawing pictures is pleasant.", it: "Fare disegni è piacevole.", kanji: "絵をかくのは気持ちがいいです。", kana: "えを かくのは きもちが いいです。" },
+            { icon: "🎾", en: "I like playing tennis.", it: "Mi piace giocare a tennis.", kanji: "テニスをするのが好きです。", kana: "てにすを するのが すきです。" },
+            { icon: "🌅", en: "Waking up early is tough.", it: "Svegliarsi presto è dura.", kanji: "早く起きるのはつらいです。", kana: "はやく おきるのは つらいです。" },
+            { icon: "🌃🚶", en: "Walking late at night is dangerous.", it: "Camminare a tarda notte è pericoloso.", kanji: "夜遅く歩くのは危ないです。", kana: "よる おそく あるくのは あぶないです。" },
+            { icon: "🛒", en: "I am good at shopping.", it: "Sono bravo a fare acquisti.", kanji: "買い物を出すのが上手です。", kana: "かいものを だすのが じょうずです。" },
+            { icon: "🍬", en: "Eating sweets is bad for teeth.", it: "Mangiare dolci fa male ai denti.", kanji: "甘い物を食べるのは歯に悪いです。", kana: "あまいものを たべるのは はに わるいです。" },
+            { icon: "🏔️", en: "Climbing mountains is tiring.", it: "Scalare le montagne è stancante.", kanji: "山に登るのは疲れます。", kana: "やまに のぼるのは つかれます。" },
+            { icon: "🎧", en: "Listening to music is relaxing.", it: "Ascoltare musica è rilassante.", kanji: "音楽を聞くのはリラックスできます。", kana: "おんがくを きくのは りらっくす できます。" },
+            { icon: "🚶‍♂️❓", en: "Going alone is lonely.", it: "Andare da soli è solitario.", kanji: "一人で行くのは寂しいです。", kana: "ひとりでも いくのは さびしいです。" },
+            { icon: "🎹", en: "Playing the piano is difficult.", it: "Suonare il piano è difficile.", kanji: "ピアノを弾くのは難しいです。", kana: "ぴあのを ひくのは むずかしいです。" },
+            { icon: "🍱", en: "Making bento is fun.", it: "Preparare il bento è divertente.", kanji: "お弁当を作るのは楽しいです。", kana: "おべんとうを つくるのは たのしいです。" }
+        ];
+
+        // Mode 2: Actions (~no wo wasuremashita / shitte imasu ka)
+        const actData = [
+            { icon: "🚪", en: "I forgot to close the window.", it: "Ho dimenticato di chiudere la finestra.", kanji: "窓を閉めるのを忘れました。", kana: "まどを しめるのを わすれました。" },
+            { icon: "🔑", en: "I forgot to lock the door.", it: "Ho dimenticato di chiudere a chiave.", kanji: "鍵をかけるのを忘れました。", kana: "かぎを かけるのを わすれました。" },
+            { icon: "🥛", en: "I forgot to buy milk.", it: "Ho dimenticato di comprare il latte.", kanji: "牛乳を買うのを忘れました。", kana: "ぎゅうにゅうを かうのを わすれました。" },
+            { icon: "💡", en: "I forgot to turn off the lights.", it: "Ho dimenticato di spegnere la luce.", kanji: "電気を消すのを忘れました。", kana: "でんきを けすのを わすれました。" },
+            { icon: "📩", en: "I forgot to send the mail.", it: "Ho dimenticato di inviare la mail.", kanji: "メールを送るのを忘れました。", kana: "めーるを おくるのを わすれました。" },
+            { icon: "💊", en: "I forgot to take the medicine.", it: "Ho dimenticato di prendere la medicina.", kanji: "薬を飲むのを忘れました。", kana: "くすりを のむのを わすれました。" },
+            { icon: "🎂", en: "I forgot to bring the cake.", it: "Ho dimenticato di portare la torta.", kanji: "ケーキを持ってくるのを忘れました。", kana: "けーきを もってくるのを わすれました。" },
+            { icon: "👨‍💼🤝", en: "Did you know that Tanaka-san got married?", it: "Sapevi che il signor Tanaka si è sposato?", kanji: "田中さんが結婚したのを知っていますか。", kana: "たなかさんが けっこんしたのを しっていますか。" },
+            { icon: "🏥", en: "Did you know sensei is in the hospital?", it: "Sapevi che il professore è in ospedale?", kanji: "先生が入院しているのを知っていますか。", kana: "せんせいに にゅういんしているのを しっていますか。" },
+            { icon: "🚉🐢", en: "Did you know the train is late?", it: "Sapevi che il treno è in ritardo?", kanji: "電車が遅れるのを知っていますか。", kana: "でんしゃが おくれるのを しっていますか。" },
+            { icon: "🏢🤝❌", en: "Did you know the meeting was canceled?", it: "Sapevi che la riunione è stata annullata?", kanji: "会議が中止になったのを知っていますか。", kana: "かいぎが ちゅうしになったのを しっていますか。" },
+            { icon: "👶🍼", en: "Did you know the baby was born?", it: "Sapevi che è nato il bambino?", kanji: "赤ちゃんが生まれたのを知っていますか。", kana: "あかちゃんが うまれたのを しっていますか。" },
+            { icon: "🏞️✨", en: "Did you know that park is famous?", it: "Sapevi che quel parco è famoso?", kanji: "あの公園が有名なのを知っていますか。", kana: "あのこうえんが ゆうめいなのを しっていますか。" },
+            { icon: "📱🔋", en: "I forgot to charge my phone.", it: "Ho dimenticato di caricare il telefono.", kanji: "スマホを充電するのを忘れました。", kana: "すまほを じゅうでんするのを わすれました。" },
+            { icon: "🍱❌", en: "I forgot to eat lunch.", it: "Ho dimenticato di pranzare.", kanji: "昼ご飯を食べるのを忘れました。", kana: "ひるごはんを たべるのを わすれました。" },
+            { icon: "🧼", en: "I forgot to wash my hands.", it: "Ho dimenticato di lavarmi le mani.", kanji: "手を洗うのを忘れました。", kana: "てを あらうのを わすれました。" },
+            { icon: "🚶⬅️", en: "Did you know he is coming today?", it: "Sapevi che lui viene oggi?", kanji: "今日彼が来るのを知っていますか。", kana: "きょう かれが くるのを しっていますか。" }
+        ];
+
+        // Mode 3: Focus (~no wa N desu)
+        const focData = [
+            { icon: "🤱🎁", en: "The one who gave me this was my mother.", it: "Quella che mi ha dato questo è mia madre.", kanji: "これをくれたのは母です。", kana: "これを くれたのは ははです。" },
+            { icon: "📍🗼", en: "The place where I was born is Tokyo.", it: "Il luogo dove sono nato è Tokyo.", kanji: "私が生まれたのは東京です。", kana: "わたしが うまれたのは とうきょうです。" },
+            { icon: "🎂🎁", en: "What I want for my birthday is a watch.", it: "Quello che voglio per il compleanno è un orologio.", kanji: "誕生日で欲しいのは時計です。", kana: "たんじょうびで ほしいのは とけいです。" },
+            { icon: "📅🇯🇵", en: "The day I go to Japan is next week.", it: "Il giorno in cui vado in Giappone è la prossima settimana.", kanji: "日本へ行くのは来週です。", kana: "にほんへ いくのは らいしゅうです。" },
+            { icon: "👨‍💼💬", en: "The person I talked to was Tanaka-san.", it: "La persona con cui ho parlato era il signor Tanaka.", kanji: "私が話したのは田中さんです。", kana: "わたしが はなしたのは たなかさんです。" },
+            { icon: "👟🛒", en: "The thing I bought was shoes.", it: "La cosa che ho comprato sono le scarpe.", kanji: "私が買ったのは靴です。", kana: "わたしが かったのは くつです。" },
+            { icon: "🕙🤝", en: "The time the meeting starts is 10:00.", it: "L'ora in cui inizia la riunione sono le 10.", kanji: "会議が始まるのは１０時です。", kana: "かいぎが はじまるのは じゅうじです。" },
+            { icon: "🍎😋", en: "The fruit I like most is Apple.", it: "Il frutto che mi piace di più è la mela.", kanji: "私が一番好きなのはりんごです。", kana: "わたしが いちばん すきなのは りんごです。" },
+            { icon: "🎞️🎬", en: "The movie I saw yesterday was fun.", it: "Il film che ho visto ieri era divertente.", kanji: "昨日見たのはとても面白かったです。", kana: "きのう みたのは とても おもしろかったです。" },
+            { icon: "👔🧠❌", en: "The thing I forgot was my tie.", it: "Quello che ho dimenticato è la cravatta.", kanji: "忘れたのはネクタイです。", kana: "わすれたのは ねくたいです。" },
+            { icon: "🏨🛌", en: "The place where I am staying is this hotel.", it: "Il posto dove alloggio è questo hotel.", kanji: "私が泊まっているのはこのホテルです。", kana: "わたしが とまっているのは このほてるです。" },
+            { icon: "📦🏃", en: "The thing that arrived just now was a parcel.", it: "Quello che è arrivato proprio ora è un pacco.", kanji: "今届いたのは荷物です。", kana: "いま とどいたのは にもつです。" },
+            { icon: "🍱🍳", en: "The thing I made was a bento.", it: "Quello che ho preparato è un bento.", kanji: "私が作ったのはお弁当です。", kana: "わたしが つくったのは おべんとうです。" },
+            { icon: "🎹🎶", en: "The instrument I'm learning is the piano.", it: "Lo strumento che sto imparando è il piano.", kanji: "私が習っているのはピアノです。", kana: "わたしが ならっているのは ぴあのです。" },
+            { icon: "🏞️🏃", en: "The place where I run is the park.", it: "Il posto dove corro è il parco.", kanji: "私が走るのは公園です。", kana: "わたしが はしるのは こうえんです。" },
+            { icon: "👨‍🏫", en: "The person I like most is sensei.", it: "La persona che mi piace di più è il professore.", kanji: "私が一番好きなのは先生です。", kana: "わたしが いちばん すきなのは せんせいです。" },
+            { icon: "☕🛒", en: "The thing I drink every morning is coffee.", it: "La cosa che bevo ogni mattina è il caffè.", kanji: "毎朝飲むのはコーヒーです。", kana: "まいあさ のむのは こーひーです。" }
+        ];
+
+        let currentMode = 'nom';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['nom', 'act', 'foc'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'nom') instr.innerText = "Nominalization: V-no wa/ga adj desu";
+            else if(mode === 'act') instr.innerText = "Actions: I forgot... / Do you know...?";
+            else instr.innerText = "Focus: The one/thing that ... is ...";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { nom: nomData, act: actData, foc: focData };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Word</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { nom: nomData, act: actData, foc: focData };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { nom: nomData, act: actData, foc: focData };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { nom: nomData, act: actData, foc: focData };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
+
