@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Practice: Lesson 49 Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-container { perspective: 1000px; }
+        .card { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            backface-visibility: hidden; position: absolute;
+            width: 100%; height: 100%; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+        .item-icon { font-size: 4.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="bg-amber-500 text-white p-6 shadow-md text-center">
+        <h1 class="text-2xl font-bold italic">L49: Respectful Honorifics</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
+        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
+            <button id="mode-special" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('special')">
+                Special Verbs
+            </button>
+            <button id="mode-standard" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('standard')">
+                O-V-ni naru
+            </button>
+            <button id="mode-passive" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('passive')">
+                Passive Form
+            </button>
+        </div>
+
+        <!-- Question Area -->
+        <div id="game-view" class="w-full flex flex-col items-center">
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Use special honorific verbs...
+            </div>
+
+            <!-- Card Container -->
+            <div class="card-container w-full h-[480px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
+                    <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
+                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        
+                        <!-- Manual Audio Button -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-16 h-16 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
+                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center px-2">
+                <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-400 font-black text-lg">
+                        <span id="current-index" class="text-amber-600 font-black">1</span> 
+                        <span class="text-gray-200">/</span> 
+                        <span id="total-count">17</span>
+                    </div>
+                </div>
+                <button onclick="buttonNext()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+            </div>
+        </div>
+
+        <!-- Finished View -->
+        <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
+            <div class="text-7xl mb-8">Finished‼️</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 49 Honorific Mastery Complete.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao
+    </footer>
+
+    <script>
+        // Mode 1: Special Honorific Verbs
+        const specialData = [
+            { icon: "👨‍🏫🏠", en: "The teacher is at home.", it: "Il professore è a casa (gentile).", kanji: "先生はうちにいらっしゃいます。", kana: "せんせいは うちに いらっしゃいます。" },
+            { icon: "🍱😋", en: "What will you eat?", it: "Cosa mangerà? (gentile).", kanji: "何を召し上がりますか。", kana: "なにを めしあがりますか。" },
+            { icon: "🗣️💬", en: "What did the president say?", it: "Cosa ha detto il presidente? (gentile).", kanji: "社長は何とおっしゃいましたか。", kana: "しゃちょうは なんと おっしゃいましたか。" },
+            { icon: "👁️📺", en: "Have you seen the news?", it: "Ha visto le notizie? (gentile).", kanji: "ニュースをご覧になりましたか。", kana: "にゅーすを ごらんになられましたか。" },
+            { icon: "🎾🤝", en: "Do you play tennis?", it: "Pratica il tennis? (gentile).", kanji: "テニスをなさいますか。", kana: "てにすを なさいますか。" },
+            { icon: "👨‍🏫🎓", en: "The teacher came to the school.", it: "Il professore è venuto a scuola (gentile).", kanji: "先生は学校にいらっしゃいました。", kana: "せんせいは がっこうに いらっしゃいました。" },
+            { icon: "🧠❓", en: "Do you know that person?", it: "Conosce quella persona? (gentile).", kanji: "あの方をご存じですか。", kana: "あのかたを ごぞんじですか。" },
+            { icon: "🥤🍵", en: "Please drink some tea.", it: "Per favore beva del tè (gentile).", kanji: "お茶を召し上がってください。", kana: "おちゃを めしあがって ください。" },
+            { icon: "🏢🤵", en: "Where is the president going?", it: "Dove va il presidente? (gentile).", kanji: "社長はどちらへいらっしゃいますか。", kana: "しゃちょうは どちらへ いらっしゃいますか。" },
+            { icon: "🗣️💡", en: "He said it was true.", it: "Ha detto che è vero (gentile).", kanji: "本当だとおっしゃいました。", kana: "ほんとうだと おっしゃいました。" },
+            { icon: "👁️🎨", en: "Did you see the exhibition?", it: "Ha visto la mostra? (gentile).", kanji: "展覧会をご覧になりましたか。", kana: "てんらんかいを ごらんになりましたか。" },
+            { icon: "🤝✨", en: "What are you doing now?", it: "Cosa sta facendo ora? (gentile).", kanji: "今何をなさっていますか。", kana: "いま なにを なさっていますか。" },
+            { icon: "🍣🇯🇵", en: "Do you eat Japanese food?", it: "Mangia cibo giapponese? (gentile).", kanji: "日本料理を召し上がりますか。", kana: "にほんりょうりを めしあがりますか。" },
+            { icon: "👨‍🏫💤", en: "Is the teacher sleeping?", it: "Il professore sta dormendo? (gentile).", kanji: "先生は寝ていらっしゃいますか。", kana: "せんせいは ねていらっしゃいますか。" },
+            { icon: "🧠📍", en: "Do you know the way?", it: "Conosce la strada? (gentile).", kanji: "道をご存じですか。", kana: "みちを ごぞんじですか。" },
+            { icon: "🍷🥂", en: "Would you like to drink wine?", it: "Vorrebbe bere del vino? (gentile).", kanji: "ワインを召し上がりますか。", kana: "わいんを めしあがりますか。" },
+            { icon: "👨‍💼🏢", en: "The boss is in the office.", it: "Il capo è in ufficio (gentile).", kanji: "部長は事務所にいらっしゃいます。", kana: "ぶちょうは じむしょに いらっしゃいます。" }
+        ];
+
+        // Mode 2: Standard Honorific (O-V-ni narimasu)
+        const standardData = [
+            { icon: "🏠🚶‍♂️", en: "The boss has returned home.", it: "Il capo è tornato a casa (gentile).", kanji: "部長はお帰りになりました。", kana: "ぶちょうは おかえりに なりました。" },
+            { icon: "✍️📄", en: "Did the teacher write the letter?", it: "Il professore ha scritto la lettera? (gentile).", kanji: "先生は手紙をお書きになりましたか。", kana: "せんせいは てがみを おかきに なりましたか。" },
+            { icon: "📖💡", en: "Have you read this book?", it: "Ha letto questo libro? (gentile).", kanji: "この本をお読みになりましたか。", kana: "この ほんを およみに なりましたか。" },
+            { icon: "🕙🛑", en: "The meeting has ended.", it: "La riunione è terminata (gentile).", kanji: "会議はお終わりになりました。", kana: "かいぎは おおわりに なりました。" },
+            { icon: "👔✨", en: "The president wore a new tie.", it: "Il presidente ha messo una cravatta nuova (gentile).", kanji: "社長は新しいネクタイをお締めになりました。", kana: "しゃちょうは あたらしい ねくたいを おしめに なりました。" },
+            { icon: "📸🌳", en: "Did you take a photo?", it: "Ha scattato una foto? (gentile).", kanji: "写真をお撮りになりましたか。", kana: "しゃしんを おとりに なりましたか。" },
+            { icon: "🛒🥚", en: "Did you buy the eggs?", it: "Ha comprato le uova? (gentile).", kanji: "卵をお買いになりましたか。", kana: "たまごを おかいに なりましたか。" },
+            { icon: "🏨🛌", en: "Did you stay at the hotel?", it: "Ha alloggiato in hotel? (gentile).", kanji: "ホテルにお泊まりになりましたか。", kana: "ほてるに おとまりに なりましたか。" },
+            { icon: "🎨🖌️", en: "Did you draw this picture?", it: "Ha disegnato questo quadro? (gentile).", kanji: "この絵をお描きになりましたか。", kana: "このえを おかきに なりましたか。" },
+            { icon: "🚶‍♂️💨", en: "Did you hurry?", it: "Si è affrettato? (gentile).", kanji: "お急ぎになりましたか。", kana: "おいそぎに なりましたか。" },
+            { icon: "🧴🚿", en: "Did you take a bath?", it: "Ha fatto il bagno? (gentile).", kanji: "お風呂にお入りになりましたか。", kana: "おふろに おはいりに なりましたか。" },
+            { icon: "🗣️🤝", en: "Did you talk with him?", it: "Ha parlato con lui? (gentile).", kanji: "彼とお話しになりましたか。", kana: "かれと おはなしに なりましたか。" },
+            { icon: "🎁🎀", en: "Did you send the present?", it: "Ha inviato il regalo? (gentile).", kanji: "プレゼントをお送りになりましたか。", kana: "ぷれぜんとを おおくりに なりましたか。" },
+            { icon: "🎾✨", en: "Did you play tennis?", it: "Ha giocato a tennis? (gentile).", kanji: "テニスをお楽しみになりましたか。", kana: "てにすを おたのしみに なりましたか。" },
+            { icon: "🚶‍♂️🏞️", en: "Did you take a walk?", it: "Ha fatto una passeggiata? (gentile).", kanji: "お散歩になりましたか。", kana: "おさんぽに なりましたか。" },
+            { icon: "📜🧠", en: "Did you remember the words?", it: "Ha ricordato le parole? (gentile).", kanji: "言葉をお覚えになりましたか。", kana: "ことばを おおぼえに なりましたか。" },
+            { icon: "🚅💨", en: "Did you take the Shinkansen?", it: "Ha preso lo Shinkansen? (gentile).", kanji: "新幹線にお乗りになりましたか。", kana: "しんかんせんに おのりに なりましたか。" }
+        ];
+
+        // Mode 3: Passive Form (Honorific)
+        const passiveData = [
+            { icon: "👨‍🏫📖", en: "The teacher read the magazine.", it: "Il professore ha letto la rivista (gentile/passivo).", kanji: "先生は雑誌を読まれました。", kana: "せんせいは ざっしを よまれました。" },
+            { icon: "👨‍💼🏢", en: "The boss came to the office.", it: "Il capo è venuto in ufficio (gentile/passivo).", kanji: "部長は事務所に来られました。", kana: "ぶちょうは じむしょに こられました。" },
+            { icon: "🏙️🚶", en: "Did you go to Tokyo?", it: "È andato a Tokyo? (gentile/passivo).", kanji: "東京へ行かれましたか。", kana: "とうきょうへ いかれましたか。" },
+            { icon: "🍱😋", en: "Did you eat lunch?", it: "Ha pranzato? (gentile/passivo).", kanji: "昼ご飯を食べられましたか。", kana: "ひるごはんを たべられましたか。" },
+            { icon: "🗣️💬", en: "What did you say?", it: "Cosa ha detto? (gentile/passivo).", kanji: "何と言われましたか。", kana: "なんと いわれましたか。" },
+            { icon: "👔✨", en: "The president wore a suit.", it: "Il presidente ha indossato un completo (gentile/passivo).", kanji: "社長はスーツを着られました。", kana: "しゃちょうは すーつを きられました。" },
+            { icon: "🏠🚶", en: "Did you return home?", it: "È tornato a casa? (gentile/passivo).", kanji: "帰られましたか。", kana: "かえられましたか。" },
+            { icon: "🛒🥚", en: "Did you buy the eggs?", it: "Ha comprato le uova? (gentile/passivo).", kanji: "卵を買われましたか。", kana: "たまごを かわれましたか。" },
+            { icon: "📞🤝", en: "Did you make a call?", it: "Ha fatto una chiamata? (gentile/passivo).", kanji: "電話をかけられましたか。", kana: "でんわを かけられましたか。" },
+            { icon: "😴🛌", en: "Did the teacher sleep?", it: "Il professore ha dormito? (gentile/passivo).", kanji: "先生は寝られましたか。", kana: "せんせいは ねられましたか。" },
+            { icon: "🚶💨", en: "Did you hurry?", it: "Si è affrettato? (gentile/passivo).", kanji: "急がれましたか。", kana: "いそがれましたか。" },
+            { icon: "🎥🍿", en: "Did you see the movie?", it: "Ha visto il film? (gentile/passivo).", kanji: "映画を見られましたか。", kana: "えいがを みられましたか。" },
+            { icon: "🤝💬", en: "Did you talk with the manager?", it: "Ha parlato con il manager? (gentile/passivo).", kanji: "課長と話されましたか。", kana: "かちょうと はなされましたか。" },
+            { icon: "📸🌳", en: "Did you take a photo?", it: "Ha scattato una foto? (gentile/passivo).", kanji: "写真を撮られましたか。", kana: "しゃしんを とられましたか。" },
+            { icon: "🚉🏃", en: "Did you take the train?", it: "Ha preso il treno? (gentile/passivo).", kanji: "電車に乗られましたか。", kana: "でんしゃに のられましたか。" },
+            { icon: "🏢🧱", en: "Did you enter the building?", it: "È entrato nell'edificio? (gentile/passivo).", kanji: "ビルに入られましたか。", kana: "びるに はいられましたか。" },
+            { icon: "✍️📄", en: "Did you write the report?", it: "Ha scritto il rapporto? (gentile/passivo).", kanji: "レポートを書かれましたか。", kana: "れぽーとを かかれましたか。" }
+        ];
+
+        let currentMode = 'special';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('finished-view').classList.add('hidden');
+            
+            const modes = ['special', 'standard', 'passive'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
+            });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'special') instr.innerText = "Special Verbs: Irasshaimasu, Meshiagarimasu, etc.";
+            else if(mode === 'standard') instr.innerText = "Standard Honorific: O + V-masu + ni narimasu";
+            else instr.innerText = "Passive Honorific: ~reru / ~rareru (Same as passive)";
+            
+            updateView();
+        }
+
+        function updateView() {
+            const data = { special: specialData, standard: standardData, passive: passiveData };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
+            document.getElementById('current-index').innerText = currentIndex + 1;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Context</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function speakJapanese() {
+            const data = { special: specialData, standard: standardData, passive: passiveData };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function nextQuestion() {
+            const data = { special: specialData, standard: standardData, passive: passiveData };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
+                document.getElementById('game-view').classList.add('hidden');
+                document.getElementById('finished-view').classList.remove('hidden');
+                return;
+            }
+
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function prevQuestion() {
+            const data = { special: specialData, standard: standardData, passive: passiveData };
+            const questions = data[currentMode];
+            isFlipped = false;
+            document.getElementById('practice-card').classList.remove('is-flipped');
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
+        }
+
+        function buttonNext() {
+            if (!isFlipped) {
+                flipCard();
+            } else {
+                nextQuestion();
+            }
+        }
+
+        updateView();
+    </script>
+</body>
+</html>
