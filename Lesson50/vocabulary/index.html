@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 43 Master</title>
+    <title>Japanese Practice: Lesson 50 Vocabulary</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -18,60 +19,52 @@
             padding: 2rem;
         }
         .card-back { transform: rotateY(180deg); }
-        .item-icon { font-size: 4.5rem; }
+        .item-icon { font-size: 5.5rem; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L43: Looks like... & Go and Come</h1>
-        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+        <h1 class="text-2xl font-bold italic">L50: Vocabulary Master</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System &bull; Final</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
-        <!-- Mode Selector (English Tabs) -->
-        <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-appear" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('appear')">
-                Appearance
-            </button>
-            <button id="mode-anti" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('anti')">
-                Anticipation
-            </button>
-            <button id="mode-go" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('go')">
-                Go & Come back
-            </button>
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 rounded-full h-1.5 mb-8 overflow-hidden shadow-inner">
+            <div id="progress-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%"></div>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                It looks like...
+                Final Challenge: Guess the word...
             </div>
 
             <!-- Card Container -->
-            <div class="card-container w-full h-[480px] relative mb-10">
+            <div class="card-container w-full h-[450px] relative mb-10">
                 <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
                     <!-- Front -->
                     <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
                         <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
                             <!-- Injected by JS -->
                         </div>
-                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
                     </div>
                     <!-- Back -->
                     <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
-                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
-                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        <div id="answer-kanji" class="text-5xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-2xl font-bold text-amber-500 mb-8"></div>
                         
                         <!-- Manual Audio Button -->
-                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-16 h-16 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-20 h-20 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                             </svg>
                         </button>
 
-                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
-                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
+                        <div id="answer-it" class="text-lg text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next word</div>
                     </div>
                 </div>
             </div>
@@ -83,7 +76,7 @@
                     <div class="text-gray-400 font-black text-lg">
                         <span id="current-index" class="text-amber-600 font-black">1</span> 
                         <span class="text-gray-200">/</span> 
-                        <span id="total-count">17</span>
+                        <span id="total-count">?</span>
                     </div>
                 </div>
                 <button onclick="buttonNext()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
@@ -92,133 +85,57 @@
 
         <!-- Finished View -->
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
-            <div class="text-7xl mb-8">Finished‼️</div>
-            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 43 Mastery Complete.</p>
+            <div class="text-7xl mb-8">Graduated!</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Tutto il vocabolario è finito!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">You have completed all 50 lessons of vocabulary.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
-                Restart
+                Restart Lesson 50
             </button>
         </div>
     </main>
 
     <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
-        Result Prep System &bull; Mika Tomao
+        Result Prep System &bull; Mika Tomao &bull; Mission Complete
     </footer>
 
     <script>
-        // Mode 1: Appearance (Adj ~sou desu)
-        const appearData = [
-            { icon: "🍰😋", en: "This cake looks delicious.", it: "Questa torta sembra deliziosa.", kanji: "このケーキはおいしそうです。", kana: "この けーきは おいしそうです。" },
-            { icon: "🧥❄️", en: "He looks cold.", it: "Lui sembra avere freddo.", kanji: "彼は寒そうです。", kana: "かれは さむそうです。" },
-            { icon: "🍀😊", en: "She looks happy.", it: "Lei sembra felice.", kanji: "彼女は幸せそうです。", kana: "かのじょは しあわせそうです。" },
-            { icon: "📱✨", en: "This smartphone looks convenient.", it: "Questo smartphone sembra comodo/conveniente.", kanji: "このスマホは便利そうです。", kana: "この すまほは べんりそうです。" },
-            { icon: "🧱💪", en: "This table looks sturdy.", it: "Questo tavolo sembra robusto.", kanji: "このテーブルは丈夫そうです。", kana: "この てーぶるは じょうぶそうです。" },
-            { icon: "🧩😵", en: "That task looks difficult.", it: "Quel compito sembra difficile.", kanji: "その仕事は大変そうです。", kana: "その しごとは たいへんそうです。" },
-            { icon: "📖💡", en: "This book looks interesting.", it: "Questo libro sembra interessante.", kanji: "この本は面白そうです。", kana: "この ほんは おもしろそうです。" },
-            { icon: "🤒💊", en: "He looks unwell.", it: "Lui non sembra stare bene.", kanji: "彼は気分が悪そうです。", kana: "かれは きぶんが わるそうです。" },
-            { icon: "👜🎒", en: "That luggage looks heavy.", it: "Quel bagaglio sembra pesante.", kanji: "その荷物は重そうです。", kana: "その にもつは おもそうです。" },
-            { icon: "🏢🏙️", en: "This building looks new.", it: "Questo edificio sembra nuovo.", kanji: "このビルは新しそうです。", kana: "この びるは あたらしそうです。" },
-            { icon: "👔🤵", en: "He looks smart/cool.", it: "Lui sembra elegante/figo.", kanji: "彼は頭がよさそうです。", kana: "かれは あたまが よさそうです。" },
-            { icon: "🥗🥦", en: "This salad looks healthy.", it: "Questa insalata sembra salutare.", kanji: "このサラダは体によさそうです。", kana: "この さらだは からだに よさそうです。" },
-            { icon: "🍜🔥", en: "This ramen looks spicy.", it: "Questo ramen sembra piccante.", kanji: "このラーメンは辛そうです。", kana: "この らーめんは からそうです。" },
-            { icon: "🧸🎀", en: "That toy looks cute.", it: "Quel giocattolo sembra carino.", kanji: "そのおもちゃは可愛らしそうです。", kana: "その おもちゃは かわいらしそうです。" },
-            { icon: "☁️🌬️", en: "The weather looks like it will become bad.", it: "Il tempo sembra che peggiorerà.", kanji: "天気が悪くなりそうです。", kana: "てんきが わるく なりそうです。" },
-            { icon: "🧗‍♂️🏔️", en: "Mountain climbing looks tough.", it: "Scalare le montagne sembra faticoso.", kanji: "山登りはきつそうです。", kana: "やまのぼりは きつそうです。" },
-            { icon: "☕🥛", en: "This coffee looks sweet.", it: "Questo caffè sembra dolce.", kanji: "このコーヒーは甘そうです。", kana: "この こーひーは あまそうです。" }
+        const vocabData = [
+            { icon: "😰🧠", en: "become tense / nervous", it: "innervosirsi, tendersi", kanji: "緊張します", kana: "きんちょうします" },
+            { icon: "📡📺", en: "broadcast", it: "trasmettere, diffondere", kanji: "放送します", kana: "ほうそうします" },
+            { icon: "📹🎬", en: "record [on video]", it: "registrare [su video]", kanji: "撮ります [ビデオに]", kana: "とります [びでおに]" },
+            { icon: "🌳🏞️", en: "nature", it: "natura", kanji: "自然", kana: "しぜん" },
+            { icon: "🦒🦒", en: "giraffe", it: "giraffa", kanji: "きりん", kana: "きりん" },
+            { icon: "🐘🐘", en: "elephant", it: "elefante", kanji: "ぞう", kana: "ぞう" },
+            { icon: "🌟✨", en: "[dream] come true", it: "[sogno] avverarsi", kanji: "かないます [ゆめが]", kana: "かないます [ゆめが]" },
+            { icon: "🚩👤", en: "guide", it: "guida", kanji: "ガイド", kana: "がいど" },
+            { icon: "📸📖", en: "album", it: "album", kanji: "アルバム", kana: "あるばむ" },
+            { icon: "🏃‍♂️💨", en: "go, come (humble)", it: "andare, venire (umile)", kanji: "参ります", kana: "まいります" },
+            { icon: "🏠🚶", en: "be (humble)", it: "essere, stare (umile)", kanji: "居ります", kana: "おります" },
+            { icon: "🍱😋", en: "eat, drink, receive (humble)", it: "mangiare, bere, ricevere (umile)", kanji: "いただきます", kana: "いただきます" },
+            { icon: "🗣️💬", en: "say, be named (humble)", it: "dire, chiamarsi (umile)", kanji: "申します", kana: "もうします" },
+            { icon: "💼✨", en: "do (humble)", it: "fare (umile)", kanji: "いたします", kana: "いたします" },
+            { icon: "👁️📜", en: "see, look at (humble)", it: "vedere, guardare (umile)", kanji: "拝見します", kana: "はいけんします" },
+            { icon: "🧠❓", en: "know (humble)", it: "sapere, conoscere (umile)", kanji: "存じております", kana: "ぞんじております" },
+            { icon: "🤝✨", en: "meet (humble)", it: "incontrare (umile)", kanji: "お目にかかります", kana: "おめに かかります" }
         ];
 
-        // Mode 2: Anticipation (Verb ~sou desu)
-        const antiData = [
-            { icon: "☁️☔", en: "It looks like it will start raining.", it: "Sembra che inizierà a piovere.", kanji: "雨が降りそうです。", kana: "あめが ふりそうです。" },
-            { icon: "🧶✂️", en: "The string looks like it will break.", it: "Lo spago sembra che stia per rompersi.", kanji: "紐が切れそうです。", kana: "ひもが きれそうです。" },
-            { icon: "🔘❌", en: "The button looks like it will come off.", it: "Il bottone sembra che stia per staccarsi.", kanji: "ボタンが取れそうです。", kana: "ぼたんが とれそうです。" },
-            { icon: "📦📉", en: "The luggage looks like it will fall.", it: "Il bagaglio sembra che stia per cadere.", kanji: "荷物が落ちそうです。", kana: "にもつが おちそうです。" },
-            { icon: "⛽❌", en: "The gasoline looks like it will run out.", it: "Sembra che la benzina stia per finire.", kanji: "ガソリンがなくなりそうです。", kana: "がそりんが なくなりそうです。" },
-            { icon: "🌲📉", en: "The tree looks like it will fall down.", it: "L'albero sembra che stia per cadere.", kanji: "木が倒れそうです。", kana: "きが たおれそうです。" },
-            { icon: "🔥💨", en: "The fire looks like it will go out.", it: "Il fuoco sembra che stia per spegnersi.", kanji: "火が消えそうです。", kana: "ひが きえそうです。" },
-            { icon: "🌞🌡️", en: "The price looks like it will rise.", it: "Sembra che il prezzo salirà.", kanji: "値段が上がりそうです。", kana: "ねだんが あがりそうです。" },
-            { icon: "❄️📉", en: "The temperature looks like it will fall.", it: "Sembra che la temperatura scenderà.", kanji: "気温が下がりそうです。", kana: "きおんが さがりそうです。" },
-            { icon: "👜💔", en: "The bag looks like it will break.", it: "La borsa sembra che stia per rompersi.", kanji: "バッグが壊れそうです。", kana: "ばっぐが こわれそうです。" },
-            { icon: "🌸✨", en: "The cherry blossoms look like they will bloom.", it: "Sembra che i ciliegi stiano per fiorire.", kanji: "桜が咲きそうです。", kana: "さくらが さきそうです。" },
-            { icon: "🌞☁️", en: "The sky looks like it will clear up.", it: "Sembra che il cielo si rasserenerà.", kanji: "空が晴れそうです。", kana: "そらが はれそうです。" },
-            { icon: "🌊🚤", en: "The boat looks like it will sink.", it: "La barca sembra che stia per affondare.", kanji: "船が沈みそうです。", kana: "ふねが しずみそうです。" },
-            { icon: "🏗️🏢", en: "The building looks like it's completed.", it: "L'edificio sembra quasi completato.", kanji: "ビルができそうです。", kana: "びるが できそうです。" },
-            { icon: "🚶💨", en: "It looks like I'll be late for the meeting.", it: "Sembra che farò tardi alla riunione.", kanji: "会議に遅れそうです。", kana: "かいぎに おくれそうです。" },
-            { icon: "🚄💨", en: "It looks like I'll miss the Shinkansen.", it: "Sembra che perderò lo Shinkansen.", kanji: "新幹線に乗り遅れそうです。", kana: "しんかんせんに のりおくれそうです。" },
-            { icon: "🥂✨", en: "The party looks like it's starting.", it: "Sembra che la festa stia per iniziare.", kanji: "パーティーが始まりそうです。", kana: "ぱーてぃーが はじまりそうです。" }
-        ];
-
-        // Mode 3: Go & Come back (~te kimasu)
-        const goData = [
-            { icon: "🍞🛒", en: "I'll go and buy some bread.", it: "Vado a comprare del pane (e torno).", kanji: "パンを買ってきます。", kana: "ぱんを かって きます。" },
-            { icon: "📩🏃", en: "I'll go and get the mail.", it: "Vado a prendere la posta.", kanji: "手紙を取ってきます。", kana: "てがみを とって きます。" },
-            { icon: "🧼🖐️", en: "I'll go and wash my hands.", it: "Vado a lavarmi le mani.", kanji: "手を洗ってきます。", kana: "てを あらって きます。" },
-            { icon: "📞🤝", en: "I'll go and make a phone call.", it: "Vado a fare una telefonata.", kanji: "電話をかけてきます。", kana: "でんわを かけて きます。" },
-            { icon: "🥤🛒", en: "I'll go and buy some juice.", it: "Vado a comprare un succo.", kanji: "ジュースを買ってきます。", kana: "じゅーすを かって きます。" },
-            { icon: "👨‍🏫❓", en: "I'll go and ask the teacher.", it: "Vado a chiedere al professore.", kanji: "先生に聞いてきます。", kana: "せんせいに きいて きます。" },
-            { icon: "🔑🏃", en: "I'll go and get the keys.", it: "Vado a prendere le chiavi.", kanji: "鍵を持ってきます。", kana: "かぎを もって きます。" },
-            { icon: "🚬🧥", en: "I'll go and have a smoke.", it: "Vado a fumare.", kanji: "たばこを吸ってきます。", kana: "たばこを すって きます。" },
-            { icon: "🧴🛀", en: "I'll go and take a shower.", it: "Vado a fare la doccia.", kanji: "シャワーを浴びてきます。", kana: "しゃわーを あびて きます。" },
-            { icon: "🧥🚪", en: "I'll go and put on my coat.", it: "Vado a mettermi il cappotto.", kanji: "コートを着てきます。", kana: "こーとを きて きます。" },
-            { icon: "🚰💧", en: "I'll go and drink some water.", it: "Vado a bere un po' d'acqua.", kanji: "水を飲んできます。", kana: "みずを のんで きます。" },
-            { icon: "🚉🚶", en: "I'll go and see off my friend at the station.", it: "Vado ad accompagnare il mio amico in stazione.", kanji: "友達を駅まで送ってきます。", kana: "ともだちを えきまで おくって きます。" },
-            { icon: "📸🌳", en: "I'll go and take a photo.", it: "Vado a scattare una foto.", kanji: "写真を撮ってきます。", kana: "しゃしんを とって きます。" },
-            { icon: "🛒🥚", en: "I'll go and buy eggs.", it: "Vado a comprare le uova.", kanji: "卵を買ってきます。", kana: "たまごを かって きます。" },
-            { icon: "👔🏠", en: "I'll go and change my clothes.", it: "Vado a cambiarmi i vestiti.", kanji: "服を着替えてきます。", kana: "ふくを きがえて きます。" },
-            { icon: "🚶🌳", en: "I'll go and take a little walk.", it: "Vado a fare una passeggiata.", kanji: "ちょっと散歩してきます。", kana: "ちょっと さんぽ して きます。" },
-            { icon: "🚉🛤️", en: "I'll go and check the time.", it: "Vado a controllare l'orario.", kanji: "時間を確かめてきます。", kana: "じかんを たしかめて きます。" }
-        ];
-
-        let currentMode = 'appear';
         let currentIndex = 0;
         let isFlipped = false;
 
-        function switchMode(mode) {
-            currentMode = mode;
-            currentIndex = 0;
-            isFlipped = false;
-            document.getElementById('practice-card').classList.remove('is-flipped');
-            document.getElementById('game-view').classList.remove('hidden');
-            document.getElementById('finished-view').classList.add('hidden');
-            
-            const modes = ['appear', 'anti', 'go'];
-            modes.forEach(m => {
-                const btn = document.getElementById(`mode-${m}`);
-                if(m === mode) {
-                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
-                    btn.classList.remove('text-gray-600');
-                } else {
-                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
-                    btn.classList.add('text-gray-600');
-                }
-            });
-
-            const instr = document.getElementById('instruction');
-            if(mode === 'appear') instr.innerText = "Appearance (~sou): Judging by sight (Adj)";
-            else if(mode === 'anti') instr.innerText = "Anticipation (~sou): Predicting an event (Verb)";
-            else instr.innerText = "Go & Come back (~te kimasu): Go do something and return";
-            
-            updateView();
-        }
-
         function updateView() {
-            const data = { appear: appearData, anti: antiData, go: goData };
-            const questions = data[currentMode];
-            const q = questions[currentIndex];
+            const q = vocabData[currentIndex];
             const promptContent = document.getElementById('prompt-content');
-            
             document.getElementById('current-index').innerText = currentIndex + 1;
-            document.getElementById('total-count').innerText = questions.length;
-            
+            document.getElementById('total-count').innerText = vocabData.length;
+            document.getElementById('progress-bar').style.width = ((currentIndex + 1) / vocabData.length * 100) + "%";
             document.getElementById('answer-kanji').innerText = q.kanji;
             document.getElementById('answer-kana').innerText = q.kana;
             document.getElementById('answer-it').innerText = q.it;
-
             promptContent.innerHTML = `
                 <div class="item-icon mb-4">${q.icon}</div>
                 <div class="text-center px-6">
-                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Situation</div>
-                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">English Definition</div>
+                    <div class="text-4xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
                 </div>
             `;
         }
@@ -228,14 +145,11 @@
             if (!isFlipped) {
                 card.classList.add('is-flipped');
                 isFlipped = true;
-            } else {
-                nextQuestion();
-            }
+            } else { nextQuestion(); }
         }
 
         function speakJapanese() {
-            const data = { appear: appearData, anti: antiData, go: goData };
-            const text = data[currentMode][currentIndex].kana;
+            const text = vocabData[currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
             ut.rate = 0.95;
@@ -243,43 +157,32 @@
         }
 
         function nextQuestion() {
-            const data = { appear: appearData, anti: antiData, go: goData };
-            const questions = data[currentMode];
-            
-            if (isFlipped && currentIndex === questions.length - 1) {
+            if (isFlipped && currentIndex === vocabData.length - 1) {
                 document.getElementById('game-view').classList.add('hidden');
                 document.getElementById('finished-view').classList.remove('hidden');
                 return;
             }
-
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
             setTimeout(() => {
-                currentIndex = (currentIndex + 1) % questions.length;
+                currentIndex = (currentIndex + 1) % vocabData.length;
                 updateView();
             }, 150);
         }
 
         function prevQuestion() {
-            const data = { appear: appearData, anti: antiData, go: goData };
-            const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
             setTimeout(() => {
-                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                currentIndex = (currentIndex - 1 + vocabData.length) % vocabData.length;
                 updateView();
             }, 150);
         }
 
-        function buttonNext() {
-            if (!isFlipped) {
-                flipCard();
-            } else {
-                nextQuestion();
-            }
-        }
-
+        function buttonNext() { if (!isFlipped) flipCard(); else nextQuestion(); }
         updateView();
     </script>
 </body>
 </html>
+
+```
