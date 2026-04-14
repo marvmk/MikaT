@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,7 +63,14 @@
                     <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
                         <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
                         <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
-                        <div class="h-px w-16 bg-amber-200 mx-auto mb-8"></div>
+                        
+                        <!-- Manual Audio Button (Fixed & Re-added) -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-20 h-20 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
                         <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
                         <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
                     </div>
@@ -79,7 +87,7 @@
                         <span id="total-count">17</span>
                     </div>
                 </div>
-                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+                <button onclick="buttonNext()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
             </div>
         </div>
 
@@ -123,7 +131,7 @@
         // Mode 2: ~Ato de (After)
         const atoData = [
             { icon: "🍱🦷", en: "After eating, brush your teeth.", it: "Dopo mangiato, lavati i denti.", kanji: "ご飯を食べたあとで、歯を磨きます。", kana: "ごはんを たべたあとで、はを みがきます。" },
-            { icon: "💼🍺", en: "After work, go for a drink.", it: "Dopo il lavoro, vai a bere qualcosa.", kanji: "仕事のあとで、飲みに行きます。", kana: "しごとの あとで、のみに いきます。" },
+            { icon: "💼🍺", en: "After work, go for a drink.", it: "Dopo il lavoro, vai a bere qualcosa.", kanji: "Dopo il lavoro, vai a bere qualcosa.", kanji: "仕事のあとで、飲みに行きます。", kana: "しごとの あとで、のみに いきます。" },
             { icon: "🎬🍕", en: "After the movie, eat dinner.", it: "Dopo il film, cena.", kanji: "映画を見たあとで、晩ご飯を食べます。", kana: "えいがを みたあとで、ばんごはんを たべます。" },
             { icon: "🏫🎾", en: "After school, play tennis.", it: "Dopo la scuola, gioca a tennis.", kanji: "学校のあとで、テニスをします。", kana: "がっこうの あとで、てにすを します。" },
             { icon: "🚿🛌", en: "After taking a shower, sleep.", it: "Dopo la doccia, dormi.", kanji: "シャワーを浴びたあとで、寝ます。", kana: "しゃわーを あびたあとで、ねます。" },
@@ -243,7 +251,6 @@
             if (isFlipped && currentIndex === questions.length - 1) {
                 document.getElementById('game-view').classList.add('hidden');
                 document.getElementById('finished-view').classList.remove('hidden');
-                speakFinish();
                 return;
             }
 
@@ -266,13 +273,14 @@
             }, 150);
         }
 
-        function speakFinish() {
-            const ut = new SpeechSynthesisUtterance("お疲れ様でした。第34課の練習が終わりました。");
-            ut.lang = 'ja-JP';
-            window.speechSynthesis.speak(ut);
+        function buttonNext() {
+            if (!isFlipped) flipCard();
+            else nextQuestion();
         }
 
         updateView();
     </script>
 </body>
 </html>
+
+```
