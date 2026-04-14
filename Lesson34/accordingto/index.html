@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 33 Comprehensive</title>
+    <title>Japanese Practice: Lesson 34 Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -24,28 +24,28 @@
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L33: Reporting & Commands</h1>
+        <h1 class="text-2xl font-bold italic">L34: Procedures & Sequence</h1>
         <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-commands" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('commands')">
-                Commands
+            <button id="mode-toori" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('toori')">
+                According To
             </button>
-            <button id="mode-meanings" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('meanings')">
-                Meanings
+            <button id="mode-ato" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('ato')">
+                After
             </button>
-            <button id="mode-messages" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('messages')">
-                Messages
+            <button id="mode-state" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('state')">
+                State / Without
             </button>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                Imperative and Prohibition
+                According to the instructions...
             </div>
 
             <!-- Card Container -->
@@ -87,7 +87,7 @@
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
             <div class="text-7xl mb-8">Finished‼️</div>
             <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 33 Complete Mastery.</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 34 Complete Mastery.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
                 Restart
             </button>
@@ -99,70 +99,70 @@
     </footer>
 
     <script>
-        // Mode 1: Commands (Commands & Prohibition)
-        const commandsData = [
-            { icon: "🛑", en: "Stop!", it: "Fermati!", kanji: "止まれ！", kana: "とまれ！" },
-            { icon: "🏃", en: "Run!", it: "Corri!", kanji: "走れ！", kana: "はしれ！" },
-            { icon: "⚡", en: "Hurry up!", it: "Sbrigati!", kanji: "急げ！", kana: "いそげ！" },
-            { icon: "🛌", en: "Sleep!", it: "Dormi!", kanji: "寝ろ！", kana: "ねろ！" },
-            { icon: "📖", en: "Read!", it: "Leggi!", kanji: "読め！", kana: "よめ！" },
-            { icon: "✍️", en: "Write!", it: "Scrivi!", kanji: "書け！", kana: "かけ！" },
-            { icon: "🏥", en: "Go to the hospital!", it: "Vai in ospedale!", kanji: "病院へ行け！", kana: "びょういんへ いけ！" },
-            { icon: "📚", en: "Study!", it: "Studia!", kanji: "勉強しろ！", kana: "べんきょうしろ！" },
-            { icon: "🧍", en: "Stand up!", it: "Alzati!", kanji: "立て！", kana: "たて！" },
-            { icon: "🚫", en: "Don't enter!", it: "Non entrare!", kanji: "入るな！", kana: "はいるな！" },
-            { icon: "🚬🚫", en: "Don't smoke!", it: "Non fumare!", kanji: "吸うな！", kana: "すうな！" },
-            { icon: "🧠🚫", en: "Don't forget!", it: "Non dimenticare!", kanji: "忘れるな！", kana: "わすれるな！" },
-            { icon: "🤳🚫", en: "Don't take photos!", it: "Non fare foto!", kanji: "撮るな！", kana: "とるな！" },
-            { icon: "🖐️🚫", en: "Don't touch!", it: "Non toccare!", kanji: "触るな！", kana: "さわるな！" },
-            { icon: "🗣️🚫", en: "Don't speak!", it: "Non parlare!", kanji: "話すな！", kana: "はなすな！" },
-            { icon: "🥤🚫", en: "Don't drink!", it: "Non bere!", kanji: "飲むな！", kana: "のむな！" },
-            { icon: "🚪🚫", en: "Don't open!", it: "Non aprire!", kanji: "開けるな！", kana: "あけるな！" }
+        // Mode 1: ~Toori ni (According to)
+        const tooriData = [
+            { icon: "🎨", en: "Draw a picture as I do.", it: "Fai un disegno come faccio io.", kanji: "私がするとおりに、絵をかいてください。", kana: "わたしが するとおりに、えを かいてください。" },
+            { icon: "📄", en: "Fold the paper as written here.", it: "Piega il foglio come c'è scritto qui.", kanji: "ここに書いてあるとおりに、紙を折ってください。", kana: "ここに かいてあるとおりに、かみを おってください。" },
+            { icon: "🛠️", en: "Assemble it according to the manual.", it: "Montalo secondo il manuale.", kanji: "説明書のとおりに、組み立ててください。", kana: "せつめいしょのとおりに、くみたててください。" },
+            { icon: "👨‍🍳", en: "Cook as the teacher told.", it: "Cucina come ha detto l'insegnante.", kanji: "先生が言ったとおりに、料理してください。", kana: "せんせいが いったとおりに、りょうりしてください。" },
+            { icon: "💃", en: "Dance as I do.", it: "Balla come faccio io.", kanji: "私がするとおりに、踊ってください。", kana: "わたしが するとおりに、おどってください。" },
+            { icon: "🗺️", en: "Go according to the map.", it: "Vai secondo la mappa.", kanji: "地図のとおりに、行ってください。", kana: "ちずのとおりに、いってください。" },
+            { icon: "📏", en: "Cut according to the line.", it: "Taglia secondo la linea.", kanji: "線のとおりに、切ってください。", kana: "せんのとおりに、きってください。" },
+            { icon: "🖨️", en: "Type as seen on the screen.", it: "Digita come vedi sullo schermo.", kanji: "画面に見たとおりに、打ってください。", kana: "がめんに みたとおりに、うってください。" },
+            { icon: "🎶", en: "Sing as you heard.", it: "Canta come hai sentito.", kanji: "聞いたとおりに、歌ってください。", kana: "きいたとおりに、うたってください。" },
+            { icon: "👟", en: "Walk as guided.", it: "Cammina come guidato.", kanji: "案内されたとおりに、歩いてください。", kana: "あんないされたとおりに、あるいてください。" },
+            { icon: "🖋️", en: "Write as I said.", it: "Scrivi come ho detto.", kanji: "私が言ったとおりに、書いてください。", kana: "わたしが いったとおりに、かいてください。" },
+            { icon: "🍱", en: "Make a bento like the sample.", it: "Fai un bento come il campione.", kanji: "見本のとおリに、お弁当を作ってください。", kana: "みほんのとおりに、おべんとうを つくってください。" },
+            { icon: "🎾", en: "Swing like the pro.", it: "Fai lo swing come il professionista.", kanji: "プロがするとおりに、打ってください。", kana: "ぷろが するとおりに、うってください。" },
+            { icon: "💬", en: "Answer as remembered.", it: "Rispondi come ricordi.", kanji: "覚えているとおりに、答えてください。", kana: "おぼえているとおりに、こたえてください。" },
+            { icon: "🧩", en: "Do as shown in the picture.", it: "Fai come mostrato nella figura.", kanji: "図のとおりに、やってください。", kana: "ずのとおりに、やってください。" },
+            { icon: "👔", en: "Tie the tie like the father.", it: "Lega la cravatta come il padre.", kanji: "父がするとおりに、ネクタイを締めます。", kana: "ちちが するとおりに、ねくたいを しめます。" },
+            { icon: "🧱", en: "Stack according to the numbers.", it: "Impila secondo i numeri.", kanji: "番号のとおりに、並べてください。", kana: "ばんごうのとおりに、ならべてください。" }
         ];
 
-        // Mode 2: Meanings (~to kaite arimasu / ~to iu imi desu)
-        const meaningsData = [
-            { icon: "🛑", en: "It says 'Stop'.", it: "C'è scritto 'Fermati'.", kanji: "「止まれ」と書いてあります。", kana: "「とまれ」と かいてあります。" },
-            { icon: "🚭", en: "It says 'No Smoking'.", it: "C'è scritto 'Vietato fumare'.", kanji: "「禁煙」と書いてあります。", kana: "「きんえん」と かいてあります。" },
-            { icon: "🚪", en: "It says 'Entrance'.", it: "C'è scritto 'Entrata'.", kanji: "「入口」と書いてあります。", kana: "「いりぐち」と かいてあります。" },
-            { icon: "🚮", en: "What does this mean?", it: "Cosa significa questo?", kanji: "これはどういう意味ですか。", kana: "これは どういう いみですか。" },
-            { icon: "㊙️", en: "It means 'Secret'.", it: "Significa 'Segreto'.", kanji: "「秘密」という意味です。", kana: "「ひみつ」という いみです。" },
-            { icon: "🆓", en: "It means it's free of charge.", it: "Significa che è gratuito.", kanji: "「無料」という意味です。", kana: "「むりょう」という いみです。" },
-            { icon: "📶", en: "It means you can use the internet.", it: "Significa che puoi usare internet.", kanji: "ネットが使えるという意味です。", kana: "ねっとが つかえるという いみです。" },
-            { icon: "📦", en: "It says 'Fragile'.", it: "C'è scritto 'Fragile'.", kanji: "「こわれもの」と書いてあります。", kana: "「こわれもの」と かいてあります。" },
-            { icon: "🚲❌", en: "It means 'No Parking'.", it: "Significa 'Divieto di sosta'.", kanji: "「駐車禁止」という意味です。", kana: "「ちゅうしゃきんし」という いみです。" },
-            { icon: "⚠️", en: "It means 'Danger'.", it: "Significa 'Pericolo'.", kanji: "「危険」という意味です。", kana: "「きけん」という いみです。" },
-            { icon: "🚻", en: "It means 'Toilet'.", it: "Significa 'Toilette'.", kanji: "「お手洗い」という意味です。", kana: "「おてあらい」という いみです。" },
-            { icon: "🔄", en: "It means 'Recycle'.", it: "Significa 'Riciclo'.", kanji: "「リサイクル」という意味です。", kana: "「りさいくる」という いみです。" },
-            { icon: "📖", en: "It says 'Open'.", it: "C'è scritto 'Aperto'.", kanji: "「営業中」と書いてあります。", kana: "「えいぎょうちゅう」と かいてあります。" },
-            { icon: "🔐", en: "It means you can't enter.", it: "Significa che non puoi entrare.", kanji: "入れないという意味です。", kana: "はいれないという いみです。" },
-            { icon: "🎫", en: "It means you need a ticket.", it: "Significa che serve un biglietto.", kanji: "切符が必要だという意味です。", kana: "きっぷが ひつようだと いう いみです。" },
-            { icon: "🆘", en: "It means 'Emergency'.", it: "Significa 'Emergenza'.", kanji: "「緊急」という意味です。", kana: "「きんきゅう」という いみです。" },
-            { icon: "☕", en: "It says 'Break Time'.", it: "C'è scritto 'Pausa'.", kanji: "「休憩」と書いてあります。", kana: "「きゅうけい」と かいてあります。" }
+        // Mode 2: ~Ato de (After)
+        const atoData = [
+            { icon: "🍱🦷", en: "After eating, brush your teeth.", it: "Dopo mangiato, lavati i denti.", kanji: "ご飯を食べたあとで、歯を磨きます。", kana: "ごはんを たべたあとで、はを みがきます。" },
+            { icon: "💼🍺", en: "After work, go for a drink.", it: "Dopo il lavoro, vai a bere qualcosa.", kanji: "仕事のあとで、飲みに行きます。", kana: "しごとの あとで、のみに いきます。" },
+            { icon: "🎬🍕", en: "After the movie, eat dinner.", it: "Dopo il film, cena.", kanji: "映画を見たあとで、晩ご飯を食べます。", kana: "えいがを みたあとで、ばんごはんを たべます。" },
+            { icon: "🏫🎾", en: "After school, play tennis.", it: "Dopo la scuola, gioca a tennis.", kanji: "学校のあとで、テニスをします。", kana: "がっこうの あとで、てにすを します。" },
+            { icon: "🚿🛌", en: "After taking a shower, sleep.", it: "Dopo la doccia, dormi.", kanji: "シャワーを浴びたあとで、寝ます。", kana: "しゃわーを あびたあとで、ねます。" },
+            { icon: "🏃🚿", en: "After running, take a shower.", it: "Dopo la corsa, fai la doccia.", kanji: "走ったあとで、シャワーを浴びます。", kana: "はしったあとで、しゃわーを あびます。" },
+            { icon: "🛒🏠", en: "After shopping, go home.", it: "Dopo la spesa, torna a casa.", kanji: "買い物をしたあとで、うちへ帰ります。", kana: "かいものを したあとで、うちへ かえります。" },
+            { icon: "📖💡", en: "After studying, turn off lights.", it: "Dopo lo studio, spegni le luci.", kanji: "勉強したあとで、電気を消します。", kana: "べんきょうしたあとで、でんきを けします。" },
+            { icon: "🤝🥪", en: "After the meeting, eat lunch.", it: "Dopo la riunione, pranza.", kanji: "会議のあとで、昼ご飯を食べます。", kana: "かいぎの あとで、ひるごはんを たべます。" },
+            { icon: "🎹🎶", en: "After practice, listen to CD.", it: "Dopo la pratica, ascolta il CD.", kanji: "練習したあとで、CDを聞きます。", kana: "れんしゅうしたあとで、しーでぃーを ききます。" },
+            { icon: "🧼🍱", en: "After washing hands, eat.", it: "Dopo essersi lavati le mani, mangia.", kanji: "手を洗ったあとで、食べます。", kana: "てを あらったあとで、たべます。" },
+            { icon: "🧺🎬", en: "After laundry, watch TV.", it: "Dopo il bucato, guarda la TV.", kanji: "洗濯のあとで、テレビを見ます。", kana: "せんたくの あとで、てれびを みます。" },
+            { icon: "📬📖", en: "After getting mail, read it.", it: "Dopo aver ricevuto la mail, leggila.", kanji: "メールが来たあとで、読みます。", kana: "めーるが きたあとで、よみます。" },
+            { icon: "⚽🥤", en: "After soccer, drink water.", it: "Dopo il calcio, bevi acqua.", kanji: "サッカーのあとで、水を飲みます。", kana: "さっかーの あとで、みずを のみます。" },
+            { icon: "🚶☕", en: "After a walk, drink coffee.", it: "Dopo la passeggiata, bevi caffè.", kanji: "散歩のあとで、コーヒーを飲みます。", kana: "さんぽの あとで、こーひーを のみます。" },
+            { icon: "🚗⛽", en: "After driving, refuel.", it: "Dopo la guida, fai rifornimento.", kanji: "運転したあとで、ガソリンを入れます。", kana: "うんてんしたあとで、がそりんを いれます。" },
+            { icon: "🧗🚿", en: "After climbing, go to Onsen.", it: "Dopo la scalata, vai all'Onsen.", kanji: "山に登ったあとで、温泉に行きます。", kana: "やまに のぼったあとで、おんせんを に いきます。" }
         ];
 
-        // Mode 3: Messages (~to itte imashita / ~to tsutaete...)
-        const messagesData = [
-            { icon: "👨‍💼", en: "Tanaka-san said he'll be late.", it: "Il signor Tanaka ha detto che farà tardi.", kanji: "田中さんは遅れると言っていました。", kana: "たなかさんは おくれると いっていました。" },
-            { icon: "🎂", en: "She said the party starts at 6.", it: "Ha detto che la festa inizia alle 6.", kanji: "パーティーは６時からだと言っていました。", kana: "ぱーてぃーは ろくじからだと いっていました。" },
-            { icon: "🏢", en: "He said he is busy today.", it: "Ha detto che oggi è occupato.", kanji: "今日は忙しいと言っていました。", kana: "きょうは いそがしいと いっていました。" },
-            { icon: "📞", en: "Please tell him to call me.", it: "Per favore gli dica di chiamarmi.", kanji: "電話をくれるように伝えてください。", kana: "でんわを くれるように つたえてください。" },
-            { icon: "👩‍🏫", en: "Could you tell her I'll be absent?", it: "Potrebbe riferirle che sarò assente?", kanji: "休むと伝えていただけませんか。", kana: "やすむと つたえて いただけませんか。" },
-            { icon: "🍽️", en: "Could you tell them I'll go at 7?", it: "Potrebbe riferire che andrò alle 7?", kanji: "７時に行くと伝えていただけませんか。", kana: "ななじに いくと つたえて いただけませんか。" },
-            { icon: "✉️", en: "He said he already sent the mail.", it: "Ha detto di aver già inviato la mail.", kanji: "メールを送ったと言っていました。", kana: "めーるを おくったと いっていました。" },
-            { icon: "🌨️", en: "She said it's snowing in London.", it: "Ha detto che a Londra sta nevicando.", kanji: "ロンドンは雪だと言っていました。", kana: "ろんどんは ゆきだと いっていました。" },
-            { icon: "🎬", en: "They said the movie was fun.", it: "Hanno detto che il film era divertente.", kanji: "映画は楽しかったと言っていました。", kana: "えいがは たのしかったと いっていました。" },
-            { icon: "🛒", en: "Please tell her to buy some milk.", it: "Per favore le dica di comprare il latte.", kanji: "牛乳を買うように伝えてください。", kana: "ぎゅうにゅうを かうように つたえてください。" },
-            { icon: "🗣️", en: "He said he doesn't know the answer.", it: "Ha detto di non sapere la risposta.", kanji: "答えを知らないと言っていました。", kana: "こたえを しらないと いっていました。" },
-            { icon: "🚪", en: "Could you tell him to wait here?", it: "Potrebbe dirgli di aspettare qui?", kanji: "ここで待つように伝えていただけませんか。", kana: "ここで まつように つたえて いただけませんか。" },
-            { icon: "📅", en: "She said the meeting is tomorrow.", it: "Ha detto che la riunione è domani.", kanji: "会議は明日だと言っていました。", kana: "かいぎは あしただと いっていました。" },
-            { icon: "👔", en: "Could you tell him I can't go?", it: "Potrebbe riferirgli che non posso andare?", kanji: "行けないと伝えていただけませんか。", kana: "いけないと つたえて いただけませんか。" },
-            { icon: "🥪", en: "He said he already ate lunch.", it: "Ha detto di aver già pranzato.", kanji: "昼ご飯を食べたと言っていました。", kana: "ひるごはんを たべたと いっていました。" },
-            { icon: "🚕", en: "Please tell them to call a taxi.", it: "Per favore dica loro di chiamare un taxi.", kanji: "タクシーを呼ぶように伝えてください。", kana: "たくしーを よぶように つたえてください。" },
-            { icon: "🚶", en: "She said she'll come back soon.", it: "Ha detto che tornerà presto.", kanji: "すぐ戻るとと言っていました。", kana: "すぐ もどると いっていました。" }
+        // Mode 3: ~Te / ~Naide (State)
+        const stateData = [
+            { icon: "🧂🍱", en: "Eat with soy sauce.", it: "Mangia con la salsa di soia.", kanji: "しょうゆをつけて、食べます。", kana: "しょうゆを つけて、たべます。" },
+            { icon: "🍬☕", en: "Drink without sugar.", it: "Bevi senza zucchero.", kanji: "砂糖を入れないで、飲みます。", kana: "さとうを いれないで、のみます。" },
+            { icon: "🌂🚶", en: "Go out with an umbrella.", it: "Esci con l'ombrello.", kanji: "傘を持って、出かけます。", kana: "かさを もって、でかけます。" },
+            { icon: "🧢🏃", en: "Run without a hat.", it: "Corri senza cappello.", kanji: "帽子をかぶらないで、走ります。", kana: "ぼうしを かぶらないで、はしります。" },
+            { icon: "❄️🛌", en: "Sleep with the AC on.", it: "Dormi con l'aria condizionata accesa.", kanji: "エアコンをつけて、寝ます。", kana: "えあこんを つけて、ねます。" },
+            { icon: "👓📖", en: "Read with glasses.", it: "Leggi con gli occhiali.", kanji: "眼鏡をかけて、読みます。", kana: "めがねを かけて、よみます。" },
+            { icon: "🚪🛌", en: "Sleep without locking the door.", it: "Dormi senza chiudere la porta a chiave.", kanji: "鍵をかけないで、寝ます。", kana: "かぎを かけないで、ねます。" },
+            { icon: "📱🚶", en: "Walk while looking at phone.", it: "Cammina guardando il telefono.", kanji: "スマホを見て、歩きます。", kana: "すまほを みて、あるきます。" },
+            { icon: "🥛☕", en: "Drink without milk.", it: "Bevi senza latte.", kanji: "牛乳を入れないで、飲みます。", kana: "ぎゅうにゅうを いれないで、のみます。" },
+            { icon: "🚗💨", en: "Drive without a license.", it: "Guida senza patente.", kanji: "免許を持たないで、運転します。", kana: "めんきょを もたないで、うんてんします。" },
+            { icon: "🧥🚶", en: "Go out without a coat.", it: "Esci senza cappotto.", kanji: "コートを着ないで、出かけます。", kana: "こーとを きないで、でかけます。" },
+            { icon: "💡🛌", en: "Sleep with the lights on.", it: "Dormi con le luci accese.", kanji: "電気をつけて、寝ます。", kana: "でんきを つけて、ねます。" },
+            { icon: "🍴🍕", en: "Eat pizza with a fork.", it: "Mangia la pizza con la forchetta.", kanji: "フォークを使って、食べます。", kana: "ふぉーくを つかって、たべます。" },
+            { icon: "🍳🧂", en: "Cook without salt.", it: "Cucina senza sale.", kanji: "塩を入れないで、作ります。", kana: "しおを いれないで、つくります。" },
+            { icon: "🏢🧥", en: "Go to work with a tie.", it: "Vai al lavoro con la cravatta.", kanji: "ネクタイを締めて、行きます。", kana: "ねくたいを しめて、いきます。" },
+            { icon: "🚶💨", en: "Go without eating anything.", it: "Vai senza mangiare nulla.", kanji: "何も食べないで、行きます。", kana: "なにも たべないで、いきます。" },
+            { icon: "🎫🚶", en: "Enter with a ticket.", it: "Entra con il biglietto.", kanji: "チケットを持って、入ります。", kana: "ちけっとを もって、はいります。" }
         ];
 
-        let currentMode = 'commands';
+        let currentMode = 'toori';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -174,7 +174,7 @@
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
             
-            const modes = ['commands', 'meanings', 'messages'];
+            const modes = ['toori', 'ato', 'state'];
             modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
                 if(m === mode) {
@@ -187,15 +187,15 @@
             });
 
             const instr = document.getElementById('instruction');
-            if(mode === 'commands') instr.innerText = "Imperative and Prohibition";
-            else if(mode === 'meanings') instr.innerText = "Reporting signs and meanings";
-            else instr.innerText = "Reporting speech and passing messages";
+            if(mode === 'toori') instr.innerText = "Do it according to the instructions...";
+            else if(mode === 'ato') instr.innerText = "Sequence: What do you do after?";
+            else instr.innerText = "State: Doing with or without...";
             
             updateView();
         }
 
         function updateView() {
-            const data = { commands: commandsData, meanings: meaningsData, messages: messagesData };
+            const data = { toori: tooriData, ato: atoData, state: stateData };
             const questions = data[currentMode];
             const q = questions[currentIndex];
             const promptContent = document.getElementById('prompt-content');
@@ -210,7 +210,7 @@
             promptContent.innerHTML = `
                 <div class="item-icon mb-4">${q.icon}</div>
                 <div class="text-center px-6">
-                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Scenario</div>
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Scenario</div>
                     <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
                 </div>
             `;
@@ -228,16 +228,16 @@
         }
 
         function speakJapanese() {
-            const data = { commands: commandsData, meanings: meaningsData, messages: messagesData };
+            const data = { toori: tooriData, ato: atoData, state: stateData };
             const text = data[currentMode][currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
-            ut.rate = (currentMode === 'commands') ? 0.85 : 0.95;
+            ut.rate = 0.95;
             window.speechSynthesis.speak(ut);
         }
 
         function nextQuestion() {
-            const data = { commands: commandsData, meanings: meaningsData, messages: messagesData };
+            const data = { toori: tooriData, ato: atoData, state: stateData };
             const questions = data[currentMode];
             
             if (isFlipped && currentIndex === questions.length - 1) {
@@ -256,7 +256,7 @@
         }
 
         function prevQuestion() {
-            const data = { commands: commandsData, meanings: meaningsData, messages: messagesData };
+            const data = { toori: tooriData, ato: atoData, state: stateData };
             const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
@@ -267,7 +267,7 @@
         }
 
         function speakFinish() {
-            const ut = new SpeechSynthesisUtterance("お疲れ様でした！練習が終わりました。");
+            const ut = new SpeechSynthesisUtterance("お疲れ様でした。第34課の練習が終わりました。");
             ut.lang = 'ja-JP';
             window.speechSynthesis.speak(ut);
         }
@@ -276,4 +276,3 @@
     </script>
 </body>
 </html>
-
