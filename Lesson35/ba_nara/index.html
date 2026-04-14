@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 35 Master</title>
+    <title>Japanese Practice: Lesson 35 Master (51 Questions)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -18,51 +19,58 @@
             padding: 2rem;
         }
         .card-back { transform: rotateY(180deg); }
-        .item-icon { font-size: 4.5rem; }
+        .item-icon { font-size: 5rem; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L35: Conditionals</h1>
-        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+        <h1 class="text-2xl font-bold italic">L35: Conditional Forms (51 Qs)</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System &bull; Mika Tomao</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-conjugation" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('conjugation')">
-                Ba-Form
+            <button id="mode-ba" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('ba')">
+                ~Ba (Verbs/I-adj)
             </button>
-            <button id="mode-sentences" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('sentences')">
-                Conditionals
+            <button id="mode-nara" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('nara')">
+                ~Nara / ~Ba~Hodo
             </button>
             <button id="mode-advice" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('advice')">
-                Advice / Nara
+                Practical / Advice
             </button>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                Change to Conditional (Ba-form)
+                Translate using conditional form...
             </div>
 
             <!-- Card Container -->
             <div class="card-container w-full h-[480px] relative mb-10">
                 <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
-                    <!-- Front -->
+                    <!-- Front Face -->
                     <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
                         <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
                             <!-- Injected by JS -->
                         </div>
-                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
                     </div>
-                    <!-- Back -->
+                    <!-- Back Face -->
                     <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
                         <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
                         <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
-                        <div class="h-px w-16 bg-amber-200 mx-auto mb-8"></div>
+                        
+                        <!-- Speaker Button -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-20 h-20 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+
                         <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
                         <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
                     </div>
@@ -79,17 +87,17 @@
                         <span id="total-count">17</span>
                     </div>
                 </div>
-                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+                <button onclick="buttonNext()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
             </div>
         </div>
 
         <!-- Finished View -->
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
-            <div class="text-7xl mb-8">Finished‼️</div>
-            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 35 Mastered.</p>
+            <div class="text-7xl mb-8">Ottimo!</div>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Lezione 35 completata!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Hai completato tutti i 51 esercizi.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
-                Restart
+                Restart Lesson
             </button>
         </div>
     </main>
@@ -99,70 +107,70 @@
     </footer>
 
     <script>
-        // Mode 1: Conjugation (17 Qs)
-        const conjugationData = [
-            { icon: "🚶", en: "Go", it: "Se vai", kanji: "行けば", kana: "いけば" },
-            { icon: "🥤", en: "Drink", it: "Se bevi", kanji: "飲めば", kana: "のめば" },
-            { icon: "🍱", en: "Eat", it: "Se mangi", kanji: "食べれば", kana: "たべれば" },
-            { icon: "🎬", en: "See", it: "Se vedi", kanji: "見れば", kana: "みれば" },
-            { icon: "⚡", en: "Do", it: "Se fai", kanji: "すれば", kana: "すれば" },
-            { icon: "🏃‍♂️⬅️", en: "Come", it: "Se vieni", kanji: "来れば", kana: "くれば" },
-            { icon: "🛒", en: "Buy", it: "Se compri", kanji: "買えば", kana: "かえば" },
-            { icon: "⌛", en: "Wait", it: "Se aspetti", kanji: "待てば", kana: "まてば" },
-            { icon: "📖", en: "Read", it: "Se leggi", kanji: "読めば", kana: "よめば" },
-            { icon: "✍️", en: "Write", it: "Se scrivi", kanji: "書けば", kana: "かけば" },
-            { icon: "🗣️", en: "Speak", it: "Se parli", kanji: "話せば", kana: "はなせば" },
-            { icon: "👂", en: "Listen", it: "Se ascolti", kanji: "聞けば", kana: "きけば" },
-            { icon: "🏊‍♂️", en: "Swim", it: "Se nuoti", kanji: "泳げば", kana: "およげば" },
-            { icon: "🤝", en: "Meet", it: "Se incontri", kanji: "会えば", kana: "あえば" },
-            { icon: "🛌", en: "Sleep", it: "Se dormi", kanji: "寝れば", kana: "ねれば" },
-            { icon: "🌅", en: "Wake up", it: "Se ti svegli", kanji: "起きれば", kana: "おきれば" },
-            { icon: "📘", en: "Borrow", it: "Se prendi in prestito", kanji: "借りれば", kana: "かりれば" }
+        // Mode 1: ~Ba (Verbs & I-Adj) - 17 Questions
+        const baData = [
+            { icon: "📖", en: "If you read this book, you will understand.", it: "Se leggi questo libro, capirai.", kanji: "この本を読めば、分かります。", kana: "このほんを よめば、わかります。" },
+            { icon: "🏫", en: "If you go to the station, there is a store.", it: "Se vai in stazione, c'è un negozio.", kanji: "駅へ行けば、店があります。", kana: "えきへ いけば、みせが あります。" },
+            { icon: "💻", en: "If you use a computer, it's easy.", it: "Se usi il computer, è facile.", kanji: "パソコンを使えば、簡単です。", kana: "ぱそこんを つかえば、かんたんです。" },
+            { icon: "🌞", en: "If the weather is good, the view is beautiful.", it: "Se il tempo è bello, il panorama è splendido.", kanji: "天気がよければ、景色が綺麗です。", kana: "てんきが よければ、けしきが きれいです。" },
+            { icon: "🏷️", en: "If it's cheap, I want to buy it.", it: "Se è economico, voglio comprarlo.", kanji: "安ければ、買いたいです。", kana: "やすければ、かいたい です。" },
+            { icon: "🏃", en: "If you hurry, you will make it.", it: "Se ti affretti, farai in tempo.", kanji: "急げば、間に合います。", kana: "いそげば、まにあいます。" },
+            { icon: "💊", en: "If you drink this, you'll feel better.", it: "Se bevi questo, ti sentirai meglio.", kanji: "これを飲めば、元気になります。", kana: "これを のめば、げんきに なります。" },
+            { icon: "🪟", en: "If you open the window, it's cool.", it: "Se apri la finestra, rinfresca.", kanji: "窓を開ければ、涼しいです。", kana: "まどを あければ、すずしい です。" },
+            { icon: "🎾", en: "If you practice every day, you'll be good.", it: "Se ti eserciti ogni giorno, diventerai bravo.", kanji: "毎日練習すれば、上手になります。", kana: "まいにち れんしゅう すれば、じょうずに なります。" },
+            { icon: "👨‍🏫", en: "If you ask the teacher, you'll know.", it: "Se chiedi al professore, lo saprai.", kanji: "先生に聞けば、分かります。", kana: "せんせいに きけば、わかります。" },
+            { icon: "🎬", en: "If you watch this movie, you'll cry.", it: "Se guardi questo film, piangerai.", kanji: "この映画を見れば、泣きます。", kana: "このえいがを みれば、なきます。" },
+            { icon: "🔘", en: "If you press this button, the ticket comes out.", it: "Se premi questo bottone, esce il biglietto.", kanji: "このボタンを押せば、切符が出ます。", kana: "この ぼたんを おせば、きっぷが でます。" },
+            { icon: "🚶", en: "If you walk, it takes 10 minutes.", it: "Se cammini, ci vogliono 10 minuti.", kanji: "歩けば、１０分かかります。", kana: "あるけば、じゅっぷん かかります。" },
+            { icon: "✍️", en: "If you write your name here, it's okay.", it: "Se scrivi qui il tuo nome, va bene.", kanji: "ここに名前を書けば、大丈夫です。", kana: "ここに なまえを かけば、だいじょうぶ です。" },
+            { icon: "✨", en: "If it's interesting, let's borrow it.", it: "Se è interessante, prendiamolo in prestito.", kanji: "面白ければ、借りましょう。", kana: "おもしろければ、かりましょう。" },
+            { icon: "🛒", en: "If you go to the supermarket, it's cheaper.", it: "Se vai al supermercato, è più economico.", kanji: "スーパーへ行けば、もっと安いです。", kana: "すーぱーへ いけば、もっと やすいです。" },
+            { icon: "🌂", en: "If you use an umbrella, you won't get wet.", it: "Se usi l'ombrello, non ti bagnerai.", kanji: "傘をさせば、濡れません。", kana: "かさを さすれば、ぬれません。" }
         ];
 
-        // Mode 2: Sentences (17 Qs)
-        const sentencesData = [
-            { icon: "💰", en: "If I have money, I'll buy a car.", it: "Se ho i soldi, compro una macchina.", kanji: "お金があれば、車を買います。", kana: "おかねが あれば、くるまを かいます。" },
-            { icon: "🏥", en: "If you go to the hospital, you'll get better.", it: "Se vai in ospedale, ti sentirai meglio.", kanji: "病院へ行けば、よくなります。", kana: "びょういんへ いけば、よくなります。" },
-            { icon: "🏷️", en: "If it's cheap, I'll buy it.", it: "Se è economico, lo compro.", kanji: "安ければ、買います。", kana: "やすければ、かいます。" },
-            { icon: "☀️", en: "If it's good weather, let's walk.", it: "Se c'è bel tempo, facciamo una passeggiata.", kanji: "天気がよければ、散歩しましょう。", kana: "てんきが よければ、さんぽしましょう。" },
-            { icon: "🍱❌", en: "If you don't eat, you'll be hungry.", it: "Se non mangi, avrai fame.", kanji: "食べなければ、おなかがすきます。", kana: "たべなければ、おなかが すきます。" },
-            { icon: "📝❌", en: "If it's difficult, you don't have to do it.", it: "Se è difficile, non devi farlo.", kanji: "難しければ、しなくてもいいです。", kana: "むずかしくれば、しなくても いいです。" },
-            { icon: "📖✅", en: "If you study, you'll pass.", it: "Se studi, passerai l'esame.", kanji: "勉強すれば、合格します。", kana: "べんきょうすれば、ごうかくします。" },
-            { icon: "🔘🚪", en: "If you press this, the door opens.", it: "Se premi questo, la porta si apre.", kanji: "これを押せば、ドアが開きます。", kana: "これを おせば、どあが あきます。" },
-            { icon: "👨‍🏫", en: "If you ask the teacher, you'll understand.", it: "Se chiedi al professore, capirai.", kanji: "先生に聞けば、わかります。", kana: "せんせいに きけば、わかります。" },
-            { icon: "🆓", en: "If you are free, let's go.", it: "Se sei libero, andiamo.", kanji: "暇なら、行きましょう。", kana: "ひまなら、いきましょう。" },
-            { icon: "🏃‍♂️💨", en: "If you run, you'll make it.", it: "Se corri, farai in tempo.", kanji: "走れば、間に合います。", kana: "はしれば、まにあいます。" },
-            { icon: "🌧️❌", en: "If it rains, the party is cancelled.", it: "Se piove, la festa è annullata.", kanji: "雨が降れば、パーティーは中止です。", kana: "あめが ふれば、ぱーてぃーは ちゅうしです。" },
-            { icon: "🗺️", en: "If you look at the map, you'll know.", it: "Se guardi la mappa, lo saprai.", kanji: "地図を見れば、わかります。", kana: "ちずを みれば、わかります。" },
-            { icon: "🎾", en: "If you practice, you'll be good.", it: "Se fai pratica, diventerai bravo.", kanji: "練習すれば、上手になります。", kana: "れんしゅうすれば、じょうずになります。" },
-            { icon: "🤫", en: "If it's quiet, I can sleep.", it: "Se è silenzioso, posso dormire.", kanji: "静かなら、寝られます。", kana: "しずかなら、ねられます。" },
-            { icon: "☕💡", en: "If I drink coffee, I wake up.", it: "Se bevo caffè, mi sveglio.", kanji: "コーヒーを飲めば、目が覚めます。", kana: "こーひーを のめば、めが さめます。" },
-            { icon: "🛠️✨", en: "If you use this, it's easy.", it: "Se usi questo, è facile.", kanji: "これを使えば、簡単です。", kana: "これを つかえば、かんたんです。" }
+        // Mode 2: ~Nara (Noun/Na-adj) & ~Ba ~Hodo - 17 Questions
+        const naraData = [
+            { icon: "📅", en: "If it's tomorrow, I am free.", it: "Se è domani, sono libero.", kanji: "明日なら、暇です。", kana: "あしたなら、ひまです。" },
+            { icon: "🍁", en: "If it's Kyoto, autumn is good.", it: "Se è Kyoto, l'autunno è bello.", kanji: "京都なら、秋がいいです。", kana: "きょうとなら、あきが いいです。" },
+            { icon: "📷", en: "If it's for a camera, that shop is good.", it: "Se è per una macchina fotografica, quel negozio è buono.", kanji: "カメラなら、あの店がいいです。", kana: "かめらなら、あのみせが いいです。" },
+            { icon: "🤫", en: "If it's quiet, it's a good room.", it: "Se è tranquillo, è una buona stanza.", kanji: "静かなら、いい部屋です。", kana: "しずかなら、いい へやです。" },
+            { icon: "✨", en: "If it's easy, I want to do it.", it: "Se è facile, voglio farlo.", kanji: "簡単なら、やりたいです。", kana: "かんたんなら、やりたい です。" },
+            { icon: "💪", en: "If it's healthy, anything is fine.", it: "Se è salutare, va bene tutto.", kanji: "健康にいいなら、何でもいいです。", kana: "けんこうに いいなら、なんでも いいです。" },
+            { icon: "🍱", en: "The more you eat, the more delicious it is.", it: "Più mangi, più è delizioso.", kanji: "食べれば食べるほど、おいしいです。", kana: "たべれば たべるほど、おいしい です。" },
+            { icon: "💴", en: "The cheaper, the better.", it: "Più è economico, meglio è.", kanji: "安ければ安いほどいいです。", kana: "やすければ やすいほど いいです。" },
+            { icon: "🧩", en: "The easier, the better.", it: "Più è facile, meglio è.", kanji: "簡単なら簡単なほどいいです。", kana: "かんたんなら かんたんなほど いいです。" },
+            { icon: "🇯🇵", en: "The more I study Japanese, the harder it gets.", it: "Più studio giapponese, più diventa difficile.", kanji: "日本語は勉強すればするほど難しいです。", kana: "にほんごは べんきょうすれば するほど むずかしい です。" },
+            { icon: "🎶", en: "The more I listen to this song, the more I like it.", it: "Più ascolto questa canzone, più mi piace.", kanji: "この歌は聞けば聞くほど好きになります。", kana: "このうたは きけば きくほど すきに なります。" },
+            { icon: "👥", en: "The more people, the more fun.", it: "Più persone ci sono, più ci si diverte.", kanji: "人が多ければ多いほど、楽しいです。", kana: "ひとが おおければ おおいほど、たのしい です。" },
+            { icon: "🚉", en: "The closer to the station, the more convenient.", it: "Più è vicino alla stazione, più è comodo.", kanji: "駅から近ければ近いほど、便利です。", kana: "えきから ちかければ ちかいほど、べんり です。" },
+            { icon: "🏢", en: "The newer the building, the more expensive.", it: "Più l'edificio è nuovo, più è costoso.", kanji: "ビルは新しければ新しいほど高いです。", kana: "びるは あたらしければ あたらしいほど たかい です。" },
+            { icon: "📦", en: "The bigger, the better.", it: "Più è grande, meglio è.", kanji: "大きければ大きいほどいいです。", kana: "おおきければ おおきいほど いいです。" },
+            { icon: "🤵", en: "The more I talk to him, the more I like him.", it: "Più parlo con lui, più mi piace.", kanji: "彼と話せば話すほど、好きになります。", kana: "かれと はなせば はなすほど、すきに なります。" },
+            { icon: "🏋️", en: "The more I practice, the more I improve.", it: "Più mi esercito, più miglioro.", kanji: "練習すればするほど上手になります。", kana: "れんしゅう すれば するほど じょうずに なります。" }
         ];
 
-        // Mode 3: Advice/Nara (17 Qs)
+        // Mode 3: Practical Advice / Situations - 17 Questions
         const adviceData = [
-            { icon: "🎫", en: "Where should I buy a ticket?", it: "Dove dovrei comprare il biglietto?", kanji: "どこで切符を買えばいいですか。", kana: "どこで きっぷを かえばいいですか。" },
-            { icon: "📷", en: "If it's about cameras, Akihabara is good.", it: "Se si tratta di fotocamere, Akihabara va bene.", kanji: "カメラなら、秋葉原がいいですよ。", kana: "かめらなら、あきはばらが いいですよ。" },
-            { icon: "💬", en: "What should I say?", it: "Cosa dovrei dire?", kanji: "何と言えばいいですか。", kana: "なんと いえば いいですか。" },
-            { icon: "🚉", en: "How should I go to the station?", it: "Come dovrei andare alla stazione?", kanji: "駅へはどう行けばいいですか。", kana: "えきへは どう いけば いいですか。" },
-            { icon: "🍣", en: "If it's about sushi, that shop is famous.", it: "Se si tratta di sushi, quel negozio è famoso.", kanji: "寿司なら、あの店が有名ですよ。", kana: "すしなら、あの みせが ゆうめいですよ。" },
-            { icon: "❓", en: "Who should I ask?", it: "A chi dovrei chiedere?", kanji: "だれに聞けばいいですか。", kana: "だれに きけば いいですか。" },
-            { icon: "🎁", en: "When should I bring it?", it: "Quando dovrei portarlo?", kanji: "いつ持ってくればいいですか。", kana: "いつ もってくれば いいですか。" },
-            { icon: "🎒", en: "If it's about a trip, talk to Tanaka.", it: "Se si tratta di un viaggio, parla con Tanaka.", kanji: "旅行なら、田中さんに相談してください。", kana: "りょこうなら、たなかさんに そうだんしてください。" },
-            { icon: "🛠️", en: "How should I use this?", it: "Come dovrei usare questo?", kanji: "どうやって使えばいいですか。", kana: "どうやって つかえば いいですか。" },
-            { icon: "🍽️", en: "What should I eat?", it: "Cosa dovrei mangiare?", kanji: "何を食べればいいですか。", kana: "なにを たべれば いいですか。" },
-            { icon: "⚽", en: "If it's about sports, I like soccer.", it: "Se si tratta di sport, mi piace il calcio.", kanji: "スポーツなら、サッカーが好きです。", kana: "すぽーつなら、さっかーが すきです。" },
-            { icon: "🅿️", en: "Where should I park the car?", it: "Dove dovrei parcheggiare l'auto?", kanji: "どこに車を止めればいいですか。", kana: "どこに くるまを とめれば いいですか。" },
-            { icon: "🏨", en: "If it's about a hotel, I recommend this one.", it: "Se si tratta di un hotel, consiglio questo.", kanji: "ホテルなら、ここがおすすめです。", kana: "ほてるなら、ここが おすすめです。" },
-            { icon: "✍️", en: "How should I write it?", it: "Come dovrei scriverlo?", kanji: "どう書けばいいですか。", kana: "どう かけば いいですか。" },
-            { icon: "🌹", en: "If it's about a present, flowers are good.", it: "Se si tratta di un regalo, i fiori vanno bene.", kanji: "プレゼントなら、花がいいですよ。", kana: "ぷれぜんとなら、はなが いいですよ。" },
-            { icon: "📞", en: "Who should I call?", it: "Chi dovrei chiamare?", kanji: "だれに電話すればいいですか。", kana: "だれに でんわすれば いいですか。" },
-            { icon: "⏰", en: "If it's about the time, 10:00 is convenient.", it: "Se si tratta dell'orario, le 10:00 sono comode.", kanji: "時間なら、１０時が都合がいいです。", kana: "じかんなら、じゅうじが つごうが いいです。" }
+            { icon: "💴", en: "If you don't have money, borrow some.", it: "Se non hai soldi, chiedine in prestito.", kanji: "お金がなければ、借りてください。", kana: "おかねが なければ、かりて ください。" },
+            { icon: "🏥", en: "If you are sick, go to the hospital.", it: "Se sei malato, vai in ospedale.", kanji: "病気なら、病院へ行ってください。", kana: "びょうきなら、びょういんへ いって ください。" },
+            { icon: "📖", en: "If you don't understand, look in the dictionary.", it: "Se non capisci, guarda nel dizionario.", kanji: "分からなければ、辞書を引いてください。", kana: "わからなければ、じしょを ひいて ください。" },
+            { icon: "🎂", en: "If it's a birthday, buy a cake.", it: "Se è un compleanno, compra una torta.", kanji: "誕生日なら、ケーキを買いましょう。", kana: "たんじょうびなら、けーきを かいましょう。" },
+            { icon: "📞", en: "If you're late, call me.", it: "Se sei in ritardo, chiamami.", kanji: "遅れるなら、電話をください。", kana: "おくれるなら、でんわを ください。" },
+            { icon: "👔", en: "If you're busy, don't overdo it.", it: "Se sei occupato, non esagerare.", kanji: "忙しければ、無理をしないでください。", kana: "いそがしければ、むりを しないで ください。" },
+            { icon: "🚓", en: "If you lose it, tell the police.", it: "Se lo perdi, dillo alla polizia.", kanji: "なくせば、警察に言ってください。", kana: "なくせば、けいさつに いって ください。" },
+            { icon: "🛠️", en: "If the computer is broken, fix it.", it: "Se il computer è rotto, riparalo.", kanji: "パソコンが故障すれば、直します。", kana: "ぱそこんが こしょう すれば、なおします。" },
+            { icon: "🎁", en: "If it's free, I want it.", it: "Se è gratis, lo voglio.", kanji: "無料なら、欲しいです。", kana: "むりょうなら、ほしい です。" },
+            { icon: "🍲", en: "If the food is delicious, I'm happy.", it: "Se il cibo è delizioso, sono felice.", kanji: "料理がおいしければ、嬉しいです。", kana: "りょうりが おいしければ、うれしい です。" },
+            { icon: "💡", en: "If the room is dark, turn on the light.", it: "Se la stanza è buia, accendi la luce.", kanji: "部屋が暗ければ、電気をつけてください。", kana: "へやが くらければ、でんきを つけて ください。" },
+            { icon: "❌", en: "If it's Saturday, I can't go.", it: "Se è sabato, non posso venire.", kanji: "土曜日なら、行けません。", kana: "どようびなら、いけません。" },
+            { icon: "🎀", en: "If it's a present, wrap it nicely.", it: "Se è un regalo, incartalo bene.", kanji: "プレゼントなら、綺麗に包んでください。", kana: "ぷれぜんと なら、きれいに つつんで ください。" },
+            { icon: "🧣", en: "If it's cold, wear a sweater.", it: "Se fa freddo, mettiti un maglione.", kanji: "寒ければ、セーターを着てください。", kana: "さむければ、せーたーを きて ください。" },
+            { icon: "🚌", en: "If it's far, take a bus.", it: "Se è lontano, prendi l'autobus.", kanji: "遠ければ、バスに乗りましょう。", kana: "とおければ、ばすに のりましょう。" },
+            { icon: "😴", en: "If you're sleepy, go to sleep.", it: "Se hai sonno, vai a dormire.", kanji: "眠ければ、寝てください。", kana: "ねむければ、ねて ください。" },
+            { icon: "✈️", en: "If it's a trip, go to Japan.", it: "Se è un viaggio, vai in Giappone.", kanji: "旅行なら、日本へ行ってください。", kana: "りょこうなら、にほんへ いって ください。" }
         ];
 
-        let currentMode = 'conjugation';
+        let currentMode = 'ba';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -174,7 +182,7 @@
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
             
-            const modes = ['conjugation', 'sentences', 'advice'];
+            const modes = ['ba', 'nara', 'advice'];
             modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
                 if(m === mode) {
@@ -187,15 +195,15 @@
             });
 
             const instr = document.getElementById('instruction');
-            if(mode === 'conjugation') instr.innerText = "Change to Conditional (Ba-form)";
-            else if(mode === 'sentences') instr.innerText = "Conditionals: If A, then B";
-            else instr.innerText = "Advice & Nara: What should I do?";
+            if(mode === 'ba') instr.innerText = "~Ba form: Conditionals for Verbs and I-Adjectives";
+            else if(mode === 'nara') instr.innerText = "~Nara for Nouns/Na-Adj & Proportional ~Ba ~Hodo";
+            else instr.innerText = "Practical Advice & Daily Life Situations";
             
             updateView();
         }
 
         function updateView() {
-            const data = { conjugation: conjugationData, sentences: sentencesData, advice: adviceData };
+            const data = { ba: baData, nara: naraData, advice: adviceData };
             const questions = data[currentMode];
             const q = questions[currentIndex];
             const promptContent = document.getElementById('prompt-content');
@@ -210,7 +218,7 @@
             promptContent.innerHTML = `
                 <div class="item-icon mb-4">${q.icon}</div>
                 <div class="text-center px-6">
-                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Scenario</div>
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning</div>
                     <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
                 </div>
             `;
@@ -221,14 +229,13 @@
             if (!isFlipped) {
                 card.classList.add('is-flipped');
                 isFlipped = true;
-                speakJapanese();
             } else {
                 nextQuestion();
             }
         }
 
         function speakJapanese() {
-            const data = { conjugation: conjugationData, sentences: sentencesData, advice: adviceData };
+            const data = { ba: baData, nara: naraData, advice: adviceData };
             const text = data[currentMode][currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
@@ -237,13 +244,12 @@
         }
 
         function nextQuestion() {
-            const data = { conjugation: conjugationData, sentences: sentencesData, advice: adviceData };
+            const data = { ba: baData, nara: naraData, advice: adviceData };
             const questions = data[currentMode];
             
             if (isFlipped && currentIndex === questions.length - 1) {
                 document.getElementById('game-view').classList.add('hidden');
                 document.getElementById('finished-view').classList.remove('hidden');
-                speakFinish();
                 return;
             }
 
@@ -256,8 +262,8 @@
         }
 
         function prevQuestion() {
-            const data = { conjugation: conjugationData, sentences: sentencesData, advice: adviceData };
-            const questions = questions = data[currentMode];
+            const data = { ba: baData, nara: naraData, advice: adviceData };
+            const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
             setTimeout(() => {
@@ -266,10 +272,9 @@
             }, 150);
         }
 
-        function speakFinish() {
-            const ut = new SpeechSynthesisUtterance("お疲れ様でした！練習が終わりました。");
-            ut.lang = 'ja-JP';
-            window.speechSynthesis.speak(ut);
+        function buttonNext() {
+            if (!isFlipped) flipCard();
+            else nextQuestion();
         }
 
         updateView();
@@ -277,3 +282,4 @@
 </body>
 </html>
 
+```
