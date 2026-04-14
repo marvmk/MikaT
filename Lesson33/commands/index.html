@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L32 Vocabulary Trainer</title>
+    <title>Japanese Practice: Lesson 33 Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -13,175 +13,266 @@
             backface-visibility: hidden; position: absolute;
             width: 100%; height: 100%; display: flex;
             flex-direction: column; align-items: center;
-            justify-content: center; border-radius: 2rem;
-            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            justify-content: center; border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
             padding: 2rem;
         }
         .card-back { transform: rotateY(180deg); }
-        .item-icon { font-size: 6rem; line-height: 1; }
+        .item-icon { font-size: 4.5rem; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L32: Vocabulary Trainer</h1>
+        <h1 class="text-2xl font-bold italic">L33: Command & Prohibition</h1>
         <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
+        <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-all" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('all')">All</button>
-            <button id="mode-verb" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('verb')">Verbs</button>
-            <button id="mode-noun" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('noun')">Nouns</button>
-            <button id="mode-adj" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('adj')">Others</button>
+            <button id="mode-command" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-sm" onclick="switchMode('command')">
+                Imperative
+            </button>
+            <button id="mode-forbid" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-sm" onclick="switchMode('forbid')">
+                Prohibition
+            </button>
+            <button id="mode-sent" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-sm" onclick="switchMode('sent')">
+                Sentences
+            </button>
         </div>
 
+        <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
-            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">Tap the card to see the Japanese</div>
+            <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
+                Change to Imperative Form (Command)
+            </div>
 
-            <div class="card-container w-full h-[500px] relative mb-10">
-                <div id="practice-card" class="card w-full h-full relative" onclick="handleCardClick()">
+            <!-- Card Container -->
+            <div class="card-container w-full h-[480px] relative mb-10">
+                <div id="practice-card" class="card w-full h-full relative" onclick="flipCard()">
+                    <!-- Front -->
                     <div class="card-face card-front bg-white border-2 border-amber-100 text-center">
-                        <div id="display-emoji" class="item-icon mb-8"></div>
-                        <div class="space-y-2">
-                            <div id="display-en" class="text-3xl font-black text-gray-800 italic leading-tight px-4"></div>
-                            <div id="display-it" class="text-xl font-bold text-amber-500 italic"></div>
+                        <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full">
+                            <!-- Injected by JS -->
                         </div>
-                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
                     </div>
+                    <!-- Back -->
                     <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
-                        <div id="display-kana" class="text-5xl font-black text-amber-900 leading-tight mb-4"></div>
-                        <div id="display-roma" class="text-2xl font-bold text-amber-600 mb-10"></div>
-                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-20 h-20 bg-white border-4 border-amber-200 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform mb-6 group">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                        <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
+                        <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
+                        
+                        <!-- Fixed Audio Button -->
+                        <button onclick="event.stopPropagation(); speakJapanese();" class="w-20 h-20 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
                         </button>
-                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap card for next word</div>
+
+                        <div id="answer-it" class="text-base text-amber-700 italic font-medium px-4"></div>
+                        <div class="mt-auto text-[10px] text-amber-300 font-bold uppercase">Tap for next question</div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex justify-between w-full items-center px-4">
+            <!-- Navigation -->
+            <div class="flex justify-between w-full items-center">
                 <button onclick="prevQuestion()" class="w-14 h-14 flex items-center justify-center border-2 border-gray-200 rounded-full text-gray-400 bg-white hover:bg-gray-50 transition shadow-sm text-xl font-bold">←</button>
-                <div class="flex items-center space-x-2 text-gray-400 font-black text-lg"><span id="current-index" class="text-amber-600 font-black">1</span><span class="text-gray-200">/</span><span id="total-count">0</span></div>
-                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase">Next</button>
+                <div class="flex items-center space-x-2 text-gray-400 font-black text-lg">
+                    <span id="current-index" class="text-amber-600 font-black">1</span> 
+                    <span class="text-gray-200">/</span> 
+                    <span id="total-count">17</span>
+                </div>
+                <button onclick="buttonNext()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
             </div>
         </div>
 
+        <!-- Finished View -->
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
-            <div class="text-7xl mb-8">Finished‼️</div>
+            <div class="text-7xl mb-8">Ottimo!</div>
             <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic">Lesson 32 Vocabulary Mastered.</p>
-            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">Restart</button>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic">Hai imparato a dare ordini e divieti.</p>
+            <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
+                Restart
+            </button>
         </div>
     </main>
 
-    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">Result Prep System &bull; Mika Tomao</footer>
+    <footer class="py-8 text-center text-gray-300 text-[10px] font-black tracking-widest uppercase">
+        Result Prep System &bull; Mika Tomao
+    </footer>
 
     <script>
-        const vocabulary = [
-            { type: "verb", emoji: "🏃", en: "take exercise", it: "fare esercizio", kana: "うんどうします", roma: "undōshimasu" },
-            { type: "verb", emoji: "✅", en: "succeed", it: "avere successo", kana: "せいこうします", roma: "sēkōshimasu" },
-            { type: "verb", emoji: "❌", en: "fail [an exam]", it: "fallire [un esame]", kana: "しっぱいします", roma: "shippaishimasu" },
-            { type: "verb", emoji: "🎓", en: "pass [an exam]", it: "superare [un esame]", kana: "ごうかくします", roma: "gōkakushimasu" },
-            { type: "verb", emoji: "🔄", en: "return", it: "tornare", kana: "もどりまます", roma: "modorimasu" },
-            { type: "verb", emoji: "🛑🌧️", en: "[rain] stop", it: "[pioggia] smette", kana: "やみます", roma: "yamimasu" },
-            { type: "verb", emoji: "☀️", en: "clear up", it: "sereno / schiarita", kana: "はれます", roma: "haremasu" },
-            { type: "verb", emoji: "☁️", en: "get cloudy", it: "annuvolarsi", kana: "くもります", roma: "kumorimasu" },
-            { type: "verb", emoji: "💨", en: "[wind] blow", it: "[vento] soffia", kana: "ふきます", roma: "fukimasu" },
-            { type: "verb", emoji: "💊", en: "recover from sickness", it: "guarire", kana: "なおります", roma: "naorimasu" },
-            { type: "verb", emoji: "🛠️", en: "be fixed / repaired", it: "essere riparato", kana: "なおります", roma: "naorimasu" },
-            { type: "verb", emoji: "🌡️", en: "[fever] continue", it: "[febbre] continua", kana: "つづきます", roma: "tsuzukimasu" },
-            { type: "verb", emoji: "🤧", en: "catch [a cold]", it: "prendere [freddo/raffreddore]", kana: "ひきます", roma: "hikimasu" },
-            { type: "verb", emoji: "🧊", en: "cool", it: "raffreddare", kana: "ひやします", roma: "hiyashimasu" },
-            { type: "adj", emoji: "😟", en: "worried", it: "preoccupato", kana: "しんぱい", roma: "shinpai" },
-            { type: "adj", emoji: "🆗", en: "enough", it: "sufficiente / abbastanza", kana: "じゅうぶん", roma: "jūbun" },
-            { type: "adj", emoji: "🤔", en: "strange / funny", it: "strano / buffo", kana: "おかしい", roma: "okashī" },
-            { type: "adj", emoji: "🔊", en: "noisy", it: "rumoroso", kana: "うるさい", roma: "urusai" },
-            { type: "noun", emoji: "👨‍⚕️", en: "doctor", it: "dottore", kana: "せんせい", roma: "sensē" },
-            { type: "noun", emoji: "🔥🤕", en: "burn", it: "ustione", kana: "やけど", roma: "yakedo" },
-            { type: "noun", emoji: "🤕", en: "injury", it: "ferita", kana: "けが", roma: "kega" },
-            { type: "noun", emoji: "🗣️💨", en: "cough", it: "tosse", kana: "せき", roma: "seki" },
-            { type: "noun", emoji: "🤒", en: "flu", it: "influenza", kana: "インフルエンザ", roma: "infuruenza" },
-            { type: "noun", emoji: "🌌", en: "sky", it: "cielo", kana: "そら", roma: "sora" },
-            { type: "noun", emoji: "☀️", en: "sun", it: "sole", kana: "たいよう", roma: "taiyō" },
-            { type: "noun", emoji: "⭐", en: "star", it: "stella", kana: "ほし", roma: "hoshi" },
-            { type: "noun", emoji: "💨", en: "wind", it: "vento", kana: "かぜ", roma: "kaze" },
-            { type: "noun", emoji: "🧭⬆️", en: "north", it: "nord", kana: "きた", roma: "kita" },
-            { type: "noun", emoji: "🧭⬇️", en: "south", it: "sud", kana: "みなみ", roma: "minami" },
-            { type: "noun", emoji: "🧭⬅️", en: "west", it: "ovest", kana: "にし", roma: "nishi" },
-            { type: "noun", emoji: "🧭➡️", en: "east", it: "est", kana: "ひがし", roma: "higashi" },
-            { type: "noun", emoji: "🚰", en: "tap water", it: "acqua del rubinetto", kana: "すいどう", roma: "suidō" },
-            { type: "noun", emoji: "⚙️", en: "engine", it: "motore", kana: "エンジン", roma: "enjin" },
-            { type: "noun", emoji: "🤝", en: "team", it: "squadra", kana: "チーム", roma: "chīmu" },
-            { type: "noun", emoji: "🌃", en: "this evening", it: "stasera", kana: "こんばん", roma: "konban" },
-            { type: "noun", emoji: "🌆", en: "late afternoon", it: "tardo pomeriggio", kana: "ゆうがた", roma: "yūgata" },
-            { type: "noun", emoji: "🕒", en: "before", it: "prima", kana: "まえ", roma: "mae" },
-            { type: "noun", emoji: "🐢", en: "late", it: "tardi", kana: "おそく", roma: "osoku" }
+        const commandQuestions = [
+            { icon: "🏃", en: "Go!", it: "Vai!", kanji: "行け！", kana: "いけ！" },
+            { icon: "🥤", en: "Drink!", it: "Bevi!", kanji: "飲め！", kana: "のめ！" },
+            { icon: "🏠", en: "Return!", it: "Torna!", kanji: "帰れ！", kana: "かえれ！" },
+            { icon: "📖", en: "Read!", it: "Leggi!", kanji: "読め！", kana: "よめ！" },
+            { icon: "✍️", en: "Write!", it: "Scrivi!", kanji: "書け！", kana: "かけ！" },
+            { icon: "👂", en: "Listen!", it: "Ascolta!", kanji: "聞け！", kana: "きけ！" },
+            { icon: "🛒", en: "Buy!", it: "Compra!", kanji: "買え！", kana: "かえ！" },
+            { icon: "🤝", en: "Meet!", it: "Incontra!", kanji: "会え！", kana: "あえ！" },
+            { icon: "⌛", en: "Wait!", it: "Aspetta!", kanji: "待て！", kana: "まて！" },
+            { icon: "🗣️", en: "Speak!", it: "Parla!", kanji: "話せ！", kana: "はなせ！" },
+            { icon: "🏊‍♂️", en: "Swim!", it: "Nuota!", kanji: "泳げ！", kana: "およげ！" },
+            { icon: "🍱", en: "Eat!", it: "Mangia!", kanji: "食べろ！", kana: "たべろ！" },
+            { icon: "🎬", en: "Watch!", it: "Guarda!", kanji: "見ろ！", kana: "みろ！" },
+            { icon: "🛌", en: "Sleep!", it: "Dormi!", kanji: "寝ろ！", kana: "ねろ！" },
+            { icon: "🌅", en: "Wake up!", it: "Svegliati!", kanji: "起きろ！", kana: "おきろ！" },
+            { icon: "⚡", en: "Do!", it: "Fai!", kanji: "しろ！", kana: "しろ！" },
+            { icon: "🚶‍♂️⬅️", en: "Come!", it: "Vieni!", kanji: "来い！", kana: "こい！" }
         ];
 
-        let filteredList = [...vocabulary];
+        const forbidQuestions = [
+            { icon: "🏃❌", en: "Don't go!", it: "Non andare!", kanji: "行くな！", kana: "いくな！" },
+            { icon: "🥤❌", en: "Don't drink!", it: "Non bere!", kanji: "飲むな！", kana: "のむな！" },
+            { icon: "🏠❌", en: "Don't return!", it: "Non tornare!", kanji: "帰るな！", kana: "かえるな！" },
+            { icon: "📖❌", en: "Don't read!", it: "Non leggere!", kanji: "読むな！", kana: "よむな！" },
+            { icon: "✍️❌", en: "Don't write!", it: "Non scrivere!", kanji: "書くな！", kana: "かくな！" },
+            { icon: "👂❌", en: "Don't listen!", it: "Non ascoltare!", kanji: "聞くな！", kana: "きくな！" },
+            { icon: "🛒❌", en: "Don't buy!", it: "Non comprare!", kanji: "買うな！", kana: "かうな！" },
+            { icon: "🤝❌", en: "Don't meet!", it: "Non incontrare!", kanji: "会うな！", kana: "あうな！" },
+            { icon: "⌛❌", en: "Don't wait!", it: "Non aspettare!", kanji: "待つな！", kana: "まつな！" },
+            { icon: "🗣️❌", en: "Don't speak!", it: "Non parlare!", kanji: "話すな！", kana: "はなすな！" },
+            { icon: "🏊‍♂️❌", en: "Don't swim!", it: "Non nuotare!", kanji: "泳ぐな！", kana: "およぐな！" },
+            { icon: "🍱❌", en: "Don't eat!", it: "Non mangiare!", kanji: "食べるな！", kana: "たべるな！" },
+            { icon: "🎬❌", en: "Don't watch!", it: "Non guardare!", kanji: "見るな！", kana: "みるな！" },
+            { icon: "🛌❌", en: "Don't sleep!", it: "Non dormire!", kanji: "寝るな！", kana: "ねるな！" },
+            { icon: "🌅❌", en: "Don't wake up!", it: "Non svegliarti!", kanji: "起きるな！", kana: "おきるな！" },
+            { icon: "⚡❌", en: "Don't do!", it: "Non fare!", kanji: "するな！", kana: "するな！" },
+            { icon: "🚶‍♂️⬅️❌", en: "Don't come!", it: "Non venire!", kanji: "来るな！", kana: "くるな！" }
+        ];
+
+        const sentQuestions = [
+            { icon: "🛑", en: "Stop!", it: "Fermati!", kanji: "止まれ！", kana: "とまれ！" },
+            { icon: "🚪❌", en: "Don't enter!", it: "Non entrare!", kanji: "入るな！", kana: "はいるな！" },
+            { icon: "🏥", en: "Go to the hospital!", it: "Vai in ospedale!", kanji: "病院へ行け！", kana: "びょういんへ いけ！" },
+            { icon: "📚", en: "Study!", it: "Studia!", kanji: "勉強しろ！", kana: "べんきょうしろ！" },
+            { icon: "🖐️❌", en: "Don't touch!", it: "Non toccare!", kanji: "触るな！", kana: "さわるな！" },
+            { icon: "📖", en: "Read the book!", it: "Leggi il libro!", kanji: "本を読め！", kana: "ほんを よめ！" },
+            { icon: "⚡", en: "Hurry up!", it: "Sbrigati!", kanji: "急げ！", kana: "いそげ！" },
+            { icon: "🧠❌", en: "Don't forget!", it: "Non dimenticare!", kanji: "忘れるな！", kana: "わすれるな！" },
+            { icon: "🚪", en: "Close the door!", it: "Chiudi la porta!", kanji: "ドアを閉めろ！", kana: "どあを しめろ！" },
+            { icon: "🤫", en: "Don't speak!", it: "Non parlare!", kanji: "話すな！", kana: "はなすな！" },
+            { icon: "💼", en: "Work!", it: "Lavora!", kanji: "働け！", kana: "はたらけ！" },
+            { icon: "🥤❌", en: "Don't drink!", it: "Non bere!", kanji: "飲むな！", kana: "のむな！" },
+            { icon: "跑", en: "Run!", it: "Corri!", kanji: "走れ！", kana: "はしれ！" },
+            { icon: "🎬❌", en: "Don't look!", it: "Non guardare!", kanji: "見るな！", kana: "みるな！" },
+            { icon: "🧍", en: "Stand up!", it: "Alzati!", kanji: "立て！", kana: "たて！" },
+            { icon: "🏃❌", en: "Don't go!", it: "Non andare!", kanji: "行くな！", kana: "いくな！" },
+            { icon: "🪑", en: "Sit down!", it: "Siediti!", kanji: "座れ！", kana: "すわれ！" }
+        ];
+
+        let currentMode = 'command';
         let currentIndex = 0;
         let isFlipped = false;
 
         function switchMode(mode) {
-            if (mode === 'all') filteredList = [...vocabulary];
-            else if (mode === 'adj') filteredList = vocabulary.filter(item => item.type === 'adj' || item.type === 'other');
-            else filteredList = vocabulary.filter(item => item.type === mode);
+            currentMode = mode;
             currentIndex = 0;
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
-            ['all', 'verb', 'noun', 'adj'].forEach(m => {
+            
+            const modes = ['command', 'forbid', 'sent'];
+            modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
-                btn.classList.toggle('bg-white', m === mode);
-                btn.classList.toggle('shadow-sm', m === mode);
-                btn.classList.toggle('text-amber-600', m === mode);
-                btn.classList.toggle('text-gray-600', m !== mode);
+                if(m === mode) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.remove('text-gray-600');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-amber-600');
+                    btn.classList.add('text-gray-600');
+                }
             });
+
+            const instr = document.getElementById('instruction');
+            if(mode === 'command') instr.innerText = "Imperative: Give a direct command";
+            else if(mode === 'forbid') instr.innerText = "Prohibition: Forbid an action";
+            else instr.innerText = "Sentences: Common commands & signs";
+            
             updateView();
         }
 
         function updateView() {
-            const q = filteredList[currentIndex];
+            const data = { command: commandQuestions, forbid: forbidQuestions, sent: sentQuestions };
+            const questions = data[currentMode];
+            const q = questions[currentIndex];
+            const promptContent = document.getElementById('prompt-content');
+            
             document.getElementById('current-index').innerText = currentIndex + 1;
-            document.getElementById('total-count').innerText = filteredList.length;
-            document.getElementById('display-emoji').innerText = q.emoji;
-            document.getElementById('display-en').innerText = q.en;
-            document.getElementById('display-it').innerText = q.it;
-            document.getElementById('display-kana').innerText = q.kana;
-            document.getElementById('display-roma').innerText = q.roma;
+            document.getElementById('total-count').innerText = questions.length;
+            
+            document.getElementById('answer-kanji').innerText = q.kanji;
+            document.getElementById('answer-kana').innerText = q.kana;
+            document.getElementById('answer-it').innerText = q.it;
+
+            promptContent.innerHTML = `
+                <div class="item-icon mb-4">${q.icon}</div>
+                <div class="text-center px-6">
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Instruction</div>
+                    <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
+                </div>
+            `;
         }
 
-        function handleCardClick() {
-            if (!isFlipped) { document.getElementById('practice-card').classList.add('is-flipped'); isFlipped = true; }
-            else { nextQuestion(); }
+        function flipCard() {
+            const card = document.getElementById('practice-card');
+            if (!isFlipped) {
+                card.classList.add('is-flipped');
+                isFlipped = true;
+                // Auto speak on flip if desired, but button is now there for manual
+            } else {
+                nextQuestion();
+            }
         }
 
         function speakJapanese() {
-            const ut = new SpeechSynthesisUtterance(filteredList[currentIndex].kana);
-            ut.lang = 'ja-JP'; ut.rate = 0.9; window.speechSynthesis.speak(ut);
+            const data = { command: commandQuestions, forbid: forbidQuestions, sent: sentQuestions };
+            const text = data[currentMode][currentIndex].kana;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ja-JP';
+            ut.rate = 0.85;
+            window.speechSynthesis.speak(ut);
         }
 
         function nextQuestion() {
-            if (isFlipped && currentIndex === filteredList.length - 1) {
+            const data = { command: commandQuestions, forbid: forbidQuestions, sent: sentQuestions };
+            const questions = data[currentMode];
+            
+            if (isFlipped && currentIndex === questions.length - 1) {
                 document.getElementById('game-view').classList.add('hidden');
                 document.getElementById('finished-view').classList.remove('hidden');
                 return;
             }
+
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
-            setTimeout(() => { currentIndex = (currentIndex + 1) % filteredList.length; updateView(); }, 150);
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % questions.length;
+                updateView();
+            }, 150);
         }
 
         function prevQuestion() {
+            const data = { command: commandQuestions, forbid: forbidQuestions, sent: sentQuestions };
+            const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
-            setTimeout(() => { currentIndex = (currentIndex - 1 + filteredList.length) % filteredList.length; updateView(); }, 150);
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+                updateView();
+            }, 150);
         }
 
-        window.onload = () => switchMode('all');
+        function buttonNext() {
+            if (!isFlipped) flipCard();
+            else nextQuestion();
+        }
+
+        updateView();
     </script>
 </body>
 </html>
-
