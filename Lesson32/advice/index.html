@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 32 Master</title>
+    <title>Japanese Practice: Lesson 32 Master (Expanded)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -25,19 +25,19 @@
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
         <h1 class="text-2xl font-bold italic">L32: Advice & Predictions</h1>
-        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System &bull; 51 Questions</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-advice" class="flex-1 whitespace-nowrap px-4 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('advice')">
+            <button id="mode-advice" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('advice')">
                 Advice (~hou ga ii)
             </button>
-            <button id="mode-prob" class="flex-1 whitespace-nowrap px-4 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('prob')">
+            <button id="mode-prob" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('prob')">
                 Probable (~deshou)
             </button>
-            <button id="mode-poss" class="flex-1 whitespace-nowrap px-4 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('poss')">
+            <button id="mode-poss" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('poss')">
                 Possible (~kamo)
             </button>
         </div>
@@ -45,7 +45,7 @@
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                Give advice or predict...
+                Translate or predict...
             </div>
 
             <!-- Card Container -->
@@ -63,7 +63,7 @@
                         <div id="answer-kanji" class="text-3xl font-black text-amber-900 leading-tight mb-4 px-2"></div>
                         <div id="answer-kana" class="text-xl font-bold text-amber-500 mb-8"></div>
                         
-                        <!-- Manual Audio Button -->
+                        <!-- Audio Button -->
                         <button onclick="event.stopPropagation(); speakJapanese();" class="w-20 h-20 bg-white border-2 border-amber-200 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform mb-6 group">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-500 group-hover:text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
@@ -93,10 +93,10 @@
         <!-- Finished View -->
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
             <div class="text-7xl mb-8">Ottimo!</div>
-            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Lezione 32 completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Hai imparato a dare consigli e fare previsioni.</p>
+            <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Missione compiuta!</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Hai completato tutti i 51 esercizi della lezione 32.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
-                Restart
+                Restart Lesson
             </button>
         </div>
     </main>
@@ -107,29 +107,63 @@
 
     <script>
         const adviceData = [
-            { icon: "🏃‍♂️💤", en: "You should sleep early.", it: "Dovresti dormire presto.", kanji: "早く寝たほうがいいです。", kana: "はやく ねた ほうが いいです。" },
+            { icon: "🛌💤", en: "You should sleep early.", it: "Dovresti dormire presto.", kanji: "早く寝たほうがいいです。", kana: "はやく ねた ほうが いいです。" },
             { icon: "🏋️‍♂️💪", en: "You should exercise every day.", it: "Dovresti fare esercizio ogni giorno.", kanji: "毎日運動したほうがいいです。", kana: "まいにち うんどうした ほうが いいです。" },
             { icon: "🚭🙅‍♂️", en: "You should quit smoking.", it: "Dovresti smettere di fumare.", kanji: "タバコはやめたほうがいいです。", kana: "たばこは やめた ほうが いいです。" },
             { icon: "🥬🥗", en: "You should eat more vegetables.", it: "Dovresti mangiare più verdure.", kanji: "野菜を食べたほうがいいです。", kana: "やさいを たべた ほうが いいです。" },
-            { icon: "🛑😴", en: "You should not push yourself too hard.", it: "Dovresti non sforzarti troppo.", kanji: "無理をしないほうがいいです。", kana: "むりを しない ほうが いいです。" },
-            { icon: "🏥🤒", en: "You should go to the hospital.", it: "Dovresti andare in ospedale.", kanji: "病院へ行ったほうがいいです。", kana: "びょういんへ いった ほうが いいです。" }
+            { icon: "🛑🤯", en: "You should not push yourself too hard.", it: "Dovresti non sforzarti troppo.", kanji: "無理をしないほうがいいです。", kana: "むりを しない ほうが いいです。" },
+            { icon: "🏥🤒", en: "You should go to the hospital.", it: "Dovresti andare in ospedale.", kanji: "病院へ行ったほうがいいです。", kana: "びょういんへ いった ほうが いいです。" },
+            { icon: "💧🥛", en: "You should drink more water.", it: "Dovresti bere più acqua.", kanji: "水をもっと飲んだほうがいいです。", kana: "みずを もっと のんだ ほうが いいです。" },
+            { icon: "☂️🏃", en: "You should bring an umbrella.", it: "Dovresti portare l'ombrello.", kanji: "傘を持っていったほうがいいです。", kana: "かさを もっていった ほうが いいです。" },
+            { icon: "💊🥤", en: "You should take your medicine.", it: "Dovresti prendere la medicina.", kanji: "薬を飲んだほうがいいです。", kana: "くすりを のんだ ほうが いいです。" },
+            { icon: "🧥❄️", en: "You should wear a coat.", it: "Dovresti metterti il cappotto.", kanji: "コートを着たほうがいいです。", kana: "こーとを きた ほうが いいです。" },
+            { icon: "🍺❌", en: "You should not drink alcohol.", it: "Non dovresti bere alcolici.", kanji: "お酒を飲まないほうがいいです。", kana: "おさけを のまない ほうが いいです。" },
+            { icon: "📖💡", en: "You should read the manual.", it: "Dovresti leggere il manuale.", kanji: "説明書を読んだほうがいいです。", kana: "せつめいしょを よんだ ほうが いいです。" },
+            { icon: "👨‍🏫❓", en: "You should ask the teacher.", it: "Dovresti chiedere al professore.", kanji: "先生に聞いたほうがいいです。", kana: "せんせいに きいた ほうが いいです。" },
+            { icon: "✍️📚", en: "You should study hard.", it: "Dovresti studiare sodo.", kanji: "一生懸命勉強したほうがいいです。", kana: "いっしょうけんめい べんきょうした ほうが いいです。" },
+            { icon: "🦷✨", en: "You should brush your teeth.", it: "Dovresti lavarti i denti.", kanji: "歯を磨いたほうがいいです。", kana: "はを みがいた ほうが いいです。" },
+            { icon: "🧼🖐️", en: "You should wash your hands.", it: "Dovresti lavarti le mani.", kanji: "手を洗ったほうがいいです。", kana: "てを あらった ほうが いいです。" },
+            { icon: "🕙❌", en: "You should not be late.", it: "Dovresti non arrivare in ritardo.", kanji: "遅れないほうがいいです。", kana: "おくれない ほうが いいです。" }
         ];
 
         const probData = [
             { icon: "☁️☔", en: "It will probably rain tomorrow.", it: "Domani probabilmente pioverà.", kanji: "明日は雨が降るでしょう。", kana: "あしたは あめが ふるでしょう。" },
             { icon: "🐢🕒", en: "He will probably be late.", it: "Lui probabilmente sarà in ritardo.", kanji: "彼は遅れるでしょう。", kana: "かれは おくれるでしょう。" },
-            { icon: "🇯🇵💴", en: "Prices in Japan will probably be high.", it: "I prezzi in Giappone saranno probabilmente alti.", kanji: "日本は物価が高いでしょう。", kana: "にほんは ぶっかが たかいでしょう。" },
+            { icon: "💴📈", en: "Prices in Japan will probably be high.", it: "I prezzi in Giappone saranno probabilmente alti.", kanji: "日本は物価が高いでしょう。", kana: "にほんは ぶっかが たかいでしょう。" },
             { icon: "🧩🤯", en: "The exam will probably be difficult.", it: "L'esame sarà probabilmente difficile.", kanji: "試験は難しいでしょう。", kana: "しけんは むずかしいでしょう。" },
             { icon: "🌞✨", en: "It will probably clear up in the afternoon.", it: "Probabilmente il tempo migliorerà nel pomeriggio.", kanji: "午後は晴れるでしょう。", kana: "ごごは はれるでしょう。" },
-            { icon: "🚄💨", en: "The train will probably arrive soon.", it: "Ilトレインはすぐ来るでしょう。", kana: "でんしゃは すぐ くるでしょう。" }
+            { icon: "🚄💨", en: "The train will probably arrive soon.", it: "Il treno probabilmente arriverà tra poco.", kanji: "電車はすぐ来るでしょう。", kana: "でんしゃは すぐ くるでしょう。" },
+            { icon: "❄️🏙️", en: "It will probably snow in Hokkaido.", it: "Probabilmente nevicherà in Hokkaido.", kanji: "北海道は雪が降るでしょう。", kana: "ほっかいどうは ゆきが ふるでしょう。" },
+            { icon: "🏠🏠", en: "The teacher will probably be at home.", it: "Il professore probabilmente sarà a casa.", kanji: "先生はうちにいるでしょう。", kana: "せんせいは うちに いるでしょう。" },
+            { icon: "🏢🕙", en: "The meeting will probably start soon.", it: "La riunione probabilmente inizierà presto.", kanji: "会議はすぐ始まるでしょう。", kana: "かいぎは すぐ はじまるでしょう。" },
+            { icon: "🛑🏬", en: "The shop will probably be closed.", it: "Il negozio probabilmente sarà chiuso.", kanji: "店は閉まっているでしょう。", kana: "みせは しまっている でしょう。" },
+            { icon: "📄✅", en: "The results will probably come out tomorrow.", it: "I risultati usciranno probabilmente domani.", kanji: "結果は明日出るでしょう。", kana: "けっかは あした でるでしょう。" },
+            { icon: "🎮✨", en: "The game will probably be interesting.", it: "Il gioco sarà probabilmente interessante.", kanji: "ゲームは面白いでしょう。", kana: "げーむは おもしろいでしょう。" },
+            { icon: "🏆🏅", en: "He will probably win the match.", it: "Probabilmente vincerà la partita.", kanji: "彼は試合に勝つでしょう。", kana: "かれは しあいに かつでしょう。" },
+            { icon: "💻💴", en: "The computer will probably be expensive.", it: "Il computer probabilmente sarà costoso.", kanji: "パソコンは高いでしょう。", kana: "ぱそこんは たかいでしょう。" },
+            { icon: "🏘️🤫", en: "The town will probably be quiet.", it: "La città probabilmente sarà tranquilla.", kanji: "町は静かでしょう。", kana: "まちは しずかでしょう。" },
+            { icon: "🍛🔥", en: "The food will probably be spicy.", it: "Il cibo sarà probabilmente piccante.", kanji: "料理は辛いでしょう。", kana: "りょうりは からいでしょう。" },
+            { icon: "🌧️❌", en: "The weather will probably be bad.", it: "Il tempo sarà probabilmente brutto.", kanji: "天気は悪いでしょう。", kana: "てんきは わるいでしょう。" }
         ];
 
         const possData = [
             { icon: "🏃‍♂️❌", en: "We might not make it in time.", it: "Potremmo non fare in tempo.", kanji: "間に合わないかもしれません。", kana: "まにあわない かもしれません。" },
             { icon: "🌨️❄️", en: "It might snow tonight.", it: "Potrebbe nevicare stasera.", kanji: "今夜は雪が降るかもしれません。", kana: "こんやは ゆきが ふる かもしれません。" },
-            { icon: "🛠️🧩", en: "It might be broken.", it: "Potrebbe essere rotto.", kanji: "壊れているかもしれません。", kana: "こわれている かもしれません。" },
-            { icon: "👔💼", en: "They might be busy now.", it: "Potrebbero essere occupati ora.", kanji: "今は忙しいかもしれません。", kana: "いまは いそがしい かもしれません。" },
-            { icon: "💡❓", en: "It might be true.", it: "Potrebbe essere vero.", kanji: "本当かもしれません。", kana: "ほんとう かもしれません。" }
+            { icon: "🧩🛠️", en: "It might be broken.", it: "Potrebbe essere rotto.", kanji: "壊れているかもしれません。", kana: "こわれている かもしれません。" },
+            { icon: "💼👔", en: "They might be busy now.", it: "Potrebbero essere occupati ora.", kanji: "今は忙しいかもしれません。", kana: "いまは いそがしい かもしれません。" },
+            { icon: "💡❓", en: "It might be true.", it: "Potrebbe essere vero.", kanji: "本当かもしれません。", kana: "ほんとう かもしれません。" },
+            { icon: "🤒💊", en: "He might be sick.", it: "Lui potrebbe essere malato.", kanji: "病気かもしれません。", kana: "びょうき かもしれません。" },
+            { icon: "🎒❌", en: "I might have forgotten something.", it: "Potrei aver dimenticato qualcosa.", kanji: "忘れ物をしたかもしれません。", kana: "わすれものを した かもしれません。" },
+            { icon: "❌🚶", en: "He might not come tomorrow.", it: "Potrebbe non venire domani.", kanji: "明日は来ないかもしれません。", kana: "あしたは こない かもしれません。" },
+            { icon: "🔑❌", en: "I might have lost the keys.", it: "Potrei aver perso le chiavi.", kanji: "鍵をなくしたかもしれません。", kana: "かぎを なくした かもしれません。" },
+            { icon: "⚠️🧨", en: "It might be dangerous.", it: "Potrebbe essere pericoloso.", kanji: "危険かもしれません。", kana: "きけん かもしれません。" },
+            { icon: "🍱🤢", en: "He might not like it.", it: "Potrebbe non piacergli.", kanji: "好きじゃないかもしれません。", kana: "すきじゃない かもしれません。" },
+            { icon: "❌📝", en: "I might have made a mistake.", it: "Potrei aver fatto un errore.", kanji: "間違えたかもしれません。", kana: "まちがえた かもしれません。" },
+            { icon: "🤫💬", en: "It might be a secret.", it: "Potrebbe essere un segreto.", kanji: "秘密かもしれません。", kana: "ひみつ かもしれません。" },
+            { icon: "🌧️🌪️", en: "It might rain heavily.", it: "Potrebbe piovere forte.", kanji: "ひどい雨になるかもしれません。", kana: "ひどい あめに なる かもしれません。" },
+            { icon: "📉🌳", en: "The tree might fall down.", it: "L'albero potrebbe cadere.", kanji: "木が倒れるかもしれません。", kana: "きが たおれる かもしれません。" },
+            { icon: "🏆❌", en: "We might lose the game.", it: "Potremmo perdere la partita.", kanji: "試合に負けるかもしれません。", kana: "しあいに まける かもしれません。" },
+            { icon: "👨‍🏫🎓", en: "He might be a teacher.", it: "Potrebbe essere un insegnante.", kanji: "先生かもしれません。", kana: "せんせい かもしれません。" }
         ];
 
         let currentMode = 'advice';
