@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,7 +7,7 @@
     <title>MikaT 日本語練習ポータル</title>
     <style>
         body { 
-            font-family: sans-serif; 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
             background: #f0f4f8; 
             display: flex; 
             align-items: center; 
@@ -23,7 +24,7 @@
             max-width: 500px; 
             width: 90%; 
         }
-        h1 { color: #4A90E2; margin-bottom: 10px; }
+        h1 { color: #2D3748; margin-bottom: 10px; font-size: 1.8rem; }
         p { color: #666; margin-bottom: 30px; font-weight: bold; }
         .choice-btn { 
             display: block; 
@@ -36,8 +37,11 @@
             transition: 0.3s; 
             font-size: 1.3rem; 
         }
-        .btn-blue { background: #4A90E2; }
-        .btn-purple { background: #6366f1; }
+        /* 初級I：赤色 */
+        .btn-red { background: #EF4444; }
+        /* 初級II：青色 */
+        .btn-blue { background: #3B82F6; }
+        
         .choice-btn:hover { 
             transform: translateY(-5px); 
             opacity: 0.9; 
@@ -47,9 +51,10 @@
             font-size: 0.8rem; 
             margin-top: 5px; 
             opacity: 0.8; 
+            font-weight: normal;
         }
-        .btn-blue:hover { box-shadow: 0 10px 20px rgba(74, 144, 226, 0.3); }
-        .btn-purple:hover { box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .btn-red:hover { box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
+        .btn-blue:hover { box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
     </style>
 </head>
 <body>
@@ -58,12 +63,12 @@
     <h1>MikaT Online Practice</h1>
     <p>どのコースを勉強しますか？<br>Which book are you studying?</p>
     
-    <a href="shokyu1.html" class="choice-btn btn-blue">
+    <a href="shokyu1.html" class="choice-btn btn-red">
         📘 初級 I
         <small>Lesson 1 - Lesson 25</small>
     </a>
     
-    <a href="shokyu2.html" class="choice-btn btn-purple">
+    <a href="shokyu2.html" class="choice-btn btn-blue">
         🔮 初級 II
         <small>Lesson 26 - Lesson 50</small>
     </a>
@@ -71,3 +76,5 @@
 
 </body>
 </html>
+
+```
