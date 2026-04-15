@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 43 Master</title>
+    <title>Japanese Practice: Lesson 44 Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -24,28 +24,28 @@
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L43: Looks like... & Go and Come</h1>
-        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+        <h1 class="text-2xl font-bold italic">L44: Degrees & Adjustments</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-appear" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('appear')">
-                Appearance
+            <button id="mode-over" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('over')">
+                Overdoing
             </button>
-            <button id="mode-anti" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('anti')">
-                Anticipation
+            <button id="mode-ease" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('ease')">
+                Easy & Hard
             </button>
-            <button id="mode-go" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('go')">
-                Go & Come back
+            <button id="mode-adj" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('adj')">
+                Adjustments
             </button>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                It looks like...
+                Translate the sentence...
             </div>
 
             <!-- Card Container -->
@@ -56,7 +56,7 @@
                         <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
                             <!-- Injected by JS -->
                         </div>
-                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
                     </div>
                     <!-- Back -->
                     <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
@@ -94,7 +94,7 @@
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
             <div class="text-7xl mb-8">Finished‼️</div>
             <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 43 Mastery Complete.</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 44 Mastery Complete.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
                 Restart
             </button>
@@ -106,70 +106,70 @@
     </footer>
 
     <script>
-        // Mode 1: Appearance (Adj ~sou desu)
-        const appearData = [
-            { icon: "🍰😋", en: "This cake looks delicious.", it: "Questa torta sembra deliziosa.", kanji: "このケーキはおいしそうです。", kana: "この けーきは おいしそうです。" },
-            { icon: "🧥❄️", en: "He looks cold.", it: "Lui sembra avere freddo.", kanji: "彼は寒そうです。", kana: "かれは さむそうです。" },
-            { icon: "🍀😊", en: "She looks happy.", it: "Lei sembra felice.", kanji: "彼女は幸せそうです。", kana: "かのじょは しあわせそうです。" },
-            { icon: "📱✨", en: "This smartphone looks convenient.", it: "Questo smartphone sembra comodo/conveniente.", kanji: "このスマホは便利そうです。", kana: "この すまほは べんりそうです。" },
-            { icon: "🧱💪", en: "This table looks sturdy.", it: "Questo tavolo sembra robusto.", kanji: "このテーブルは丈夫そうです。", kana: "この てーぶるは じょうぶそうです。" },
-            { icon: "🧩😵", en: "That task looks difficult.", it: "Quel compito sembra difficile.", kanji: "その仕事は大変そうです。", kana: "その しごとは たいへんそうです。" },
-            { icon: "📖💡", en: "This book looks interesting.", it: "Questo libro sembra interessante.", kanji: "この本は面白そうです。", kana: "この ほんは おもしろそうです。" },
-            { icon: "🤒💊", en: "He looks unwell.", it: "Lui non sembra stare bene.", kanji: "彼は気分が悪そうです。", kana: "かれは きぶんが わるそうです。" },
-            { icon: "👜🎒", en: "That luggage looks heavy.", it: "Quel bagaglio sembra pesante.", kanji: "その荷物は重そうです。", kana: "その にもつは おもそうです。" },
-            { icon: "🏢🏙️", en: "This building looks new.", it: "Questo edificio sembra nuovo.", kanji: "このビルは新しそうです。", kana: "この びるは あたらしそうです。" },
-            { icon: "👔🤵", en: "He looks smart/cool.", it: "Lui sembra elegante/figo.", kanji: "彼は頭がよさそうです。", kana: "かれは あたまが よさそうです。" },
-            { icon: "🥗🥦", en: "This salad looks healthy.", it: "Questa insalata sembra salutare.", kanji: "このサラダは体によさそうです。", kana: "この さらだは からだに よさそうです。" },
-            { icon: "🍜🔥", en: "This ramen looks spicy.", it: "Questo ramen sembra piccante.", kanji: "このラーメンは辛そうです。", kana: "この らーめんは からそうです。" },
-            { icon: "🧸🎀", en: "That toy looks cute.", it: "Quel giocattolo sembra carino.", kanji: "そのおもちゃは可愛らしそうです。", kana: "その おもちゃは かわいらしそうです。" },
-            { icon: "☁️🌬️", en: "The weather looks like it will become bad.", it: "Il tempo sembra che peggiorerà.", kanji: "天気が悪くなりそうです。", kana: "てんきが わるく なりそうです。" },
-            { icon: "🧗‍♂️🏔️", en: "Mountain climbing looks tough.", it: "Scalare le montagne sembra faticoso.", kanji: "山登りはきつそうです。", kana: "やまのぼりは きつそうです。" },
-            { icon: "☕🥛", en: "This coffee looks sweet.", it: "Questo caffè sembra dolce.", kanji: "このコーヒーは甘そうです。", kana: "この こーひーは あまそうです。" }
+        // Mode 1: Overdoing (~sugimasu)
+        const overData = [
+            { icon: "🍰🤢", en: "I ate too much cake.", it: "Ho mangiato troppa torta.", kanji: "ケーキを食べすぎました。", kana: "けーきを たべすぎました。" },
+            { icon: "🍷🥴", en: "I drank too much wine.", it: "Ho bevuto troppo vino.", kanji: "ワインを飲みすぎました。", kana: "わいんを のみすぎました。" },
+            { icon: "🛌💤", en: "I slept too much.", it: "Ho dormito troppo.", kanji: "寝すぎました。", kana: "ねすぎました。" },
+            { icon: "🚶‍♂️💦", en: "I walked too much.", it: "Ho camminato troppo.", kanji: "歩きすぎました。", kana: "あるきすぎました。" },
+            { icon: "👗🛒", en: "I bought too many clothes.", it: "Ho comprato troppi vestiti.", kanji: "服を買いすぎました。", kana: "ふくを かいすぎました。" },
+            { icon: "☕🔥", en: "This tea is too hot.", it: "Questo tè è troppo caldo.", kanji: "このお茶は熱すぎます。", kana: "この おちゃは あつすぎます。" },
+            { icon: "🧩🤯", en: "This problem is too difficult.", it: "Questo problema è troppo difficile.", kanji: "この問題は難しすぎます。", kana: "この もんだいは むずかしすぎます。" },
+            { icon: "💼😫", en: "Working too much is bad for the body.", it: "Lavorare troppo fa male al corpo.", kanji: "働きすぎるのは体に悪いです。", kana: "はたらきすぎるのは からだに わるいです。" },
+            { icon: "😂💥", en: "I laughed too much.", it: "Ho riso troppo.", kanji: "笑いすぎました。", kana: "わらいすぎました。" },
+            { icon: "😢🌊", en: "I cried too much.", it: "Ho pianto troppo.", kanji: "泣きすぎました。", kana: "なきすぎました。" },
+            { icon: "🏗️🏢", en: "This building is too high.", it: "Questo edificio è troppo alto.", kanji: "このビルは高すぎます。", kana: "この びるは たかすぎます。" },
+            { icon: "💻👀", en: "I used the computer too much.", it: "Ho usato troppo il computer.", kanji: "パソコンを使いすぎました。", kana: "ぱそこんを つかいすぎました。" },
+            { icon: "📢🎧", en: "The music is too loud.", it: "La musica è troppo forte.", kanji: "音楽が大きすぎます。", kana: "おんがくが おおきすぎます。" },
+            { icon: "🗣️🕰️", en: "I talked too much.", it: "Ho parlato troppo.", kanji: "話しすぎました。", kana: "はなしすぎました。" },
+            { icon: "🏃‍♂️🔥", en: "I ran too much.", it: "Ho corso troppo.", kanji: "走りすぎました。", kana: "はしりすぎました。" },
+            { icon: "🍬🦷", en: "I put in too much sugar.", it: "Ho messo troppo zucchero.", kanji: "砂糖を入れすぎました。", kana: "さとうを いれすぎました。" },
+            { icon: "📱😵", en: "I looked at the phone too much.", it: "Ho guardato troppo il telefono.", kanji: "スマホを見すぎました。", kana: "すまほを みすぎました。" }
         ];
 
-        // Mode 2: Anticipation (Verb ~sou desu)
-        const antiData = [
-            { icon: "☁️☔", en: "It looks like it will start raining.", it: "Sembra che inizierà a piovere.", kanji: "雨が降りそうです。", kana: "あめが ふりそうです。" },
-            { icon: "🧶✂️", en: "The string looks like it will break.", it: "Lo spago sembra che stia per rompersi.", kanji: "紐が切れそうです。", kana: "ひもが きれそうです。" },
-            { icon: "🔘❌", en: "The button looks like it will come off.", it: "Il bottone sembra che stia per staccarsi.", kanji: "ボタンが取れそうです。", kana: "ぼたんが とれそうです。" },
-            { icon: "📦📉", en: "The luggage looks like it will fall.", it: "Il bagaglio sembra che stia per cadere.", kanji: "荷物が落ちそうです。", kana: "にもつが おちそうです。" },
-            { icon: "⛽❌", en: "The gasoline looks like it will run out.", it: "Sembra che la benzina stia per finire.", kanji: "ガソリンがなくなりそうです。", kana: "がそりんが なくなりそうです。" },
-            { icon: "🌲📉", en: "The tree looks like it will fall down.", it: "L'albero sembra che stia per cadere.", kanji: "木が倒れそうです。", kana: "きが たおれそうです。" },
-            { icon: "🔥💨", en: "The fire looks like it will go out.", it: "Il fuoco sembra che stia per spegnersi.", kanji: "火が消えそうです。", kana: "ひが きえそうです。" },
-            { icon: "🌞🌡️", en: "The price looks like it will rise.", it: "Sembra che il prezzo salirà.", kanji: "値段が上がりそうです。", kana: "ねだんが あがりそうです。" },
-            { icon: "❄️📉", en: "The temperature looks like it will fall.", it: "Sembra che la temperatura scenderà.", kanji: "気温が下がりそうです。", kana: "きおんが さがりそうです。" },
-            { icon: "👜💔", en: "The bag looks like it will break.", it: "La borsa sembra che stia per rompersi.", kanji: "バッグが壊れそうです。", kana: "ばっぐが こわれそうです。" },
-            { icon: "🌸✨", en: "The cherry blossoms look like they will bloom.", it: "Sembra che i ciliegi stiano per fiorire.", kanji: "桜が咲きそうです。", kana: "さくらが さきそうです。" },
-            { icon: "🌞☁️", en: "The sky looks like it will clear up.", it: "Sembra che il cielo si rasserenerà.", kanji: "空が晴れそうです。", kana: "そらが はれそうです。" },
-            { icon: "🌊🚤", en: "The boat looks like it will sink.", it: "La barca sembra che stia per affondare.", kanji: "船が沈みそうです。", kana: "ふねが しずみそうです。" },
-            { icon: "🏗️🏢", en: "The building looks like it's completed.", it: "L'edificio sembra quasi completato.", kanji: "ビルができそうです。", kana: "びるが できそうです。" },
-            { icon: "🚶💨", en: "It looks like I'll be late for the meeting.", it: "Sembra che farò tardi alla riunione.", kanji: "会議に遅れそうです。", kana: "かいぎに おくれそうです。" },
-            { icon: "🚄💨", en: "It looks like I'll miss the Shinkansen.", it: "Sembra che perderò lo Shinkansen.", kanji: "新幹線に乗り遅れそうです。", kana: "しんかんせんに のりおくれそうです。" },
-            { icon: "🥂✨", en: "The party looks like it's starting.", it: "Sembra che la festa stia per iniziare.", kanji: "パーティーが始まりそうです。", kana: "ぱーてぃーが はじまりそうです。" }
+        // Mode 2: Easy & Hard (~yasui / ~nikui)
+        const easeData = [
+            { icon: "🖋️✨", en: "This pen is easy to write with.", it: "Questa penna è facile da scrivere.", kanji: "このペンは書きやすいです。", kana: "この ぺんは かきやすいです。" },
+            { icon: "💊🥤", en: "This medicine is easy to drink.", it: "Questa medicina è facile da bere.", kanji: "この薬は飲みやすいです。", kana: "この くすりは のみやすいです。" },
+            { icon: "🚶‍♂️🚧", en: "This road is hard to walk on.", it: "Questa strada è difficile da camminare.", kanji: "この道は歩きにくいです。", kana: "この みちは あるきにくいです。" },
+            { icon: "📱🧩", en: "This smartphone is hard to use.", it: "Questo smartphone è difficile da usare.", kanji: "このスマホは使いにくいです。", kana: "この すまほは つかいにくいです。" },
+            { icon: "👗🧼", en: "White clothes get dirty easily.", it: "I vestiti bianchi si sporcano facilmente.", kanji: "白い服は汚れやすいです。", kana: "しろい ふくは よごれやすいです。" },
+            { icon: "🥛💪", en: "This glass is hard to break.", it: "Questo bicchiere è difficile da rompere.", kanji: "このコップは壊れにくいです。", kana: "この こっぷは こわれにくいです。" },
+            { icon: "🚉🔍", en: "The station is easy to find.", it: "La stazione è facile da trovare.", kanji: "駅は見つかりやすいです。", kana: "えきは みつかりやすいです。" },
+            { icon: "🏠✨", en: "This town is easy to live in.", it: "Questa città è facile da vivere.", kanji: "この町は住みやすいです。", kana: "この まちは すみやすいです。" },
+            { icon: "📖🧩", en: "This book is hard to read.", it: "Questo libro è difficile da leggere.", kanji: "この本は読みにくいです。", kana: "この ほんは よみにくいです。" },
+            { icon: "🥩🦷", en: "This meat is hard to eat.", it: "Questa carne è difficile da mangiare.", kanji: "この肉は食べにくいです。", kana: "この にくは たべにくいです。" },
+            { icon: "👜✨", en: "This bag is easy to carry.", it: "Questa borsa è facile da trasportare.", kanji: "このバッグは運びやすいです。", kana: "この ばっぐは はこびやすいです。" },
+            { icon: "🚪🔒", en: "This window is hard to open.", it: "Questa finestra è difficile da aprire.", kanji: "この窓は開きにくいです。", kana: "この まどは あきにくいです。" },
+            { icon: "👤💭", en: "This name is easy to remember.", it: "Questo nome è facile da ricordare.", kanji: "この名前は覚えやすいです。", kana: "この なまえは おぼえやすいです。" },
+            { icon: "✍️😵", en: "This letter is hard to read.", it: "Questa lettera è difficile da leggere.", kanji: "この字は読みにくいです。", kana: "この じは よみにくいです。" },
+            { icon: "💻🎒", en: "This computer is easy to carry.", it: "Questo computer è facile da trasportare.", kanji: "このパソコンは運びやすいです。", kana: "この ぱそこんは はこびやすいです。" },
+            { icon: "🌧️👗", en: "Rainy days get wet easily.", it: "Nei giorni di pioggia ci si bagna facilmente.", kanji: "雨の日は濡れやすいです。", kana: "あめの ひは ぬれやすいです。" },
+            { icon: "👟😖", en: "New shoes are hard to walk in.", it: "Le scarpe nuove sono difficili da camminare.", kanji: "新しい靴は歩きにくいです。", kana: "あたらしい くつは あるきにくいです。" }
         ];
 
-        // Mode 3: Go & Come back (~te kimasu)
-        const goData = [
-            { icon: "🍞🛒", en: "I'll go and buy some bread.", it: "Vado a comprare del pane (e torno).", kanji: "パンを買ってきます。", kana: "ぱんを かって きます。" },
-            { icon: "📩🏃", en: "I'll go and get the mail.", it: "Vado a prendere la posta.", kanji: "手紙を取ってきます。", kana: "てがみを とって きます。" },
-            { icon: "🧼🖐️", en: "I'll go and wash my hands.", it: "Vado a lavarmi le mani.", kanji: "手を洗ってきます。", kana: "てを あらって きます。" },
-            { icon: "📞🤝", en: "I'll go and make a phone call.", it: "Vado a fare una telefonata.", kanji: "電話をかけてきます。", kana: "でんわを かけて きます。" },
-            { icon: "🥤🛒", en: "I'll go and buy some juice.", it: "Vado a comprare un succo.", kanji: "ジュースを買ってきます。", kana: "じゅーすを かって きます。" },
-            { icon: "👨‍🏫❓", en: "I'll go and ask the teacher.", it: "Vado a chiedere al professore.", kanji: "先生に聞いてきます。", kana: "せんせいに きいて きます。" },
-            { icon: "🔑🏃", en: "I'll go and get the keys.", it: "Vado a prendere le chiavi.", kanji: "鍵を持ってきます。", kana: "かぎを もって きます。" },
-            { icon: "🚬🧥", en: "I'll go and have a smoke.", it: "Vado a fumare.", kanji: "たばこを吸ってきます。", kana: "たばこを すって きます。" },
-            { icon: "🧴🛀", en: "I'll go and take a shower.", it: "Vado a fare la doccia.", kanji: "シャワーを浴びてきます。", kana: "しゃわーを あびて きます。" },
-            { icon: "🧥🚪", en: "I'll go and put on my coat.", it: "Vado a mettermi il cappotto.", kanji: "コートを着てきます。", kana: "こーとを きて きます。" },
-            { icon: "🚰💧", en: "I'll go and drink some water.", it: "Vado a bere un po' d'acqua.", kanji: "水を飲んできます。", kana: "みずを のんで きます。" },
-            { icon: "🚉🚶", en: "I'll go and see off my friend at the station.", it: "Vado ad accompagnare il mio amico in stazione.", kanji: "友達を駅まで送ってきます。", kana: "ともだちを えきまで おくって きます。" },
-            { icon: "📸🌳", en: "I'll go and take a photo.", it: "Vado a scattare una foto.", kanji: "写真を撮ってきます。", kana: "しゃしんを とって きます。" },
-            { icon: "🛒🥚", en: "I'll go and buy eggs.", it: "Vado a comprare le uova.", kanji: "卵を買ってきます。", kana: "たまごを かって きます。" },
-            { icon: "👔🏠", en: "I'll go and change my clothes.", it: "Vado a cambiarmi i vestiti.", kanji: "服を着替えてきます。", kana: "ふくを きがえて きます。" },
-            { icon: "🚶🌳", en: "I'll go and take a little walk.", it: "Vado a fare una passeggiata.", kanji: "ちょっと散歩してきます。", kana: "ちょっと さんぽ して きます。" },
-            { icon: "🚉🛤️", en: "I'll go and check the time.", it: "Vado a controllare l'orario.", kanji: "時間を確かめてきます。", kana: "じかんを たしかめて きます。" }
+        // Mode 3: Adjustments (~shimasu)
+        const adjData = [
+            { icon: "☕🍬", en: "I'll make the tea sweet.", it: "Farò il tè dolce.", kanji: "お茶を甘くします。", kana: "おちゃを あまく します。" },
+            { icon: "🏠✨", en: "I'll make the room clean.", it: "Farò pulita la stanza.", kanji: "部屋をきれいにします。", kana: "へやを きれいに します。" },
+            { icon: "📢🆙", en: "Please make your voice louder.", it: "Per favore alza la voce.", kanji: "声を大きくしてください。", kana: "こえを おおきく して ください。" },
+            { icon: "📺⬇️", en: "Please make the TV quieter.", it: "Per favore abbassa la TV.", kanji: "テレビを静かにしてください。", kana: "てれびを しずかに して ください。" },
+            { icon: "✂️💇", en: "Please make my hair short.", it: "Per favore fammi i capelli corti.", kanji: "髪を短くしてください。", kana: "かみを みじかく して ください。" },
+            { icon: "🧂📉", en: "I'll make the salt less.", it: "Metterò meno sale.", kanji: "塩を少なくします。", kana: "しおを すくなく します。" },
+            { icon: "📖1/2", en: "Please make the homework half.", it: "Per favore fammi metà dei compiti.", kanji: "宿題を半分にしてください。", kana: "しゅくだいを はんぶんに して ください。" },
+            { icon: "🕙🤝", en: "I'll make the meeting time 10:00.", it: "Sceglierò le 10:00 per la riunione.", kanji: "会議の時間を１０時にします。", kana: "かいぎの じかんを じゅうじに します。" },
+            { icon: "🏨🛌", en: "I'll make the hotel a single room.", it: "Sceglierò una camera singola in hotel.", kanji: "ホテルをシングルにします。", kana: "ほてるを しんぐるに します。" },
+            { icon: "🍱🇯🇵", en: "I'll make the dinner a Japanese dish.", it: "Sceglierò un piatto giapponese per cena.", kanji: "晩ご飯を和食にします。", kana: "ばんごはんを わしょくに します。" },
+            { icon: "💡🆙", en: "Please make the light bright.", it: "Per favore fai la luce luminosa.", kanji: "電気を明るくしてください。", kana: "でんきを あかるく して ください。" },
+            { icon: "💴📉", en: "Please make the price cheaper.", it: "Per favore fammi il prezzo più basso.", kanji: "値段を安くしてください。", kana: "ねだんを やすく して ください。" },
+            { icon: "👜📉", en: "I'll make the bag lighter.", it: "Renderò la borsa più leggera.", kanji: "バッグを軽くします。", kana: "ばっぐを かるく します。" },
+            { icon: "🚰❄️", en: "I'll make the water cold.", it: "Farò l'acqua fredda.", kanji: "水を冷たくします。", kana: "みずを つめたく します。" },
+            { icon: "✅✨", en: "Please make the answer correct.", it: "Per favore rendi corretta la risposta.", kanji: "答えを正しくしてください。", kana: "こたえを ただしく して ください。" },
+            { icon: "📸✨", en: "Please make the photo beautiful.", it: "Per favore fai bella la foto.", kanji: "写真をきれいにしてください。", kana: "しゃしんを きれいに して ください。" },
+            { icon: "🤝📉", en: "I'll make the meeting shorter.", it: "Renderò la riunione più corta.", kanji: "会議を短くします。", kana: "かいぎを みじかく します。" }
         ];
 
-        let currentMode = 'appear';
+        let currentMode = 'over';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -181,7 +181,7 @@
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
             
-            const modes = ['appear', 'anti', 'go'];
+            const modes = ['over', 'ease', 'adj'];
             modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
                 if(m === mode) {
@@ -194,15 +194,15 @@
             });
 
             const instr = document.getElementById('instruction');
-            if(mode === 'appear') instr.innerText = "Appearance (~sou): Judging by sight (Adj)";
-            else if(mode === 'anti') instr.innerText = "Anticipation (~sou): Predicting an event (Verb)";
-            else instr.innerText = "Go & Come back (~te kimasu): Go do something and return";
+            if(mode === 'over') instr.innerText = "Overdoing (~sugimasu): Too much / Excessive";
+            else if(mode === 'ease') instr.innerText = "Easy & Hard (~yasui / ~nikui): Degree of difficulty";
+            else instr.innerText = "Adjustments (~shimasu): Making a change or decision";
             
             updateView();
         }
 
         function updateView() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { over: overData, ease: easeData, adj: adjData };
             const questions = data[currentMode];
             const q = questions[currentIndex];
             const promptContent = document.getElementById('prompt-content');
@@ -234,7 +234,7 @@
         }
 
         function speakJapanese() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { over: overData, ease: easeData, adj: adjData };
             const text = data[currentMode][currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
@@ -243,7 +243,7 @@
         }
 
         function nextQuestion() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { over: overData, ease: easeData, adj: adjData };
             const questions = data[currentMode];
             
             if (isFlipped && currentIndex === questions.length - 1) {
@@ -261,7 +261,7 @@
         }
 
         function prevQuestion() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { over: overData, ease: easeData, adj: adjData };
             const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
