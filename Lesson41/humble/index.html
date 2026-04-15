@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 40 Master</title>
+    <title>Japanese Practice: Lesson 41 Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -24,28 +24,28 @@
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L40: Embedded Questions</h1>
-        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+        <h1 class="text-2xl font-bold italic">L41: Giving & Receiving</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-embed" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('embed')">
-                Embedded Q
+            <button id="mode-give" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('give')">
+                Giving Actions
             </button>
-            <button id="mode-whether" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('whether')">
-                Whether or Not
+            <button id="mode-receive" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('receive')">
+                Receiving Actions
             </button>
-            <button id="mode-try" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('try')">
-                Try Doing
+            <button id="mode-superior" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('superior')">
+                From Superiors
             </button>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                Combine the sentences...
+                Translate into Japanese (Focus on the relation)
             </div>
 
             <!-- Card Container -->
@@ -94,7 +94,7 @@
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
             <div class="text-7xl mb-8">Finished‼️</div>
             <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 40 Mastery Complete.</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 41 Mastery Complete.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
                 Restart
             </button>
@@ -106,70 +106,70 @@
     </footer>
 
     <script>
-        // Mode 1: Embedded Question (Interrogative + ka)
-        const embedData = [
-            { icon: "🛫❓", en: "Please tell me when the plane departs.", it: "Per favore mi dica quando parte l'aereo.", kanji: "飛行機がいつ出発するか教えてください。", kana: "ひこうきが いつ しゅっぱつするか おしえて ください。" },
-            { icon: "❓🎁", en: "I'll check what is inside the box.", it: "Controllerò cosa c'è dentro la scatola.", kanji: "箱の中に何があるか確かめます。", kana: "はこのなかに なにが あるか たしかめます。" },
-            { icon: "💰❓", en: "I don't know how much this costs.", it: "Non so quanto costi questo.", kanji: "これがいくらかわかりません。", kana: "これが いくらか わかりません。" },
-            { icon: "📍❓", en: "Do you know where the station is?", it: "Sa dov'è la stazione?", kanji: "駅がどこにあるか知っていますか。", kana: "えきが どこに あるか しっていますか。" },
-            { icon: "🤝❓", en: "I am counting how many people are coming.", it: "Sto contando quante persone vengono.", kanji: "何人来るか数えています。", kana: "なんにん くるか かぞえています。" },
-            { icon: "🗣️❓", en: "Please tell me what he said.", it: "Per favore mi dica cosa ha detto lui.", kanji: "彼が何と言ったか教えてください。", kana: "かれが なんといったか おしえて ください。" },
-            { icon: "⏰❓", en: "I don't know what time the meeting starts.", it: "Non so a che ora inizi la riunione.", kanji: "会議が何時に始まるか分かりません。", kana: "かいぎが なんじに はじまるか わかりません。" },
-            { icon: "🔧❓", en: "I'll ask how to use this.", it: "Chiederò come si usa questo.", kanji: "どうやって使うか聞きます。", kana: "どうやって つかうか ききます。" },
-            { icon: "🏃‍♂️❓", en: "I'm checking who won the race.", it: "Sto controllando chi ha vinto la gara.", kanji: "だれが優勝したか確かめています。", kana: "だれが ゆうしょうしたか たしかめています。" },
-            { icon: "📏❓", en: "Please measure how long it is.", it: "Per favore misuri quanto è lungo.", kanji: "長さがどれくらいか測ってください。", kana: "ながさが どれくらいか はかって ください。" },
-            { icon: "⚖️❓", en: "Do you know how much this weighs?", it: "Sa quanto pesa questo?", kanji: "重さがいくらか知っていますか。", kana: "おもさが いくらか しっていますか。" },
-            { icon: "🍷❓", en: "He is asking which wine is delicious.", it: "Lui sta chiedendo quale vino sia buono.", kanji: "どのワインがおいしいか聞いています。", kana: "どのわいんが おいしいか きいています。" },
-            { icon: "🤔❓", en: "I'll investigate why he didn't come.", it: "Indagherò perché lui non è venuto.", kanji: "なぜ彼が来なかったか調べます。", kana: "なぜ かれが こなかったか しらべます。" },
-            { icon: "🔑❓", en: "I forgot where I put the keys.", it: "Ho dimenticato dove ho messo le chiavi.", kanji: "鍵をどこに置いたか忘れました。", kana: "かぎを どこに おいたか わすれました。" },
-            { icon: "👟❓", en: "Please check what size this is.", it: "Per favore controlli che taglia sia questa.", kanji: "サイズがいくつか確かめてください。", kana: "さいずが いくつか たしかめて ください。" },
-            { icon: "🏨❓", en: "Tell me which hotel is good.", it: "Mi dica quale hotel sia buono.", kanji: "どのホテルがいいか教えてください。", kana: "どのほてるが いいか おしえて ください。" },
-            { icon: "⏳❓", en: "I'm measuring how long it takes.", it: "Sto misurando quanto tempo ci vuole.", kanji: "どのくらい時間がかかるか測っています。", kana: "どのくらい じかんが かかるか はかっています。" }
+        // Mode 1: Giving Actions (~te agemasu/yarimasu/sashiagemasu)
+        const giveData = [
+            { icon: "🧒🤝", en: "I played with the neighbor's children.", it: "Ho giocato con i bambini del vicino.", kanji: "隣の子どもと遊んであげました。", kana: "となりのこどもと あそんで あげました。" },
+            { icon: "🧒🚲", en: "I repaired my younger brother's bike.", it: "Ho riparato la bici a mio fratello minore.", kanji: "弟の自転車を直してやりました。", kana: "おとうとのじてんしゃを なおして やりました。" },
+            { icon: "🌻💧", en: "I watered the flowers.", it: "Ho dato l'acqua ai fiori.", kanji: "花に水をやってやりました。", kana: "はなにみずを やって やりました。" },
+            { icon: "🐕🚶", en: "I took the dog for a walk.", it: "Ho portato il cane a passeggio.", kanji: "犬を散歩に連れていってやりました。", kana: "いぬを さんぽに つれていって やりました。" },
+            { icon: "👨‍🏫行李", en: "I carried the teacher's luggage.", it: "Ho portato i bagagli al professore (polite).", kanji: "先生の荷物を持って差し上げました。", kana: "せんせいのにもつを もって さしあげました。" },
+            { icon: "🤝🗺️", en: "I drew a map for my friend.", it: "Ho disegnato una mappa per il mio amico.", kanji: "友達に地図を書いてあげました。", kana: "ともだちにちずを かいて あげました。" },
+            { icon: "🧒🍦", en: "I bought ice cream for the child.", it: "Ho comprato un gelato al bambino.", kanji: "子どもにアイスクリームを買ってやりました。", kana: "こどもに あいすくりーむを かって やりました。" },
+            { icon: "👵🛒", en: "I helped my grandmother with shopping.", it: "Ho aiutato mia nonna con la spesa.", kanji: "祖母の買い物を手伝ってあげました。", kana: "そぼのかいものを てつだって あげました。" },
+            { icon: "🧒📖", en: "I read a book to the child.", it: "Ho letto un libro al bambino.", kanji: "子どもに本を読んでやりました。", kana: "こどもにほんを よんで やりました。" },
+            { icon: "🤝🚗", en: "I drove my friend to the station.", it: "Ho portato il mio amico in stazione.", kanji: "友達を駅まで送ってあげました。", kana: "ともだちをえきまで おくって あげました。" },
+            { icon: "🤝🇯🇵", en: "I taught Japanese to my friend.", it: "Ho insegnato il giapponese al mio amico.", kanji: "友達に日本語を教えてあげました。", kana: "ともだちににほんごを おしえて あげました。" },
+            { icon: "🐈💤", en: "I made a bed for the cat.", it: "Ho preparato un letto per il gatto.", kanji: "猫にベッドを作ってやりました。", kana: "ねこにべっどを つくって やりました。" },
+            { icon: "👨‍💼☕", en: "I made coffee for the boss.", it: "Ho preparato il caffè per il capo (polite).", kanji: "部長にコーヒーをいれて差し上げました。", kana: "ぶちょうにこーひーを いれて さしあげました。" },
+            { icon: "🧒🪁", en: "I made a kite for the child.", it: "Ho costruito un aquilone per il bambino.", kanji: "子どもにたこを作ってやりました。", kana: "こどもにたこを つくって やりました。" },
+            { icon: "🤝🛠️", en: "I repaired the computer for my friend.", it: "Ho riparato il computer al mio amico.", kanji: "友達にパソコンを直してあげました。", kana: "ともだちにぱそこんを なおして あげました。" },
+            { icon: "🤝🏙️", en: "I showed my friend around the city.", it: "Ho fatto vedere la città al mio amico.", kanji: "友達に町を案内してあげました。", kana: "ともだちにまちを あんないして あげました。" },
+            { icon: "🐕🚿", en: "I washed the dog.", it: "Ho lavato il cane.", kanji: "犬を洗ってやりました。", kana: "いぬを あらって やりました。" }
         ];
 
-        // Mode 2: Whether or Not (~ka dōka)
-        const whetherData = [
-            { icon: "🚶‍♂️❓", en: "I don't know whether he will come or not.", it: "Non so se lui verrà o no.", kanji: "彼が来るかどうか分かりません。", kana: "かれが くるか どうか わかりません。" },
-            { icon: "✅❓", en: "Please check whether it's correct or not.", it: "Per favore controlli se sia corretto o no.", kanji: "正しいかどうか確かめてください。", kana: "ただしいか どうか たしかめて ください。" },
-            { icon: "👟❓", en: "I'll see whether the size fits or not.", it: "Vedrò se la taglia vada bene o no.", kanji: "サイズが合うかどうか見てみます。", kana: "さいずが あうか どうか みてみます。" },
-            { icon: "❌❓", en: "Please check whether there is a mistake.", it: "Per favore controlli se ci sia un errore.", kanji: "間違いがないかどうか確かめてください。", kana: "まちがいが ないか どうか たしかめて ください。" },
-            { icon: "🤒❓", en: "I don't know whether I have a fever or not.", it: "Non so se ho la febbre o no.", kanji: "熱があるかどうか分かりません。", kana: "ねつが あるか どうか わかりません。" },
-            { icon: "🌧️❓", en: "I'll check whether it's raining or not.", it: "Controllerò se stia piovendo o no.", kanji: "雨が降っているかどうか確かめます。", kana: "あめが ふっているか どうか たしかめます。" },
-            { icon: "🎂❓", en: "I don't know whether she likes cake or not.", it: "Non so se a lei piaccia la torta o no.", kanji: "彼女がケーキが好きかどうか知りません。", kana: "かのじょが けーきが すきか どうか しりません。" },
-            { icon: "🚪❓", en: "I'm checking whether I locked it or not.", it: "Sto controllando se l'ho chiuso a chiave o no.", kanji: "鍵をかけたかどうか確かめています。", kana: "かぎを かけたか どうか たしかめています。" },
-            { icon: "🎓❓", en: "I'm worried whether I can pass or not.", it: "Sono preoccupato se riuscirò a passare o no.", kanji: "合格できるかどうか心配です。", kana: "ごうかくできるか どうか しんぱいです。" },
-            { icon: "📦❓", en: "Check whether the luggage arrived.", it: "Controlla se il bagaglio sia arrivato.", kanji: "荷物が到着したかどうか確かめて。", kana: "にもつが とうちゃくしたか どうか たしかめて。" },
-            { icon: "🍽️❓", en: "I don't know if this food is safe or not.", it: "Non so se questo cibo sia sicuro o no.", kanji: "この食べ物が安全かどうか分かりません。", kana: "このたべものが あんぜんか どうか わかりません。" },
-            { icon: "🤝❓", en: "I'll check if he is free tomorrow.", it: "Controllerò se lui sia libero domani.", kanji: "明日彼が暇かどうか確かめます。", kana: "あした かれが ひまか どうか たしかめます。" },
-            { icon: "🎫❓", en: "I don't know if the ticket is available.", it: "Non so se il biglietto sia disponibile.", kanji: "切符があるかどうか分かりません。", kana: "きっぷが あるか どうか わかりません。" },
-            { icon: "👔❓", en: "Check whether he's wearing a tie.", it: "Controlla se lui porti la cravatta.", kanji: "ネクタイを締めているかどうか見て。", kana: "ねくたいを しめているか どうか みて。" },
-            { icon: "📜❓", en: "I'll see if the story is true.", it: "Vedrò se la storia sia vera.", kanji: "話が本当かどうか見てみます。", kana: "はなしが ほんとうか どうか みてみます。" },
-            { icon: "🚶‍♂️❓", en: "I don't know if he is still there.", it: "Non so se lui sia ancora lì.", kanji: "まだ彼がいるかどうか分かりません。", kana: "まだ かれが いるか どうか わかりません。" },
-            { icon: "🏠❓", en: "Please ask whether he is at home.", it: "Per favore chiedi se lui sia a casa.", kanji: "彼がうちにいるかどうか聞いてください。", kana: "かれが うちに いるか どうか きいて ください。" }
+        // Mode 2: Receiving Actions (~te moraimasu/itadakimasu)
+        const receiveData = [
+            { icon: "👨‍🏫📖", en: "I had the teacher lend me a book.", it: "Mi sono fatto prestare un libro dal professore (polite).", kanji: "先生に本を貸していただきました。", kana: "せんせいにほんを かして いただきました。" },
+            { icon: "👨‍💼📄", en: "I had the boss check my report.", it: "Mi sono fatto controllare il rapporto dal capo (polite).", kanji: "課長にレポートを見ていただきました。", kana: "かちょうにれぽーとを みて いただきました。" },
+            { icon: "🤝🗺️", en: "I had my friend draw a map.", it: "Mi sono fatto disegnare una mappa dal mio amico.", kanji: "友達に地図を書いてもらいました。", kana: "ともだちにちずを かいて もらいました。" },
+            { icon: "👩‍🍳🍱", en: "I had my wife make lunch.", it: "Mi sono fatto preparare il pranzo da mia moglie.", kanji: "妻に昼ご飯を作ってもらいました。", kana: "つまにひるごはんを つくってもらいました。" },
+            { icon: "👨‍💼📸", en: "I had the boss take a photo.", it: "Mi sono fatto scattare una foto dal capo (polite).", kanji: "部長に写真を撮っていただきました。", kana: "ぶちょうにしゃしんを とって いただきました。" },
+            { icon: "🤝🛠️", en: "I had my friend repair my bike.", it: "Mi sono fatto riparare la bici dal mio amico.", kanji: "友達に自転車を直してもらいました。", kana: "ともだちにじてんしゃを なおして もらいました。" },
+            { icon: "👨‍⚕️💊", en: "I had the doctor examine me.", it: "Mi sono fatto visitare dal dottore (polite).", kanji: "先生に診ていただきました。", kana: "せんせいにみて いただきました。" },
+            { icon: "🤝🚗", en: "I had my friend drive me home.", it: "Mi sono fatto accompagnare a casa dal mio amico.", kanji: "友達に送ってもらいました。", kana: "ともだちに おくってもらいました。" },
+            { icon: "👨‍🏫🇯🇵", en: "I had the teacher teach me Kanji.", it: "Mi sono fatto insegnare i Kanji dal professore (polite).", kanji: "先生に漢字を教えていただきました。", kana: "せんせいにかんじを おしえて いただきました。" },
+            { icon: "🤝🛒", en: "I had my friend help with shopping.", it: "Mi sono fatto aiutare con la spesa dal mio amico.", kanji: "友達に買い物を手伝ってもらいました。", kana: "ともだちにかいものを てつだってもらいました。" },
+            { icon: "👨‍💼💼", en: "I had the boss carry my luggage.", it: "Mi sono fatto portare i bagagli dal capo (polite).", kanji: "課長に荷物を持っていただきました。", kana: "かちょうににもつを もって いただきました。" },
+            { icon: "🤝🍜", en: "I had my friend cook ramen.", it: "Mi sono fatto cucinare il ramen dal mio amico.", kanji: "友達にラーメンを作ってもらいました。", kana: "ともだちにらーめんを つくってもらいました。" },
+            { icon: "👨‍🏫💬", en: "I had the teacher explain it again.", it: "Mi sono fatto spiegare di nuovo dal professore (polite).", kanji: "先生に説明していただきました。", kana: "せんせいにせつめいして いただきました。" },
+            { icon: "🤝🔍", en: "I had my friend look for the key.", it: "Mi sono fatto cercare la chiave dal mio amico.", kanji: "友達に鍵を探してもらいました。", kana: "ともだちにかぎを さがしてもらいました。" },
+            { icon: "👨‍💼📧", en: "I had the boss write an email.", it: "Mi sono fatto scrivere una mail dal capo (polite).", kanji: "部長にメールを書いていただきました。", kana: "ぶちょうにめーるを かいて いただきました。" },
+            { icon: "🤝☕", en: "I had my friend make coffee.", it: "Mi sono fatto preparare il caffè dal mio amico.", kanji: "友達にコーヒーをいれてもらいました。", kana: "ともだちにこーひーを いれて もらいました。" },
+            { icon: "👨‍🏫🗺️", en: "I had the teacher explain the way.", it: "Mi sono fatto spiegare la strada dal professore (polite).", kanji: "先生に道を教えていただきました。", kana: "せんせいにみちを おしえて いただきました。" }
         ];
 
-        // Mode 3: Try Doing (~te mimasu)
-        const tryData = [
-            { icon: "👖✨", en: "I'll try wearing these trousers.", it: "Proverò a indossare questi pantaloni.", kanji: "このズボンを履いてみます。", kana: "このずぼんを はいてみます。" },
-            { icon: "🍱😋", en: "I'll try eating this Japanese food.", it: "Proverò a mangiare questo cibo giapponese.", kanji: "この日本料理を食べてみます。", kana: "このにほんりょうりを たべてみます。" },
-            { icon: "🇯🇵🗣️", en: "I'll try speaking in Japanese.", it: "Proverò a parlare in giapponese.", kanji: "日本語で話してみます。", kana: "にほんごで はなしてみます。" },
-            { icon: "🍷🍇", en: "I'll try drinking this wine.", it: "Proverò a bere questo vino.", kanji: "このワインを飲んでみます。", kana: "このわいんを のんでみます。" },
-            { icon: "💻✨", en: "I'll try using this computer.", it: "Proverò a usare questo computer.", kanji: "このパソコンを使ってみます。", kana: "このぱそこんを つかってみます。" },
-            { icon: "👨‍🏫❓", en: "I'll try asking the teacher.", it: "Proverò a chiedere al professore.", kanji: "先生に聞いてみます。", kana: "せんせいに きいてみます。" },
-            { icon: "🚶‍♂️🗼", en: "I'll try going to Tokyo.", it: "Proverò ad andare a Tokyo.", kanji: "東京へ行ってみます。", kana: "とうきょうへ いってみます。" },
-            { icon: "🍳🍱", en: "I'll try making a bento.", it: "Proverò a preparare un bento.", kanji: "お弁当を作ってみます。", kana: "おべんとうを つくってみます。" },
-            { icon: "📞🤝", en: "I'll try calling my friend.", it: "Proverò a chiamare il mio amico.", kanji: "友達に電話してみます。", kana: "ともだちに でんわしてみます。" },
-            { icon: "📖💡", en: "I'll try reading this book.", it: "Proverò a leggere questo libro.", kanji: "この本を読んでみます。", kana: "このほんを よんでみます。" },
-            { icon: "✍️📄", en: "I'll try writing my name in Kanji.", it: "Proverò a scrivere il mio nome in Kanji.", kanji: "漢字で名前を書いてみます。", kana: "かんじで なまえを かいてみます。" },
-            { icon: "🎧🎶", en: "I'll try listening to this song.", it: "Proverò ad ascoltare questa canzone.", kanji: "この曲を聴いてみます。", kana: "このきょくを きいてみます。" },
-            { icon: "🔍✅", en: "I'll try checking it one more time.", it: "Proverò a controllare ancora una volta.", kanji: "もう一度確かめてみます。", kana: "もういちど たしかめてみます。" },
-            { icon: "🔢✨", en: "I'll try counting them by myself.", it: "Proverò a contarli da solo.", kanji: "一人で数えてみます。", kana: "ひとりで かぞえてみます。" },
-            { icon: "📏🛠️", en: "I'll try measuring the size.", it: "Proverò a misurare la taglia.", kanji: "サイズを測ってみます。", kana: "さいずを はかってみます。" },
-            { icon: "🤔💭", en: "I'll try thinking about it.", it: "Proverò a pensarci.", kanji: "それについて考えてみます。", kana: "それについて かんがえてみます。" },
-            { icon: "🕵️‍♂️💡", en: "I'll try investigating the cause.", it: "Proverò a indagare la causa.", kanji: "原因を調べてみます。", kana: "げんいんを しらべてみます。" }
+        // Mode 3: From Superior (~te kudasaimasu)
+        const superiorData = [
+            { icon: "👨‍💼🌂", en: "The section manager lent me an umbrella.", it: "Il capo mi ha prestato un ombrello (gentile).", kanji: "課長が傘を貸してくださいました。", kana: "かちょうが かさを かして くださいました。" },
+            { icon: "🍵✨", en: "The manager's wife taught me tea ceremony.", it: "La moglie del capo mi ha insegnato la cerimonia del tè.", kanji: "課長の奥様がお茶を教えてくださいました。", kana: "かちょうのおくさまが おちゃを おしえて くださいました。" },
+            { icon: "👨‍💼🏥", en: "The manager took me to the hospital.", it: "Il manager mi ha portato in ospedale (gentile).", kanji: "部長が病院へ連れていってくださいました。", kana: "ぶちょうが びょういんへ つれていって くださいました。" },
+            { icon: "👔🎁", en: "The president gave me a tie.", it: "Il presidente mi ha regalato una cravatta (gentile).", kanji: "社長がネクタイをくださいました。", kana: "しゃちょうが ねくたいを くださいました。" },
+            { icon: "👨‍🏫📖", en: "The teacher read my essay.", it: "Il professore ha letto il mio tema (gentile).", kanji: "先生が私の作文を読んでくださいました。", kana: "せんせいが わたしの さくぶんを よんで くださいました。" },
+            { icon: "👨‍💼🚗", en: "The boss drove me to the station.", it: "Il capo mi ha accompagnato in stazione (gentile).", kanji: "部長が駅まで送ってくださいました。", kana: "ぶちょうが えきまで おくって くださいました。" },
+            { icon: "👨‍🏫📸", en: "The teacher took a photo for me.", it: "Il professore mi ha scattato una foto (gentile).", kanji: "先生が写真を撮ってくださいました。", kana: "せんせいが しゃしんを とって くださいました。" },
+            { icon: "👨‍💼🍱", en: "The manager treated me to lunch.", it: "Il manager mi ha offerto il pranzo (gentile).", kanji: "部長が昼ご飯をごちそうしてくださいました。", kana: "ぶちょうが ひるごはんを ごちそうして くださいました。" },
+            { icon: "👵🍰", en: "Grandmother made a cake for me.", it: "La nonna ha preparato una torta per me (gentile).", kanji: "祖母がケーキを作ってくださいました。", kana: "そぼが けーきを つくって くださいました。" },
+            { icon: "👨‍💼💬", en: "The boss explained the plan.", it: "Il capo mi ha spiegato il piano (gentile).", kanji: "部長が計画を説明してくださいました。", kana: "ぶちょうが けいかくを せつめいして くださいました。" },
+            { icon: "👨‍🏫🔍", en: "The teacher found my lost item.", it: "Il professore ha trovato il mio oggetto smarrito.", kanji: "先生が忘れ物を見つけてくださいました。", kana: "せんせいが わすれものを みつけて くださいました。" },
+            { icon: "👨‍💼☕", en: "The manager made coffee for me.", it: "Il manager mi ha preparato il caffè (gentile).", kanji: "課長がコーヒーをいれてくださいました。", kana: "かちょうが こーひーを いれて くださいました。" },
+            { icon: "👨‍🏫🗾", en: "The teacher guided me through Kyoto.", it: "Il professore mi ha fatto da guida a Kyoto.", kanji: "先生が京都を案内してくださいました。", kana: "せんせいが きょうとを あんないして くださいました。" },
+            { icon: "👨‍💼📩", en: "The boss sent me an email.", it: "Il capo mi ha mandato una mail (gentile).", kanji: "部長がメールを送ってくださいました。", kana: "ぶちょうが めーるを おくって くださいました。" },
+            { icon: "👨‍🏫🛠️", en: "The teacher repaired my computer.", it: "Il professore mi ha riparato il computer.", kanji: "先生がパソコンを直してくださいました。", kana: "せんせいが ぱそこんを なおして くださいました。" },
+            { icon: "👨‍💼🤝", en: "The manager introduced me to the client.", it: "Il manager mi ha presentato al cliente.", kanji: "部長がお客さんを紹介してくださいました。", kana: "ぶちょうが おきゃくさんを しょうかいして くださいました。" },
+            { icon: "👨‍🏫🎁", en: "The teacher gave me a gift.", it: "Il professore mi ha fatto un regalo (gentile).", kanji: "先生がお祝いをくださいました。", kana: "せんせいが おいわいを くださいました。" }
         ];
 
-        let currentMode = 'embed';
+        let currentMode = 'give';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -181,7 +181,7 @@
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
             
-            const modes = ['embed', 'whether', 'try'];
+            const modes = ['give', 'receive', 'superior'];
             modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
                 if(m === mode) {
@@ -194,15 +194,15 @@
             });
 
             const instr = document.getElementById('instruction');
-            if(mode === 'embed') instr.innerText = "Embedded Questions: Question word + ka";
-            else if(mode === 'whether') instr.innerText = "Whether or Not: Verb/Adj + ka dōka";
-            else instr.innerText = "Try Doing: V-te mimasu (Attempt)";
+            if(mode === 'give') instr.innerText = "Giving Actions: ~te agemasu / yarimasu";
+            else if(mode === 'receive') instr.innerText = "Receiving Actions: ~te moraimasu / itadakimasu";
+            else instr.innerText = "From Superior: ~te kudasaimasu (Superior to me)";
             
             updateView();
         }
 
         function updateView() {
-            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const data = { give: giveData, receive: receiveData, superior: superiorData };
             const questions = data[currentMode];
             const q = questions[currentIndex];
             const promptContent = document.getElementById('prompt-content');
@@ -217,7 +217,7 @@
             promptContent.innerHTML = `
                 <div class="item-icon mb-4">${q.icon}</div>
                 <div class="text-center px-6">
-                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Scenario</div>
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Situation</div>
                     <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
                 </div>
             `;
@@ -234,7 +234,7 @@
         }
 
         function speakJapanese() {
-            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const data = { give: giveData, receive: receiveData, superior: superiorData };
             const text = data[currentMode][currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
@@ -243,7 +243,7 @@
         }
 
         function nextQuestion() {
-            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const data = { give: giveData, receive: receiveData, superior: superiorData };
             const questions = data[currentMode];
             
             if (isFlipped && currentIndex === questions.length - 1) {
@@ -261,7 +261,7 @@
         }
 
         function prevQuestion() {
-            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const data = { give: giveData, receive: receiveData, superior: superiorData };
             const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
