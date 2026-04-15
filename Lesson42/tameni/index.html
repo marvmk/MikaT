@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 40 Master</title>
+    <title>Japanese Practice: Lesson 42 Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -24,28 +24,28 @@
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L40: Embedded Questions</h1>
-        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+        <h1 class="text-2xl font-bold italic">L42: Purpose & Usage</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-embed" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('embed')">
-                Embedded Q
+            <button id="mode-purpose" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('purpose')">
+                Purpose (~tame ni)
             </button>
-            <button id="mode-whether" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('whether')">
-                Whether or Not
+            <button id="mode-usage" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('usage')">
+                Usage (~no ni)
             </button>
-            <button id="mode-try" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('try')">
-                Try Doing
+            <button id="mode-mix" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('mix')">
+                Practical (Mixed)
             </button>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                Combine the sentences...
+                Complete the sentence to show purpose...
             </div>
 
             <!-- Card Container -->
@@ -86,7 +86,7 @@
                         <span id="total-count">17</span>
                     </div>
                 </div>
-                <button onclick="nextQuestion()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
+                <button onclick="buttonNext()" class="px-10 py-4 bg-amber-500 rounded-full text-white font-black hover:bg-amber-600 transition shadow-lg tracking-widest uppercase text-sm">Next</button>
             </div>
         </div>
 
@@ -94,7 +94,7 @@
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
             <div class="text-7xl mb-8">Finished‼️</div>
             <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 40 Mastery Complete.</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 42 Mastery Complete.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
                 Restart
             </button>
@@ -106,70 +106,70 @@
     </footer>
 
     <script>
-        // Mode 1: Embedded Question (Interrogative + ka)
-        const embedData = [
-            { icon: "🛫❓", en: "Please tell me when the plane departs.", it: "Per favore mi dica quando parte l'aereo.", kanji: "飛行機がいつ出発するか教えてください。", kana: "ひこうきが いつ しゅっぱつするか おしえて ください。" },
-            { icon: "❓🎁", en: "I'll check what is inside the box.", it: "Controllerò cosa c'è dentro la scatola.", kanji: "箱の中に何があるか確かめます。", kana: "はこのなかに なにが あるか たしかめます。" },
-            { icon: "💰❓", en: "I don't know how much this costs.", it: "Non so quanto costi questo.", kanji: "これがいくらかわかりません。", kana: "これが いくらか わかりません。" },
-            { icon: "📍❓", en: "Do you know where the station is?", it: "Sa dov'è la stazione?", kanji: "駅がどこにあるか知っていますか。", kana: "えきが どこに あるか しっていますか。" },
-            { icon: "🤝❓", en: "I am counting how many people are coming.", it: "Sto contando quante persone vengono.", kanji: "何人来るか数えています。", kana: "なんにん くるか かぞえています。" },
-            { icon: "🗣️❓", en: "Please tell me what he said.", it: "Per favore mi dica cosa ha detto lui.", kanji: "彼が何と言ったか教えてください。", kana: "かれが なんといったか おしえて ください。" },
-            { icon: "⏰❓", en: "I don't know what time the meeting starts.", it: "Non so a che ora inizi la riunione.", kanji: "会議が何時に始まるか分かりません。", kana: "かいぎが なんじに はじまるか わかりません。" },
-            { icon: "🔧❓", en: "I'll ask how to use this.", it: "Chiederò come si usa questo.", kanji: "どうやって使うか聞きます。", kana: "どうやって つかうか ききます。" },
-            { icon: "🏃‍♂️❓", en: "I'm checking who won the race.", it: "Sto controllando chi ha vinto la gara.", kanji: "だれが優勝したか確かめています。", kana: "だれが ゆうしょうしたか たしかめています。" },
-            { icon: "📏❓", en: "Please measure how long it is.", it: "Per favore misuri quanto è lungo.", kanji: "長さがどれくらいか測ってください。", kana: "ながさが どれくらいか はかって ください。" },
-            { icon: "⚖️❓", en: "Do you know how much this weighs?", it: "Sa quanto pesa questo?", kanji: "重さがいくらか知っていますか。", kana: "おもさが いくらか しっていますか。" },
-            { icon: "🍷❓", en: "He is asking which wine is delicious.", it: "Lui sta chiedendo quale vino sia buono.", kanji: "どのワインがおいしいか聞いています。", kana: "どのわいんが おいしいか きいています。" },
-            { icon: "🤔❓", en: "I'll investigate why he didn't come.", it: "Indagherò perché lui non è venuto.", kanji: "なぜ彼が来なかったか調べます。", kana: "なぜ かれが こなかったか しらべます。" },
-            { icon: "🔑❓", en: "I forgot where I put the keys.", it: "Ho dimenticato dove ho messo le chiavi.", kanji: "鍵をどこに置いたか忘れました。", kana: "かぎを どこに おいたか わすれました。" },
-            { icon: "👟❓", en: "Please check what size this is.", it: "Per favore controlli che taglia sia questa.", kanji: "サイズがいくつか確かめてください。", kana: "さいずが いくつか たしかめて ください。" },
-            { icon: "🏨❓", en: "Tell me which hotel is good.", it: "Mi dica quale hotel sia buono.", kanji: "どのホテルがいいか教えてください。", kana: "どのほてるが いいか おしえて ください。" },
-            { icon: "⏳❓", en: "I'm measuring how long it takes.", it: "Sto misurando quanto tempo ci vuole.", kanji: "どのくらい時間がかかるか測っています。", kana: "どのくらい じかんが かかるか はかっています。" }
+        // Mode 1: Purpose (~tame ni)
+        const purposeData = [
+            { icon: "🇯🇵💼", en: "I study Japanese in order to work in Japan.", it: "Studio il giapponese per lavorare in Giappone.", kanji: "日本で働くために、日本語を勉強しています。", kana: "にほんで はたらくために、にほんごを べんきょうして います。" },
+            { icon: "🏠💴", en: "I am saving money for a house.", it: "Sto risparmiando soldi per la casa.", kanji: "家のために、貯金しています。", kana: "いえの ために、ちょきんして います。" },
+            { icon: "✈️🌍", en: "I exercise to travel around the world.", it: "Faccio esercizio per viaggiare in tutto il mondo.", kanji: "世界旅行をするために、運動しています。", kana: "せかいりょこうを するために、うんどうして います。" },
+            { icon: "🎓✅", en: "I study hard for the exam.", it: "Studio sodo per l'esame.", kanji: "試験のために、一生懸命勉強しています。", kana: "しけんの ために、いっしょうけんめい べんきょうして います。" },
+            { icon: "🏎️💨", en: "He is working to buy a car.", it: "Lui lavora per comprare un'auto.", kanji: "車を買うために、働いています。", kana: "くるまを かうために、はたらいて います。" },
+            { icon: "👪✨", en: "I work for my family.", it: "Lavoro per la mia famiglia.", kanji: "家族のために、働いています。", kana: "かぞくの ために、はたらいて います。" },
+            { icon: "🏢🤝", en: "I went to Tokyo for the meeting.", it: "Sono andato a Tokyo per la riunione.", kanji: "会議のために、東京へ行きました。", kana: "かいぎの ために、とうきょうへ いきました。" },
+            { icon: "健康🥗", en: "I eat vegetables for my health.", it: "Mangio verdure per la mia salute.", kanji: "健康のために、野菜を食べています。", kana: "けんこうの ために、やさいを たべて います。" },
+            { icon: "🏃‍♂️🏅", en: "I practice to win the marathon.", it: "Faccio pratica per vincere la maratona.", kanji: "マラソンで優勝するために、練習しています。", kana: "まらそんで ゆうしょうするために、れんしゅうして います。" },
+            { icon: "📖🧠", en: "I read books to gain knowledge.", it: "Leggo libri per acquisire conoscenza.", kanji: "知識を得るために、本を読みます。", kana: "ちしきを えるために、ほんを よみます。" },
+            { icon: "🎁💝", en: "I bought a present for her.", it: "Ho comprato un regalo per lei.", kanji: "彼女のために、プレゼントを買いました。", kana: "かのじょの ために、ぷれぜんとを かいました。" },
+            { icon: "⛩️🏯", en: "I'll go to Kyoto for sightseeing.", it: "Andrò a Kyoto per fare turismo.", kanji: "観光のために、京都へ行きます。", kana: "かんこうの ために、きょうとへ いきます。" },
+            { icon: "🖋️📄", en: "I use this pen to write Kanji.", it: "Uso questa penna per scrivere i Kanji.", kanji: "漢字を書くために、このペンを使います。", kana: "かんじを かくために、このぺんを つかいます。" },
+            { icon: "🚲🌳", en: "I ride a bike for the environment.", it: "Vado in bici per l'ambiente.", kanji: "環境のために、自転車に乗っています。", kana: "かんきょうの ために、じてんしゃに のって います。" },
+            { icon: "💻✨", en: "I bought a PC to do design.", it: "Ho comprato un PC per fare design.", kanji: "デザインをするために、パソコンを買いました。", kana: "でざいんを するために、ぱそこんを かいました。" },
+            { icon: "🎤🎶", en: "I practice singing for the concert.", it: "Faccio pratica di canto per il concerto.", kanji: "コンサートのために、歌を練習しています。", kana: "こんさーとの ために、うたを れんしゅうして います。" },
+            { icon: "🍱🗾", en: "I study cooking to open a restaurant.", it: "Studio cucina per aprire un ristorante.", kanji: "店を開くために、料理を勉強しています。", kana: "みせを ひらくために、りょうりを べんきょうして います。" }
         ];
 
-        // Mode 2: Whether or Not (~ka dōka)
-        const whetherData = [
-            { icon: "🚶‍♂️❓", en: "I don't know whether he will come or not.", it: "Non so se lui verrà o no.", kanji: "彼が来るかどうか分かりません。", kana: "かれが くるか どうか わかりません。" },
-            { icon: "✅❓", en: "Please check whether it's correct or not.", it: "Per favore controlli se sia corretto o no.", kanji: "正しいかどうか確かめてください。", kana: "ただしいか どうか たしかめて ください。" },
-            { icon: "👟❓", en: "I'll see whether the size fits or not.", it: "Vedrò se la taglia vada bene o no.", kanji: "サイズが合うかどうか見てみます。", kana: "さいずが あうか どうか みてみます。" },
-            { icon: "❌❓", en: "Please check whether there is a mistake.", it: "Per favore controlli se ci sia un errore.", kanji: "間違いがないかどうか確かめてください。", kana: "まちがいが ないか どうか たしかめて ください。" },
-            { icon: "🤒❓", en: "I don't know whether I have a fever or not.", it: "Non so se ho la febbre o no.", kanji: "熱があるかどうか分かりません。", kana: "ねつが あるか どうか わかりません。" },
-            { icon: "🌧️❓", en: "I'll check whether it's raining or not.", it: "Controllerò se stia piovendo o no.", kanji: "雨が降っているかどうか確かめます。", kana: "あめが ふっているか どうか たしかめます。" },
-            { icon: "🎂❓", en: "I don't know whether she likes cake or not.", it: "Non so se a lei piaccia la torta o no.", kanji: "彼女がケーキが好きかどうか知りません。", kana: "かのじょが けーきが すきか どうか しりません。" },
-            { icon: "🚪❓", en: "I'm checking whether I locked it or not.", it: "Sto controllando se l'ho chiuso a chiave o no.", kanji: "鍵をかけたかどうか確かめています。", kana: "かぎを かけたか どうか たしかめています。" },
-            { icon: "🎓❓", en: "I'm worried whether I can pass or not.", it: "Sono preoccupato se riuscirò a passare o no.", kanji: "合格できるかどうか心配です。", kana: "ごうかくできるか どうか しんぱいです。" },
-            { icon: "📦❓", en: "Check whether the luggage arrived.", it: "Controlla se il bagaglio sia arrivato.", kanji: "荷物が到着したかどうか確かめて。", kana: "にもつが とうちゃくしたか どうか たしかめて。" },
-            { icon: "🍽️❓", en: "I don't know if this food is safe or not.", it: "Non so se questo cibo sia sicuro o no.", kanji: "この食べ物が安全かどうか分かりません。", kana: "このたべものが あんぜんか どうか わかりません。" },
-            { icon: "🤝❓", en: "I'll check if he is free tomorrow.", it: "Controllerò se lui sia libero domani.", kanji: "明日彼が暇かどうか確かめます。", kana: "あした かれが ひまか どうか たしかめます。" },
-            { icon: "🎫❓", en: "I don't know if the ticket is available.", it: "Non so se il biglietto sia disponibile.", kanji: "切符があるかどうか分かりません。", kana: "きっぷが あるか どうか わかりません。" },
-            { icon: "👔❓", en: "Check whether he's wearing a tie.", it: "Controlla se lui porti la cravatta.", kanji: "ネクタイを締めているかどうか見て。", kana: "ねくたいを しめているか どうか みて。" },
-            { icon: "📜❓", en: "I'll see if the story is true.", it: "Vedrò se la storia sia vera.", kanji: "話が本当かどうか見てみます。", kana: "はなしが ほんとうか どうか みてみます。" },
-            { icon: "🚶‍♂️❓", en: "I don't know if he is still there.", it: "Non so se lui sia ancora lì.", kanji: "まだ彼がいるかどうか分かりません。", kana: "まだ かれが いるか どうか わかりません。" },
-            { icon: "🏠❓", en: "Please ask whether he is at home.", it: "Per favore chiedi se lui sia a casa.", kanji: "彼がうちにいるかどうか聞いてください。", kana: "かれが うちに いるか どうか きいて ください。" }
+        // Mode 2: Usage (~no ni)
+        const usageData = [
+            { icon: "✂️📄", en: "This scissors is used for cutting paper.", it: "Queste forbici si usano per tagliare la carta.", kanji: "このはさみは紙を切るのに使います。", kana: "このはさみは かみを きるのに つかいます。" },
+            { icon: "📱✨", en: "A smartphone is convenient for searching.", it: "Lo smartphone è comodo per fare ricerche.", kanji: "スマホは調べるのに便利です。", kana: "すまほは しらべるのに べんりです。" },
+            { icon: "🚗📦", en: "A car is necessary for moving house.", it: "L'auto è necessaria per fare il trasloco.", kanji: "引っ越しに車が必要です。", kana: "ひっこしに くるまが ひつようです。" },
+            { icon: "🎒🏔️", en: "This bag is good for climbing mountains.", it: "Questa borsa è buona per scalare montagne.", kanji: "このバッグは山に登るのにいいです。", kana: "このばっぐは やまに のぼるのに いいです。" },
+            { icon: "⏳🍣", en: "It takes time to make sushi.", it: "Ci vuole tempo per preparare il sushi.", kanji: "寿司を作るのに時間がかかります。", kana: "すしを つくるのに じかんが かかります。" },
+            { icon: "💴🏢", en: "How much money do you need for building?", it: "Quanti soldi servono per costruire?", kanji: "建てるのにいくら必要ですか。", kana: "たてるのに いくら ひつようですか。" },
+            { icon: "🧥❄️", en: "This coat is for the cold winter.", it: "Questo cappotto è per il freddo inverno.", kanji: "このコートは寒い冬にいいです。", kana: "このこーとは さむいふゆに いいです。" },
+            { icon: "🍱🥢", en: "Chopsticks are used for eating.", it: "Le bacchette si usano per mangiare.", kanji: "箸は食べるのに使います。", kana: "はしは たべるのに つかいます。" },
+            { icon: "🥣🍳", en: "This bowl is convenient for mixing.", it: "Questa ciotola è comoda per mescolare.", kanji: "このボウルは混ぜるのに便利です。", kana: "このぼうるは まぜるのに べんりです。" },
+            { icon: "🏙️🚶", en: "It takes 10 mins to go to the station.", it: "Ci vogliono 10 minuti per andare in stazione.", kanji: "駅へ行くのに１０分かかります。", kana: "えきへ いくのに じゅっぷん かかります。" },
+            { icon: "🖥️🎨", en: "This software is used for drawing.", it: "Questo software si usa per disegnare.", kanji: "このソフトは絵をかくのに使います。", kana: "このそふとは えを かくのに つかいます。" },
+            { icon: "🧤❄️", en: "Gloves are necessary for skiing.", it: "I guanti sono necessari per sciare.", kanji: "スキーをするのに手袋が必要です。", kana: "すきーを するのに てぶくろが ひつようです。" },
+            { icon: "🧂🍱", en: "This salt is for cooking fish.", it: "Questo sale è per cucinare il pesce.", kanji: "この塩は魚を料理するのにいいです。", kana: "このしおは さかなを りょうりするのに いいです。" },
+            { icon: "📏📐", en: "A ruler is used for measuring length.", it: "Il righello si usa per misurare la lunghezza.", kanji: "物差しは長さを測るのに使います。", kana: "ものさしは ながさを はかるのに つかいます。" },
+            { icon: "🧺🧼", en: "This soap is good for washing.", it: "Questo sapone è buono per lavare.", kanji: "この石鹸は洗うのにいいです。", kana: "このせっけんは あらうのに いいです。" },
+            { icon: "🛌✨", en: "This pillow is good for sleeping well.", it: "Questo cuscino è buono per dormir bene.", kanji: "この枕はよく寝るのにいいです。", kana: "このまくらは よくねるのに いいです。" },
+            { icon: "🧴🛁", en: "This is for cleaning the bathroom.", it: "Questo è per pulire il bagno.", kanji: "これはお風呂を掃除するのに使います。", kana: "これは おふろを そうじするのに つかいます。" }
         ];
 
-        // Mode 3: Try Doing (~te mimasu)
-        const tryData = [
-            { icon: "👖✨", en: "I'll try wearing these trousers.", it: "Proverò a indossare questi pantaloni.", kanji: "このズボンを履いてみます。", kana: "このずぼんを はいてみます。" },
-            { icon: "🍱😋", en: "I'll try eating this Japanese food.", it: "Proverò a mangiare questo cibo giapponese.", kanji: "この日本料理を食べてみます。", kana: "このにほんりょうりを たべてみます。" },
-            { icon: "🇯🇵🗣️", en: "I'll try speaking in Japanese.", it: "Proverò a parlare in giapponese.", kanji: "日本語で話してみます。", kana: "にほんごで はなしてみます。" },
-            { icon: "🍷🍇", en: "I'll try drinking this wine.", it: "Proverò a bere questo vino.", kanji: "このワインを飲んでみます。", kana: "このわいんを のんでみます。" },
-            { icon: "💻✨", en: "I'll try using this computer.", it: "Proverò a usare questo computer.", kanji: "このパソコンを使ってみます。", kana: "このぱそこんを つかってみます。" },
-            { icon: "👨‍🏫❓", en: "I'll try asking the teacher.", it: "Proverò a chiedere al professore.", kanji: "先生に聞いてみます。", kana: "せんせいに きいてみます。" },
-            { icon: "🚶‍♂️🗼", en: "I'll try going to Tokyo.", it: "Proverò ad andare a Tokyo.", kanji: "東京へ行ってみます。", kana: "とうきょうへ いってみます。" },
-            { icon: "🍳🍱", en: "I'll try making a bento.", it: "Proverò a preparare un bento.", kanji: "お弁当を作ってみます。", kana: "おべんとうを つくってみます。" },
-            { icon: "📞🤝", en: "I'll try calling my friend.", it: "Proverò a chiamare il mio amico.", kanji: "友達に電話してみます。", kana: "ともだちに でんわしてみます。" },
-            { icon: "📖💡", en: "I'll try reading this book.", it: "Proverò a leggere questo libro.", kanji: "この本を読んでみます。", kana: "このほんを よんでみます。" },
-            { icon: "✍️📄", en: "I'll try writing my name in Kanji.", it: "Proverò a scrivere il mio nome in Kanji.", kanji: "漢字で名前を書いてみます。", kana: "かんじで なまえを かいてみます。" },
-            { icon: "🎧🎶", en: "I'll try listening to this song.", it: "Proverò ad ascoltare questa canzone.", kanji: "この曲を聴いてみます。", kana: "このきょくを きいてみます。" },
-            { icon: "🔍✅", en: "I'll try checking it one more time.", it: "Proverò a controllare ancora una volta.", kanji: "もう一度確かめてみます。", kana: "もういちど たしかめてみます。" },
-            { icon: "🔢✨", en: "I'll try counting them by myself.", it: "Proverò a contarli da solo.", kanji: "一人で数えてみます。", kana: "ひとりで かぞえてみます。" },
-            { icon: "📏🛠️", en: "I'll try measuring the size.", it: "Proverò a misurare la taglia.", kanji: "サイズを測ってみます。", kana: "さいずを はかってみます。" },
-            { icon: "🤔💭", en: "I'll try thinking about it.", it: "Proverò a pensarci.", kanji: "それについて考えてみます。", kana: "それについて かんがえてみます。" },
-            { icon: "🕵️‍♂️💡", en: "I'll try investigating the cause.", it: "Proverò a indagare la causa.", kanji: "原因を調べてみます。", kana: "げんいんを しらべてみます。" }
+        // Mode 3: Practical (Mixed)
+        const mixData = [
+            { icon: "🎁🎀", en: "This paper is for wrapping presents.", it: "Questa carta è per avvolgere i regali.", kanji: "この紙はプレゼントを包むのに使います。", kana: "このかみは ぷれぜんとを つつむのに つかいます。" },
+            { icon: "🌡️💊", en: "A thermometer is for measuring temperature.", it: "Il termometro serve per misurare la febbre.", kanji: "体温計は熱を測るのに使います。", kana: "たいおんけいは ねつを はかるのに つかいます。" },
+            { icon: "👜✈️", en: "This bag is for traveling.", it: "Questa borsa è per viaggiare.", kanji: "このバッグは旅行に行くのに使います。", kana: "このばっぐは りょこうに いくのに つかいます。" },
+            { icon: "🥫🧴", en: "A can opener is for opening cans.", it: "L'apriscatole serve per aprire le lattine.", kanji: "缶切りは缶を開けるのに使います。", kana: "かんきりは かんを あけるのに つかいます。" },
+            { icon: "🍶🌾", en: "Rice is needed to make Sake.", it: "Il riso serve per fare il sake.", kanji: "お酒を造るのに米が必要です。", kana: "おさけを つくるのに こめが ひつようです。" },
+            { icon: "⚖️📜", en: "I'll study law to become a lawyer.", it: "Studierò legge per diventare avvocato.", kanji: "弁護士になるために、法律を勉強します。", kana: "べんごしに なるために、ほうりつを べんきょうします。" },
+            { icon: "🏗️📐", en: "Many people were needed to build pyramids.", it: "Servivano molte persone per costruire le piramidi.", kanji: "ピラミッドを造るのに多くの人が必要でした。", kana: "ぴらみっどを つくるのに おおぜいのひとが ひつようでした。" },
+            { icon: "🎻🎶", en: "I practice every day to be a musician.", it: "Faccio pratica ogni giorno per essere musicista.", kanji: "音楽家になるために、毎日練習しています。", kana: "おんがくかに なるために、まいにち れんしゅうして います。" },
+            { icon: "🏢🧱", en: "Concrete is used for building houses.", it: "Il cemento si usa per costruire case.", kanji: "コンクリートは家を建てるのに使われます。", kana: "こんくりーとは いえを たてるのに つかわれます。" },
+            { icon: "🧺🧼", en: "Is this detergent for washing silk?", it: "Questo detersivo è per lavare la seta?", kanji: "この洗剤は絹を洗うのにいいですか。", kana: "このせんざいは きぬを あらうのに いいですか。" },
+            { icon: "👟🏃", en: "These shoes are for running.", it: "Queste scarpe sono per correre.", kanji: "この靴は走るのにいいです。", kana: "このくつは はしるのに いいです。" },
+            { icon: "🚶💨", en: "I'll run to be in time for the train.", it: "Correrò per fare in tempo per il treno.", kanji: "電車に間に合うために、走ります。", kana: "でんしゃに まにあうために、はしります。" },
+            { icon: "🍱🧤", en: "Oven mitts are for holding hot things.", it: "I guanti da forno servono per prendere cose calde.", kanji: "鍋つかみは熱い物を持つのに便利です。", kana: "なべつかみは あついものを もつのに べんりです。" },
+            { icon: "💴🏎️", en: "I saved 3 million yen to buy a car.", it: "Ho risparmiato 3 milioni di yen per comprare un'auto.", kanji: "車を買うために、３００万円貯めました。", kana: "くるまを かうために、さんびゃくまんえん ためました。" },
+            { icon: "📜🏛️", en: "I'll go to the library for research.", it: "Andrò in biblioteca per fare ricerca.", kanji: "調べるために、図書館へ行きます。", kana: "しらべるために、としょかんへ いきます。" },
+            { icon: "🧴🛀", en: "This sponge is for washing the tub.", it: "Questa spugna è per lavare la vasca.", kanji: "このスポンジはお風呂を洗うのに使います。", kana: "このすぽんじは おふろを あらうのに つかいます。" },
+            { icon: "📞⚡", en: "A cell phone is necessary for work.", it: "Il cellulare è necessario per il lavoro.", kanji: "仕事に携帯電話が必要です。", kana: "しごとに けいたいでんわが ひつようです。" }
         ];
 
-        let currentMode = 'embed';
+        let currentMode = 'purpose';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -181,7 +181,7 @@
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
             
-            const modes = ['embed', 'whether', 'try'];
+            const modes = ['purpose', 'usage', 'mix'];
             modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
                 if(m === mode) {
@@ -194,15 +194,15 @@
             });
 
             const instr = document.getElementById('instruction');
-            if(mode === 'embed') instr.innerText = "Embedded Questions: Question word + ka";
-            else if(mode === 'whether') instr.innerText = "Whether or Not: Verb/Adj + ka dōka";
-            else instr.innerText = "Try Doing: V-te mimasu (Attempt)";
+            if(mode === 'purpose') instr.innerText = "Purpose (~tame ni): V-dic tame ni / N no tame ni";
+            else if(mode === 'usage') instr.innerText = "Usage (~no ni): For specific uses or evaluations";
+            else instr.innerText = "Practical (Mixed): Contextual sentences";
             
             updateView();
         }
 
         function updateView() {
-            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const data = { purpose: purposeData, usage: usageData, mix: mixData };
             const questions = data[currentMode];
             const q = questions[currentIndex];
             const promptContent = document.getElementById('prompt-content');
@@ -234,7 +234,7 @@
         }
 
         function speakJapanese() {
-            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const data = { purpose: purposeData, usage: usageData, mix: mixData };
             const text = data[currentMode][currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
@@ -243,7 +243,7 @@
         }
 
         function nextQuestion() {
-            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const data = { purpose: purposeData, usage: usageData, mix: mixData };
             const questions = data[currentMode];
             
             if (isFlipped && currentIndex === questions.length - 1) {
@@ -261,7 +261,7 @@
         }
 
         function prevQuestion() {
-            const data = { embed: embedData, whether: whetherData, try: tryData };
+            const data = { purpose: purposeData, usage: usageData, mix: mixData };
             const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
@@ -269,6 +269,14 @@
                 currentIndex = (currentIndex - 1 + questions.length) % questions.length;
                 updateView();
             }, 150);
+        }
+
+        function buttonNext() {
+            if (!isFlipped) {
+                flipCard();
+            } else {
+                nextQuestion();
+            }
         }
 
         updateView();
