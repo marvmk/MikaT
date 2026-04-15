@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 43 Master</title>
+    <title>Japanese Practice: Lesson 45 Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -24,28 +24,28 @@
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L43: Looks like... & Go and Come</h1>
-        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+        <h1 class="text-2xl font-bold italic">L45: In Case... & Even though...</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-appear" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('appear')">
-                Appearance
+            <button id="mode-baai" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('baai')">
+                In Case of (~baai)
             </button>
-            <button id="mode-anti" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('anti')">
-                Anticipation
+            <button id="mode-noni" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('noni')">
+                Even though (~noni)
             </button>
-            <button id="mode-go" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('go')">
-                Go & Come back
+            <button id="mode-real" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('real')">
+                Real Life
             </button>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                It looks like...
+                Complete the scenario...
             </div>
 
             <!-- Card Container -->
@@ -56,7 +56,7 @@
                         <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
                             <!-- Injected by JS -->
                         </div>
-                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
                     </div>
                     <!-- Back -->
                     <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
@@ -94,7 +94,7 @@
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
             <div class="text-7xl mb-8">Finished‼️</div>
             <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 43 Mastery Complete.</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 45 Mastery Complete.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
                 Restart
             </button>
@@ -106,70 +106,70 @@
     </footer>
 
     <script>
-        // Mode 1: Appearance (Adj ~sou desu)
-        const appearData = [
-            { icon: "🍰😋", en: "This cake looks delicious.", it: "Questa torta sembra deliziosa.", kanji: "このケーキはおいしそうです。", kana: "この けーきは おいしそうです。" },
-            { icon: "🧥❄️", en: "He looks cold.", it: "Lui sembra avere freddo.", kanji: "彼は寒そうです。", kana: "かれは さむそうです。" },
-            { icon: "🍀😊", en: "She looks happy.", it: "Lei sembra felice.", kanji: "彼女は幸せそうです。", kana: "かのじょは しあわせそうです。" },
-            { icon: "📱✨", en: "This smartphone looks convenient.", it: "Questo smartphone sembra comodo/conveniente.", kanji: "このスマホは便利そうです。", kana: "この すまほは べんりそうです。" },
-            { icon: "🧱💪", en: "This table looks sturdy.", it: "Questo tavolo sembra robusto.", kanji: "このテーブルは丈夫そうです。", kana: "この てーぶるは じょうぶそうです。" },
-            { icon: "🧩😵", en: "That task looks difficult.", it: "Quel compito sembra difficile.", kanji: "その仕事は大変そうです。", kana: "その しごとは たいへんそうです。" },
-            { icon: "📖💡", en: "This book looks interesting.", it: "Questo libro sembra interessante.", kanji: "この本は面白そうです。", kana: "この ほんは おもしろそうです。" },
-            { icon: "🤒💊", en: "He looks unwell.", it: "Lui non sembra stare bene.", kanji: "彼は気分が悪そうです。", kana: "かれは きぶんが わるそうです。" },
-            { icon: "👜🎒", en: "That luggage looks heavy.", it: "Quel bagaglio sembra pesante.", kanji: "その荷物は重そうです。", kana: "その にもつは おもそうです。" },
-            { icon: "🏢🏙️", en: "This building looks new.", it: "Questo edificio sembra nuovo.", kanji: "このビルは新しそうです。", kana: "この びるは あたらしそうです。" },
-            { icon: "👔🤵", en: "He looks smart/cool.", it: "Lui sembra elegante/figo.", kanji: "彼は頭がよさそうです。", kana: "かれは あたまが よさそうです。" },
-            { icon: "🥗🥦", en: "This salad looks healthy.", it: "Questa insalata sembra salutare.", kanji: "このサラダは体によさそうです。", kana: "この さらだは からだに よさそうです。" },
-            { icon: "🍜🔥", en: "This ramen looks spicy.", it: "Questo ramen sembra piccante.", kanji: "このラーメンは辛そうです。", kana: "この らーめんは からそうです。" },
-            { icon: "🧸🎀", en: "That toy looks cute.", it: "Quel giocattolo sembra carino.", kanji: "そのおもちゃは可愛らしそうです。", kana: "その おもちゃは かわいらしそうです。" },
-            { icon: "☁️🌬️", en: "The weather looks like it will become bad.", it: "Il tempo sembra che peggiorerà.", kanji: "天気が悪くなりそうです。", kana: "てんきが わるく なりそうです。" },
-            { icon: "🧗‍♂️🏔️", en: "Mountain climbing looks tough.", it: "Scalare le montagne sembra faticoso.", kanji: "山登りはきつそうです。", kana: "やまのぼりは きつそうです。" },
-            { icon: "☕🥛", en: "This coffee looks sweet.", it: "Questo caffè sembra dolce.", kanji: "このコーヒーは甘そうです。", kana: "この こーひーは あまそうです。" }
+        // Mode 1: In Case of (~baai wa)
+        const baaiData = [
+            { icon: "🔥🏃", en: "In case of fire, use the stairs.", it: "In caso di incendio, usa le scale.", kanji: "火事の場合は、階段を使ってください。", kana: "かじの ばあいは、かいだんを つかって ください。" },
+            { icon: "🌧️🏟️", en: "In case of rain, the match will be cancelled.", it: "In caso di pioggia, la partita sarà annullata.", kanji: "雨の場合は、試合は中止です。", kana: "あめの ばあいは、しあいは ちゅうしです。" },
+            { icon: "🌍📉", en: "In case of earthquake, don't use the elevator.", it: "In caso di terremoto, non usare l'ascensore.", kanji: "地震の場合は、エレベーターを使わないでください。", kana: "じしんの ばあいは、えれべーたーを つかわないで ください。" },
+            { icon: "🐢📞", en: "In case you are late, please call.", it: "In caso di ritardo, telefona per favore.", kanji: "遅れる場合は、電話してください。", kana: "おくれる ばあいは、でんわ してください。" },
+            { icon: "🛂👮", en: "In case you lose your passport, go to the police.", it: "In caso tu perda il passaporto, vai alla polizia.", kanji: "パスポートをなくした場合は、警察へ行ってください。", kana: "ぱすぽーとを なくした ばあいは、けいさつへ いって ください。" },
+            { icon: "🧾❌", en: "In case of a mistake on the receipt, tell me.", it: "In caso di errore sulla ricevuta, dimmelo.", kanji: "領収書が間違っている場合は、言ってください。", kana: "りょうしゅうしょが まちがって いる ばあいは、いって ください。" },
+            { icon: "🤒🛌", en: "In case you feel unwell, take a rest.", it: "In caso tu non ti senta bene, riposati.", kanji: "気分が悪い場合は、休んでください。", kana: "きぶんが わるい ばあいは、やすんで ください。" },
+            { icon: "⚙️🔴", en: "In case the machine doesn't work, press the red button.", it: "In caso la macchina non funzioni, premi il tasto rosso.", kanji: "動かない場合は、赤いボタンを押してください。", kana: "うごかない ばあいは、あかい ぼたんを おして ください。" },
+            { icon: "📖🚫", en: "In case you forget your homework, tell the teacher.", it: "In caso tu dimentichi i compiti, dillo al professore.", kanji: "宿題を忘れた場合は、先生に言ってください。", kana: "しゅくだいを わすれた ばあいは、せんせいに いって ください。" },
+            { icon: "🚗💥", en: "In case of a car accident, call the police.", it: "In caso di incidente stradale, chiama la polizia.", kanji: "交通事故の場合は、警察を呼んでください。", kana: "こうつうじこの ばあいは、けいさつを よんで ください。" },
+            { icon: "🤔❓", en: "In case you don't understand, please ask.", it: "In caso tu non capisca, chiedi per favore.", kanji: "わからない場合は、聞いてください。", kana: "わからない ばあいは、きいて ください。" },
+            { icon: "📦🚚", en: "In case the package doesn't arrive, contact the office.", it: "In caso il pacco non arrivi, contatta l'ufficio.", kanji: "荷物が届かない場合は、事務所に連絡してください。", kana: "にもつが とどかない ばあいは、じむしょに れんらくして ください。" },
+            { icon: "🕯️💡", en: "In case of power outage, use a flashlight.", it: "In caso di blackout, usa una torcia.", kanji: "停電の場合は、懐中電灯を使ってください。", kana: "ていでんの ばあいは、かいちゅうでんとうを つかって ください。" },
+            { icon: "🆘🤵", en: "In case you need help, call the attendant.", it: "In caso ti serva aiuto, chiama l'assistente.", kanji: "助けが必要な場合は、係員を呼んでください。", kana: "たすけが ひつような ばあいは、かかりいんを よんで ください。" },
+            { icon: "❌📅", en: "In case you want to cancel, do it by tomorrow.", it: "In caso tu voglia annullare, fallo entro domani.", kanji: "キャンセルしたい場合は、明日までにして下さい。", kana: "きゃんせる したい ばあいは、あしたまでに して ください。" },
+            { icon: "📄🚧", en: "In case of a paper jam, open the lid.", it: "In caso di inceppamento carta, apri il coperchio.", kanji: "紙が詰まった場合は、蓋を開けてください。", kana: "かみが つまった ばあいは、ふたを あけて ください。" },
+            { icon: "🏆🏅", en: "In case you win, you'll get a prize.", it: "In caso tu vinca, riceverai un premio.", kanji: "優勝した場合は、お祝いをあげます。", kana: "ゆうしょうした ばあいは、おいわいを あげます。" }
         ];
 
-        // Mode 2: Anticipation (Verb ~sou desu)
-        const antiData = [
-            { icon: "☁️☔", en: "It looks like it will start raining.", it: "Sembra che inizierà a piovere.", kanji: "雨が降りそうです。", kana: "あめが ふりそうです。" },
-            { icon: "🧶✂️", en: "The string looks like it will break.", it: "Lo spago sembra che stia per rompersi.", kanji: "紐が切れそうです。", kana: "ひもが きれそうです。" },
-            { icon: "🔘❌", en: "The button looks like it will come off.", it: "Il bottone sembra che stia per staccarsi.", kanji: "ボタンが取れそうです。", kana: "ぼたんが とれそうです。" },
-            { icon: "📦📉", en: "The luggage looks like it will fall.", it: "Il bagaglio sembra che stia per cadere.", kanji: "荷物が落ちそうです。", kana: "にもつが おちそうです。" },
-            { icon: "⛽❌", en: "The gasoline looks like it will run out.", it: "Sembra che la benzina stia per finire.", kanji: "ガソリンがなくなりそうです。", kana: "がそりんが なくなりそうです。" },
-            { icon: "🌲📉", en: "The tree looks like it will fall down.", it: "L'albero sembra che stia per cadere.", kanji: "木が倒れそうです。", kana: "きが たおれそうです。" },
-            { icon: "🔥💨", en: "The fire looks like it will go out.", it: "Il fuoco sembra che stia per spegnersi.", kanji: "火が消えそうです。", kana: "ひが きえそうです。" },
-            { icon: "🌞🌡️", en: "The price looks like it will rise.", it: "Sembra che il prezzo salirà.", kanji: "値段が上がりそうです。", kana: "ねだんが あがりそうです。" },
-            { icon: "❄️📉", en: "The temperature looks like it will fall.", it: "Sembra che la temperatura scenderà.", kanji: "気温が下がりそうです。", kana: "きおんが さがりそうです。" },
-            { icon: "👜💔", en: "The bag looks like it will break.", it: "La borsa sembra che stia per rompersi.", kanji: "バッグが壊れそうです。", kana: "ばっぐが こわれそうです。" },
-            { icon: "🌸✨", en: "The cherry blossoms look like they will bloom.", it: "Sembra che i ciliegi stiano per fiorire.", kanji: "桜が咲きそうです。", kana: "さくらが さきそうです。" },
-            { icon: "🌞☁️", en: "The sky looks like it will clear up.", it: "Sembra che il cielo si rasserenerà.", kanji: "空が晴れそうです。", kana: "そらが はれそうです。" },
-            { icon: "🌊🚤", en: "The boat looks like it will sink.", it: "La barca sembra che stia per affondare.", kanji: "船が沈みそうです。", kana: "ふねが しずみそうです。" },
-            { icon: "🏗️🏢", en: "The building looks like it's completed.", it: "L'edificio sembra quasi completato.", kanji: "ビルができそうです。", kana: "びるが できそうです。" },
-            { icon: "🚶💨", en: "It looks like I'll be late for the meeting.", it: "Sembra che farò tardi alla riunione.", kanji: "会議に遅れそうです。", kana: "かいぎに おくれそうです。" },
-            { icon: "🚄💨", en: "It looks like I'll miss the Shinkansen.", it: "Sembra che perderò lo Shinkansen.", kanji: "新幹線に乗り遅れそうです。", kana: "しんかんせんに のりおくれそうです。" },
-            { icon: "🥂✨", en: "The party looks like it's starting.", it: "Sembra che la festa stia per iniziare.", kanji: "パーティーが始まりそうです。", kana: "ぱーてぃーが はじまりそうです。" }
+        // Mode 2: Even though (~noni)
+        const noniData = [
+            { icon: "📅💼", en: "Even though it's Sunday, I work.", it: "Nonostante sia domenica, lavoro.", kanji: "日曜日なのに、仕事をします。", kana: "にちようび なのに、しごとを します。" },
+            { icon: "📖💔", en: "Even though I studied, I failed the exam.", it: "Sebbene abbia studiato, sono stato bocciato.", kanji: "勉強したのに、不合格でした。", kana: "べんきょうした なのに、ふごうかく でした。" },
+            { icon: "💴🧥", en: "Even though it was expensive, I bought it.", it: "Malgrado fosse caro, l'ho comprato.", kanji: "高かったのに、買ってしまいました。", kana: "たかかった なのに、かって しまいました。" },
+            { icon: "🥱📖", en: "Even though I'm sleepy, I'm studying.", it: "Anche se ho sonno, sto studiando.", kanji: "眠いのに、勉強しています。", kana: "ねむい なのに、べんきょうして います。" },
+            { icon: "🥵🧥", en: "Even though it's hot, he is wearing a coat.", it: "Sebbene faccia caldo, lui indossa il cappotto.", kanji: "暑いのに、コートを着ています。", kana: "あつい なのに、こーとを きて います。" },
+            { icon: "📅❌", en: "Even though I made an appointment, he didn't come.", it: "Malgrado l'appuntamento, lui non è venuto.", kanji: "約束したのに、彼は来ませんでした。", kana: "やくそくした なのに、かれは きませんでした。" },
+            { icon: "🏃‍♂️⚖️", en: "Even though I exercised, I didn't lose weight.", it: "Sebbene abbia fatto esercizio, non sono dimagrito.", kanji: "運動したのに、やせませんでした。", kana: "うんどうした なのに、やせませんでした。" },
+            { icon: "🍣🤢", en: "Even though it's delicious, he doesn't eat it.", it: "Anche se è buono, lui non lo mangia.", kanji: "おいしいのに、食べません。", kana: "おいしい なのに、たべません。" },
+            { icon: "💰✈️", en: "Even though I have no money, I want to travel.", it: "Malgrado non abbia soldi, voglio viaggiare.", kanji: "お金がないのに、旅行したいです。", kana: "おかねが ない なのに、りょこう したいです。" },
+            { icon: "📩❌", en: "Even though I sent an email, there is no reply.", it: "Sebbene abbia inviato una mail, non c'è risposta.", kanji: "メールを送ったのに、返事がありません。", kana: "めーるを おくった なのに、へんじが ありません。" },
+            { icon: "🇯🇵🤐", en: "Even though I live in Japan, I can't speak Japanese.", it: "Nonostante viva in Giappone, non so parlare giapponese.", kanji: "日本に住んでいるのに、日本語が話せません。", kana: "にほんに すんで いる なのに、にほんごが はなせません。" },
+            { icon: "💊🤒", en: "Even though I take medicine, my cold doesn't get better.", it: "Anche se prendo la medicina, il raffreddore non passa.", kanji: "薬を飲んだのに、風邪がなおりません。", kana: "くすりを のんだ なのに、かぜが なおりません。" },
+            { icon: "🙇😡", en: "Even though I apologized, he is still angry.", it: "Sebbene mi sia scusato, lui è ancora arrabbiato.", kanji: "謝ったのに、彼は怒っています。", kana: "あやまった なのに、かれは おこって います。" },
+            { icon: "🌃🔊", en: "Even though it's late at night, it's noisy.", it: "Malgrado sia notte fonda, c'è rumore.", kanji: "夜中なのに、うるさいです。", kana: "よなか なのに、うるさいです。" },
+            { icon: "🔥❄️", en: "Even though I turned on the heater, it's cold.", it: "Anche se ho acceso il riscaldamento, fa freddo.", kanji: "暖房をつけたのに、寒いです。", kana: "だんぼうを つけた なのに、さむいです。" },
+            { icon: "🏃🚄", en: "Even though I hurried, the train was late.", it: "Sebbene mi fossi affrettato, il treno era in ritardo.", kanji: "急いだのに、電車が遅れました。", kana: "いそいだ なのに、でんしゃが おくれました。" },
+            { icon: "🧒💡", en: "Even though he is a child, he knows a lot.", it: "Malgrado sia un bambino, sa molte cose.", kanji: "子供なのに、よく知っていますね。", kana: "こども なのに、よく しって いますね。" }
         ];
 
-        // Mode 3: Go & Come back (~te kimasu)
-        const goData = [
-            { icon: "🍞🛒", en: "I'll go and buy some bread.", it: "Vado a comprare del pane (e torno).", kanji: "パンを買ってきます。", kana: "ぱんを かって きます。" },
-            { icon: "📩🏃", en: "I'll go and get the mail.", it: "Vado a prendere la posta.", kanji: "手紙を取ってきます。", kana: "てがみを とって きます。" },
-            { icon: "🧼🖐️", en: "I'll go and wash my hands.", it: "Vado a lavarmi le mani.", kanji: "手を洗ってきます。", kana: "てを あらって きます。" },
-            { icon: "📞🤝", en: "I'll go and make a phone call.", it: "Vado a fare una telefonata.", kanji: "電話をかけてきます。", kana: "でんわを かけて きます。" },
-            { icon: "🥤🛒", en: "I'll go and buy some juice.", it: "Vado a comprare un succo.", kanji: "ジュースを買ってきます。", kana: "じゅーすを かって きます。" },
-            { icon: "👨‍🏫❓", en: "I'll go and ask the teacher.", it: "Vado a chiedere al professore.", kanji: "先生に聞いてきます。", kana: "せんせいに きいて きます。" },
-            { icon: "🔑🏃", en: "I'll go and get the keys.", it: "Vado a prendere le chiavi.", kanji: "鍵を持ってきます。", kana: "かぎを もって きます。" },
-            { icon: "🚬🧥", en: "I'll go and have a smoke.", it: "Vado a fumare.", kanji: "たばこを吸ってきます。", kana: "たばこを すって きます。" },
-            { icon: "🧴🛀", en: "I'll go and take a shower.", it: "Vado a fare la doccia.", kanji: "シャワーを浴びてきます。", kana: "しゃわーを あびて きます。" },
-            { icon: "🧥🚪", en: "I'll go and put on my coat.", it: "Vado a mettermi il cappotto.", kanji: "コートを着てきます。", kana: "こーとを きて きます。" },
-            { icon: "🚰💧", en: "I'll go and drink some water.", it: "Vado a bere un po' d'acqua.", kanji: "水を飲んできます。", kana: "みずを のんで きます。" },
-            { icon: "🚉🚶", en: "I'll go and see off my friend at the station.", it: "Vado ad accompagnare il mio amico in stazione.", kanji: "友達を駅まで送ってきます。", kana: "ともだちを えきまで おくって きます。" },
-            { icon: "📸🌳", en: "I'll go and take a photo.", it: "Vado a scattare una foto.", kanji: "写真を撮ってきます。", kana: "しゃしんを とって きます。" },
-            { icon: "🛒🥚", en: "I'll go and buy eggs.", it: "Vado a comprare le uova.", kanji: "卵を買ってきます。", kana: "たまごを かって きます。" },
-            { icon: "👔🏠", en: "I'll go and change my clothes.", it: "Vado a cambiarmi i vestiti.", kanji: "服を着替えてきます。", kana: "ふくを きがえて きます。" },
-            { icon: "🚶🌳", en: "I'll go and take a little walk.", it: "Vado a fare una passeggiata.", kanji: "ちょっと散歩してきます。", kana: "ちょっと さんぽ して きます。" },
-            { icon: "🚉🛤️", en: "I'll go and check the time.", it: "Vado a controllare l'orario.", kanji: "時間を確かめてきます。", kana: "じかんを たしかめて きます。" }
+        // Mode 3: Real Life (Textbook Scenarios)
+        const realData = [
+            { icon: "🏟️🌧️", en: "If it rains, the baseball match is cancelled.", it: "Se piove, la partita di baseball è annullata.", kanji: "雨の場合は、野球の試合は中止です。", kana: "あめの ばあいは、やきゅうの しあいは ちゅうしです。" },
+            { icon: "💳👮", en: "If you lose your card, contact the police.", it: "Se perdi la carta, contatta la polizia.", kanji: "カードをなくした場合は、警察に連絡してください。", kana: "かーどを なくした ばあいは、けいさつに れんらくして ください。" },
+            { icon: "💻🧩", en: "If the computer is broken, call the office.", it: "Se il PC è rotto, chiama l'ufficio.", kanji: "パソコンが故障した場合は、事務所に電話して下さい。", kana: "ぱそこんが こしょうした ばあいは、じむしょに でんわ して ください。" },
+            { icon: "🧾✨", en: "If you need a receipt, please tell me.", it: "Se ti serve la ricevuta, dillo per favore.", kanji: "領収書が必要な場合は、言ってください。", kana: "りょうしゅうしょが ひつような ばあいは、いって ください。" },
+            { icon: "📖🧩", en: "I studied hard, but I forgot it.", it: "Ho studiato sodo, ma l'ho dimenticato.", kanji: "一生懸命覚えたのに、忘れてしまいました。", kana: "いっしょうけんめい おぼえた なのに、わすれて しまいました。" },
+            { icon: "❄️🧥", en: "It's so cold, but I don't have a coat.", it: "Fa così freddo, eppure non ho il cappotto.", kanji: "こんなに寒いのに、コートを持っていません。", kana: "こんなに さむい なのに、こーとを もって いません。" },
+            { icon: "💴🛒", en: "It was expensive, but he bought it.", it: "Era caro, eppure lui l'ha comprato.", kanji: "高かったのに、彼はそれを買いました。", kana: "たかかった なのに、かれは それを かいました。" },
+            { icon: "📅💼", en: "Today is a holiday, but I have to work.", it: "Oggi è festa, ma devo lavorare.", kanji: "休みの日なのに、働かなければなりません。", kana: "やすみの ひ なのに、はたらかなければ なりません。" },
+            { icon: "📍🔍", en: "I checked the map, but I got lost.", it: "Ho guardato la mappa, ma mi sono perso.", kanji: "地図を見たのに、道に迷いました。", kana: "ちずを みた なのに、みちに まよいました。" },
+            { icon: "🤝💬", en: "I invited him, but he didn't come.", it: "L'ho invitato, ma lui non è venuto.", kanji: "誘ったのに、彼は来ませんでした。", kana: "さそった なのに、かれは きませんでした。" },
+            { icon: "💰🚫", en: "If you don't have enough money, ask him.", it: "Se non hai abbastanza soldi, chiedi a lui.", kanji: "お金が足りない場合は、彼に聞いてください。", kana: "おかねが たりない ばあいは、かれに きいて ください。" },
+            { icon: "📞⚡", en: "In case of emergency, use this phone.", it: "In caso di emergenza, usa questo telefono.", kanji: "非常の場合は、この電話を使ってください。", kana: "ひじょうの ばあいは、この でんわを つかって ください。" },
+            { icon: "🕰️❌", en: "It's already 11:00, but he hasn't come.", it: "Sono già le 11:00, ma lui non è venuto.", kanji: "１１時になったのに、まだ来ません。", kana: "じゅういちじに なった なのに、まだ きません。" },
+            { icon: "🤝✍️", en: "I asked for it, but he didn't do it.", it: "L'ho chiesto, ma lui non l'ha fatto.", kanji: "頼んだのに、彼はしてくれませんでした。", kana: "たのんだ なのに、かれは して くれませんでした。" },
+            { icon: "🎁😊", en: "I'm happy because I won the prize.", it: "Sono felice perché ho vinto il premio.", kanji: "優勝したので、うれしいです。(場合:優勝した場合は)", kana: "ゆうしょうしたので、うれしいです。" },
+            { icon: "🚉🚶", en: "If you are late, please wait at the station.", it: "In caso di ritardo, aspetta in stazione.", kanji: "遅れた場合は、駅で待っていてください。", kana: "おくれた ばあいは、えきで まって いて ください。" },
+            { icon: "🏃‍♂️🏅", en: "I practiced a lot, but I didn't win.", it: "Ho fatto molta pratica, ma non ho vinto.", kanji: "たくさん練習したのに、優勝できませんでした。", kana: "たくさん れんしゅうした なのに、ゆうしょう できませんでした。" }
         ];
 
-        let currentMode = 'appear';
+        let currentMode = 'baai';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -181,7 +181,7 @@
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
             
-            const modes = ['appear', 'anti', 'go'];
+            const modes = ['baai', 'noni', 'real'];
             modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
                 if(m === mode) {
@@ -194,15 +194,15 @@
             });
 
             const instr = document.getElementById('instruction');
-            if(mode === 'appear') instr.innerText = "Appearance (~sou): Judging by sight (Adj)";
-            else if(mode === 'anti') instr.innerText = "Anticipation (~sou): Predicting an event (Verb)";
-            else instr.innerText = "Go & Come back (~te kimasu): Go do something and return";
+            if(mode === 'baai') instr.innerText = "In Case of (~baai wa): Hypothetical situations";
+            else if(mode === 'noni') instr.innerText = "Even though (~noni): Opposite results / Regret";
+            else instr.innerText = "Real Life: Textbook scenarios and daily conversations";
             
             updateView();
         }
 
         function updateView() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { baai: baaiData, noni: noniData, real: realData };
             const questions = data[currentMode];
             const q = questions[currentIndex];
             const promptContent = document.getElementById('prompt-content');
@@ -217,7 +217,7 @@
             promptContent.innerHTML = `
                 <div class="item-icon mb-4">${q.icon}</div>
                 <div class="text-center px-6">
-                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Situation</div>
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Scenario</div>
                     <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
                 </div>
             `;
@@ -234,7 +234,7 @@
         }
 
         function speakJapanese() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { baai: baaiData, noni: noniData, real: realData };
             const text = data[currentMode][currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
@@ -243,7 +243,7 @@
         }
 
         function nextQuestion() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { baai: baaiData, noni: noniData, real: realData };
             const questions = data[currentMode];
             
             if (isFlipped && currentIndex === questions.length - 1) {
@@ -261,7 +261,7 @@
         }
 
         function prevQuestion() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { baai: baaiData, noni: noniData, real: realData };
             const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
