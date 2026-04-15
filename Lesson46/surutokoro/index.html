@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 43 Master</title>
+    <title>Japanese Practice: Lesson 46 Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -24,28 +24,28 @@
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L43: Looks like... & Go and Come</h1>
-        <p class="text-sm opacity-90 font-medium font-black tracking-widest uppercase">Result Prep System</p>
+        <h1 class="text-2xl font-bold italic">L46: Specific Moments & Expectations</h1>
+        <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-appear" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('appear')">
-                Appearance
+            <button id="mode-tokoro" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('tokoro')">
+                Time Points (~tokoro)
             </button>
-            <button id="mode-anti" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('anti')">
-                Anticipation
+            <button id="mode-bakari" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('bakari')">
+                Just Finished (~bakari)
             </button>
-            <button id="mode-go" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('go')">
-                Go & Come back
+            <button id="mode-hazu" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('hazu')">
+                Expectation (~hazu)
             </button>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                It looks like...
+                Complete the specific moment...
             </div>
 
             <!-- Card Container -->
@@ -56,7 +56,7 @@
                         <div id="prompt-content" class="flex flex-col items-center space-y-6 w-full px-4">
                             <!-- Injected by JS -->
                         </div>
-                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal answer</div>
+                        <div class="mt-auto text-[10px] text-gray-300 font-bold uppercase tracking-widest">Tap to reveal Japanese</div>
                     </div>
                     <!-- Back -->
                     <div class="card-face card-back bg-amber-50 border-4 border-amber-400 p-8 text-center">
@@ -94,7 +94,7 @@
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
             <div class="text-7xl mb-8">Finished‼️</div>
             <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 43 Mastery Complete.</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 46 Mastery Complete.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
                 Restart
             </button>
@@ -106,70 +106,70 @@
     </footer>
 
     <script>
-        // Mode 1: Appearance (Adj ~sou desu)
-        const appearData = [
-            { icon: "🍰😋", en: "This cake looks delicious.", it: "Questa torta sembra deliziosa.", kanji: "このケーキはおいしそうです。", kana: "この けーきは おいしそうです。" },
-            { icon: "🧥❄️", en: "He looks cold.", it: "Lui sembra avere freddo.", kanji: "彼は寒そうです。", kana: "かれは さむそうです。" },
-            { icon: "🍀😊", en: "She looks happy.", it: "Lei sembra felice.", kanji: "彼女は幸せそうです。", kana: "かのじょは しあわせそうです。" },
-            { icon: "📱✨", en: "This smartphone looks convenient.", it: "Questo smartphone sembra comodo/conveniente.", kanji: "このスマホは便利そうです。", kana: "この すまほは べんりそうです。" },
-            { icon: "🧱💪", en: "This table looks sturdy.", it: "Questo tavolo sembra robusto.", kanji: "このテーブルは丈夫そうです。", kana: "この てーぶるは じょうぶそうです。" },
-            { icon: "🧩😵", en: "That task looks difficult.", it: "Quel compito sembra difficile.", kanji: "その仕事は大変そうです。", kana: "その しごとは たいへんそうです。" },
-            { icon: "📖💡", en: "This book looks interesting.", it: "Questo libro sembra interessante.", kanji: "この本は面白そうです。", kana: "この ほんは おもしろそうです。" },
-            { icon: "🤒💊", en: "He looks unwell.", it: "Lui non sembra stare bene.", kanji: "彼は気分が悪そうです。", kana: "かれは きぶんが わるそうです。" },
-            { icon: "👜🎒", en: "That luggage looks heavy.", it: "Quel bagaglio sembra pesante.", kanji: "その荷物は重そうです。", kana: "その にもつは おもそうです。" },
-            { icon: "🏢🏙️", en: "This building looks new.", it: "Questo edificio sembra nuovo.", kanji: "このビルは新しそうです。", kana: "この びるは あたらしそうです。" },
-            { icon: "👔🤵", en: "He looks smart/cool.", it: "Lui sembra elegante/figo.", kanji: "彼は頭がよさそうです。", kana: "かれは あたまが よさそうです。" },
-            { icon: "🥗🥦", en: "This salad looks healthy.", it: "Questa insalata sembra salutare.", kanji: "このサラダは体によさそうです。", kana: "この さらだは からだに よさそうです。" },
-            { icon: "🍜🔥", en: "This ramen looks spicy.", it: "Questo ramen sembra piccante.", kanji: "このラーメンは辛そうです。", kana: "この らーめんは からそうです。" },
-            { icon: "🧸🎀", en: "That toy looks cute.", it: "Quel giocattolo sembra carino.", kanji: "そのおもちゃは可愛らしそうです。", kana: "その おもちゃは かわいらしそうです。" },
-            { icon: "☁️🌬️", en: "The weather looks like it will become bad.", it: "Il tempo sembra che peggiorerà.", kanji: "天気が悪くなりそうです。", kana: "てんきが わるく なりそうです。" },
-            { icon: "🧗‍♂️🏔️", en: "Mountain climbing looks tough.", it: "Scalare le montagne sembra faticoso.", kanji: "山登りはきつそうです。", kana: "やまのぼりは きつそうです。" },
-            { icon: "☕🥛", en: "This coffee looks sweet.", it: "Questo caffè sembra dolce.", kanji: "このコーヒーは甘そうです。", kana: "この こーひーは あまそうです。" }
+        // Mode 1: Specific Moments (~tokoro)
+        const tokoroData = [
+            { icon: "🍱🚶", en: "I'm just about to eat lunch now.", it: "Sto proprio per pranzare ora.", kanji: "これから昼ご飯を食べるところです。", kana: "これから ひるごはんを たべる ところです。" },
+            { icon: "🍱😋", en: "I am eating lunch right now.", it: "Sto pranzando proprio adesso.", kanji: "今昼ご飯を食べているところです。", kana: "いま ひるごはんを たべて いる ところです。" },
+            { icon: "🍱🍵", en: "I have just finished eating lunch.", it: "Ho appena finito di pranzare.", kanji: "たった今昼ご飯を食べたところです。", kana: "たったいま ひるごはんを たべた ところです。" },
+            { icon: "🛫🚶", en: "The plane is just about to depart.", it: "L'aereo sta proprio per partire.", kanji: "飛行機は今から出発するところです。", kana: "ひこうきは いまから しゅっぱつする ところです。" },
+            { icon: "🚉🏃", en: "I'm at the station, just about to get on the train.", it: "Sono in stazione, sto proprio per salire sul treno.", kanji: "今から電車に乗るところです。", kana: "いまから でんしゃに のる ところです。" },
+            { icon: "🧖🚿", en: "I am taking a shower right now.", it: "Sto facendo la doccia proprio ora.", kanji: "今シャワーを浴びているところです。", kana: "いま しゃわーを あびて いる ところです。" },
+            { icon: "📞✍️", en: "I have just finished the phone call.", it: "Ho appena finito la telefonata.", kanji: "たった今電話をかけたところです。", kana: "たったいま でんわを かけた ところです。" },
+            { icon: "📁💻", en: "I am making the report right now.", it: "Sto scrivendo il rapporto proprio adesso.", kanji: "今レポートを作っているところです。", kana: "いま れぽーとを つくって いる ところです。" },
+            { icon: "🚗💨", en: "I'm just about to leave the house.", it: "Sto proprio per uscire di casa.", kanji: "今から出かけるところです。", kana: "いまから でかける ところです。" },
+            { icon: "🛒🥚", en: "I am shopping right now.", it: "Sto facendo la spesa proprio ora.", kanji: "今買い物をしているところです。", kana: "いま かいものを して いる ところです。" },
+            { icon: "🧹✨", en: "I have just finished cleaning.", it: "Ho appena finito di pulire.", kanji: "たった今掃除が終わったところです。", kana: "たったいま そうじが おわった ところです。" },
+            { icon: "🤝💬", en: "We are meeting right now.", it: "Ci stiamo incontrando proprio adesso.", kanji: "今会っているところです。", kana: "いま あって いる ところです。" },
+            { icon: "😴🛌", en: "I was just about to sleep.", it: "Stavo proprio per dormire.", kanji: "これから寝るところでした。", kana: "これから ねる ところでした。" },
+            { icon: "🎥🍿", en: "The movie is starting right now.", it: "Il film sta iniziando proprio ora.", kanji: "今映画が始まるところです。", kana: "いま えいがが はじまる ところです。" },
+            { icon: "🍵🍰", en: "I have just finished making tea.", it: "Ho appena finito di preparare il tè.", kanji: "たった今お茶をいれたところです。", kana: "たったいま おちゃを いれた ところです。" },
+            { icon: "👔🕺", en: "I am getting dressed right now.", it: "Mi sto vestendo proprio adesso.", kanji: "今服を着ているところです。", kana: "いま ふくを きて いる ところです。" },
+            { icon: "🏫👋", en: "I have just arrived at school.", it: "Sono appena arrivato a scuola.", kanji: "たった今学校に着いたところです。", kana: "たったいま がっこうに ついた ところです。" }
         ];
 
-        // Mode 2: Anticipation (Verb ~sou desu)
-        const antiData = [
-            { icon: "☁️☔", en: "It looks like it will start raining.", it: "Sembra che inizierà a piovere.", kanji: "雨が降りそうです。", kana: "あめが ふりそうです。" },
-            { icon: "🧶✂️", en: "The string looks like it will break.", it: "Lo spago sembra che stia per rompersi.", kanji: "紐が切れそうです。", kana: "ひもが きれそうです。" },
-            { icon: "🔘❌", en: "The button looks like it will come off.", it: "Il bottone sembra che stia per staccarsi.", kanji: "ボタンが取れそうです。", kana: "ぼたんが とれそうです。" },
-            { icon: "📦📉", en: "The luggage looks like it will fall.", it: "Il bagaglio sembra che stia per cadere.", kanji: "荷物が落ちそうです。", kana: "にもつが おちそうです。" },
-            { icon: "⛽❌", en: "The gasoline looks like it will run out.", it: "Sembra che la benzina stia per finire.", kanji: "ガソリンがなくなりそうです。", kana: "がそりんが なくなりそうです。" },
-            { icon: "🌲📉", en: "The tree looks like it will fall down.", it: "L'albero sembra che stia per cadere.", kanji: "木が倒れそうです。", kana: "きが たおれそうです。" },
-            { icon: "🔥💨", en: "The fire looks like it will go out.", it: "Il fuoco sembra che stia per spegnersi.", kanji: "火が消えそうです。", kana: "ひが きえそうです。" },
-            { icon: "🌞🌡️", en: "The price looks like it will rise.", it: "Sembra che il prezzo salirà.", kanji: "値段が上がりそうです。", kana: "ねだんが あがりそうです。" },
-            { icon: "❄️📉", en: "The temperature looks like it will fall.", it: "Sembra che la temperatura scenderà.", kanji: "気温が下がりそうです。", kana: "きおんが さがりそうです。" },
-            { icon: "👜💔", en: "The bag looks like it will break.", it: "La borsa sembra che stia per rompersi.", kanji: "バッグが壊れそうです。", kana: "ばっぐが こわれそうです。" },
-            { icon: "🌸✨", en: "The cherry blossoms look like they will bloom.", it: "Sembra che i ciliegi stiano per fiorire.", kanji: "桜が咲きそうです。", kana: "さくらが さきそうです。" },
-            { icon: "🌞☁️", en: "The sky looks like it will clear up.", it: "Sembra che il cielo si rasserenerà.", kanji: "空が晴れそうです。", kana: "そらが はれそうです。" },
-            { icon: "🌊🚤", en: "The boat looks like it will sink.", it: "La barca sembra che stia per affondare.", kanji: "船が沈みそうです。", kana: "ふねが しずみそうです。" },
-            { icon: "🏗️🏢", en: "The building looks like it's completed.", it: "L'edificio sembra quasi completato.", kanji: "ビルができそうです。", kana: "びるが できそうです。" },
-            { icon: "🚶💨", en: "It looks like I'll be late for the meeting.", it: "Sembra che farò tardi alla riunione.", kanji: "会議に遅れそうです。", kana: "かいぎに おくれそうです。" },
-            { icon: "🚄💨", en: "It looks like I'll miss the Shinkansen.", it: "Sembra che perderò lo Shinkansen.", kanji: "新幹線に乗り遅れそうです。", kana: "しんかんせんに のりおくれそうです。" },
-            { icon: "🥂✨", en: "The party looks like it's starting.", it: "Sembra che la festa stia per iniziare.", kanji: "パーティーが始まりそうです。", kana: "ぱーてぃーが はじまりそうです。" }
+        // Mode 2: Just Finished (~bakari)
+        const bakariData = [
+            { icon: "👨‍👩‍👧‍👦🏠", en: "I have just arrived in Japan (recently).", it: "Sono appena arrivato in Giappone (da poco).", kanji: "日本に来たばかりです。", kana: "にほんに きた ばかりです。" },
+            { icon: "💍✨", en: "They have just got married.", it: "Si sono appena sposati.", kanji: "結婚したばかりです。", kana: "けっこんした ばかりです。" },
+            { icon: "💻🛒", en: "I have just bought this PC.", it: "Ho appena comprato questo PC.", kanji: "このパソコンを買ったばかりです。", kana: "この ぱそこんを かった ばかりです。" },
+            { icon: "🏢🤝", en: "He has just entered the company.", it: "Lui è appena entrato in azienda.", kanji: "彼は会社に入ったばかりです。", kana: "かれは かいしゃに はいった ばかりです。" },
+            { icon: "📖🧠", en: "I have just learned this word.", it: "Ho appena imparato questa parola.", kanji: "この言葉を習ったばかりです。", kana: "この ことばを ならった ばかりです。" },
+            { icon: "👶🍼", en: "The baby was just born.", it: "Il bambino è appena nato.", kanji: "赤ちゃんが生まれたばかりです。", kana: "あかちゃんが うまれた ばかりです。" },
+            { icon: "🏠🧹", en: "I have just cleaned the room.", it: "Ho appena pulito la stanza.", kanji: "部屋を掃除したばかりです。", kana: "へやを そうじした ばかりです。" },
+            { icon: "🍛🔥", en: "I have just made this curry.", it: "Ho appena preparato questo curry.", kanji: "カレーを作ったばかりです。", kana: "かれーを つくった ばかりです。" },
+            { icon: "👗✨", en: "I have just washed this dress.", it: "Ho appena lavato questo vestito.", kanji: "この服を洗ったばかりです。", kana: "この ふくを あらった ばかりです。" },
+            { icon: "🚗🔧", en: "The car was just repaired.", it: "L'auto è stata appena riparata.", kanji: "車を直したばかりです。", kana: "くるまを なおした ばかりです。" },
+            { icon: "🏫🎓", en: "I have just graduated from university.", it: "Mi sono appena laureato all'università.", kanji: "大学を卒業したばかりです。", kana: "だいがくを そつぎょうした ばかりです。" },
+            { icon: "🥤🧊", en: "I have just opened the bottle.", it: "Ho appena aperto la bottiglia.", kanji: "瓶を開けたばかりです。", kana: "びんを あけた ばかりです。" },
+            { icon: "📩✍️", en: "I have just sent the email.", it: "Ho appena inviato la mail.", kanji: "メールを送ったばかりです。", kana: "めーるを おくった ばかりです。" },
+            { icon: "💇✨", en: "I have just had a haircut.", it: "Ho appena tagliato i capelli.", kanji: "髪を切ったばかりです。", kana: "かみを きった ばかりです。" },
+            { icon: "🧱🏗️", en: "This house was just built.", it: "Questa casa è stata appena costruita.", kanji: "この家は建ったばかりです。", kana: "この いえは たった ばかりです。" },
+            { icon: "🧥🧼", en: "This coat was just cleaned.", it: "Questo cappotto è stato appena pulito.", kanji: "このコートはクリーニングに出したばかりです。", kana: "この こーとは くりーにんぐに だした ばかりです。" },
+            { icon: "🚶‍♂️💦", en: "I have just started walking.", it: "Ho appena iniziato a camminare.", kanji: "歩き始めたばかりです。", kana: "あるきはじめた ばかりです。" }
         ];
 
-        // Mode 3: Go & Come back (~te kimasu)
-        const goData = [
-            { icon: "🍞🛒", en: "I'll go and buy some bread.", it: "Vado a comprare del pane (e torno).", kanji: "パンを買ってきます。", kana: "ぱんを かって きます。" },
-            { icon: "📩🏃", en: "I'll go and get the mail.", it: "Vado a prendere la posta.", kanji: "手紙を取ってきます。", kana: "てがみを とって きます。" },
-            { icon: "🧼🖐️", en: "I'll go and wash my hands.", it: "Vado a lavarmi le mani.", kanji: "手を洗ってきます。", kana: "てを あらって きます。" },
-            { icon: "📞🤝", en: "I'll go and make a phone call.", it: "Vado a fare una telefonata.", kanji: "電話をかけてきます。", kana: "でんわを かけて きます。" },
-            { icon: "🥤🛒", en: "I'll go and buy some juice.", it: "Vado a comprare un succo.", kanji: "ジュースを買ってきます。", kana: "じゅーすを かって きます。" },
-            { icon: "👨‍🏫❓", en: "I'll go and ask the teacher.", it: "Vado a chiedere al professore.", kanji: "先生に聞いてきます。", kana: "せんせいに きいて きます。" },
-            { icon: "🔑🏃", en: "I'll go and get the keys.", it: "Vado a prendere le chiavi.", kanji: "鍵を持ってきます。", kana: "かぎを もって きます。" },
-            { icon: "🚬🧥", en: "I'll go and have a smoke.", it: "Vado a fumare.", kanji: "たばこを吸ってきます。", kana: "たばこを すって きます。" },
-            { icon: "🧴🛀", en: "I'll go and take a shower.", it: "Vado a fare la doccia.", kanji: "シャワーを浴びてきます。", kana: "しゃわーを あびて きます。" },
-            { icon: "🧥🚪", en: "I'll go and put on my coat.", it: "Vado a mettermi il cappotto.", kanji: "コートを着てきます。", kana: "こーとを きて きます。" },
-            { icon: "🚰💧", en: "I'll go and drink some water.", it: "Vado a bere un po' d'acqua.", kanji: "水を飲んできます。", kana: "みずを のんで きます。" },
-            { icon: "🚉🚶", en: "I'll go and see off my friend at the station.", it: "Vado ad accompagnare il mio amico in stazione.", kanji: "友達を駅まで送ってきます。", kana: "ともだちを えきまで おくって きます。" },
-            { icon: "📸🌳", en: "I'll go and take a photo.", it: "Vado a scattare una foto.", kanji: "写真を撮ってきます。", kana: "しゃしんを とって きます。" },
-            { icon: "🛒🥚", en: "I'll go and buy eggs.", it: "Vado a comprare le uova.", kanji: "卵を買ってきます。", kana: "たまごを かって きます。" },
-            { icon: "👔🏠", en: "I'll go and change my clothes.", it: "Vado a cambiarmi i vestiti.", kanji: "服を着替えてきます。", kana: "ふくを きがえて きます。" },
-            { icon: "🚶🌳", en: "I'll go and take a little walk.", it: "Vado a fare una passeggiata.", kanji: "ちょっと散歩してきます。", kana: "ちょっと さんぽ して きます。" },
-            { icon: "🚉🛤️", en: "I'll go and check the time.", it: "Vado a controllare l'orario.", kanji: "時間を確かめてきます。", kana: "じかんを たしかめて きます。" }
+        // Mode 3: Expectation (~hazu)
+        const hazuData = [
+            { icon: "👨‍💼📅", en: "Tanaka-san should come today.", it: "Il signor Tanaka dovrebbe venire oggi.", kanji: "田中さんは今日来るはずです。", kana: "たなかさんは きょう くる はずです。" },
+            { icon: "📦🚚", en: "The package should arrive tomorrow.", it: "Il pacco dovrebbe arrivare domani.", kanji: "荷物は明日届くはずです。", kana: "にもつは あした とどく はずです。" },
+            { icon: "🕙🛑", en: "The meeting should end at 10:00.", it: "La riunione dovrebbe finire alle 10:00.", kanji: "会議は１０時に終わるはずです。", kana: "かいぎは じゅうじに おわる はずです。" },
+            { icon: "💰🆗", en: "The salary should be paid today.", it: "Lo stipendio dovrebbe essere pagato oggi.", kanji: "今日給料が入るはずです。", kana: "きょう きゅうりょうが はいる はずです。" },
+            { icon: "🏢🔓", en: "The bank should be open.", it: "La banca dovrebbe essere aperta.", kanji: "銀行は開いているはずです。", kana: "ぎんこうは あいている はずです。" },
+            { icon: "🍱😋", en: "This food should be delicious.", it: "Questo cibo dovrebbe essere delizioso.", kanji: "この料理はおいしいはずです。", kana: "この りょうりは おいしい はずです。" },
+            { icon: "🧩🧠", en: "He should know the answer.", it: "Lui dovrebbe conoscere la risposta.", kanji: "彼は答えを知っているはずです。", kana: "かれは こたえを しっている はずです。" },
+            { icon: "🧥❄️", en: "It should be cold in Hokkaido.", it: "Dovrebbe fare freddo a Hokkaido.", kanji: "北海道は寒いはずです。", kana: "ほっかいどうは さむい はずです。" },
+            { icon: "👔✨", en: "The boss should be busy today.", it: "Il capo dovrebbe essere occupato oggi.", kanji: "部長は今日忙しいはずです。", kana: "ぶちょうは きょう いそがしい はずです。" },
+            { icon: "❌🏃", en: "He shouldn't be at home.", it: "Lui non dovrebbe essere a casa.", kanji: "彼はうちにいないはずです。", kana: "かれは うちに いない はずです。" },
+            { icon: "🚉🛤️", en: "The train should arrive soon.", it: "Il treno dovrebbe arrivare tra poco.", kanji: "電車はもうすぐ来るはずです。", kana: "でんしゃは もうすぐ くる はずです。" },
+            { icon: "👤🤝", en: "He should be a kind person.", it: "Lui dovrebbe essere una persona gentile.", kanji: "彼は親切な人のはずです。", kana: "かれは しんせつな ひとの はずです。" },
+            { icon: "📖✅", en: "This answer should be correct.", it: "Questa risposta dovrebbe essere corretta.", kanji: "この答えは正しいはずです。", kana: "この こたえは ただしい はずです。" },
+            { icon: "🏢🏗️", en: "The new building should be sturdy.", it: "Il nuovo edificio dovrebbe essere robusto.", kanji: "新しいビルは丈夫なはずです。", kana: "あたらしい びるは じょうぶな はずです。" },
+            { icon: "🔑💼", en: "The keys should be in the bag.", it: "Le chiavi dovrebbero essere nella borsa.", kanji: "鍵はバッグの中にあるはずです。", kana: "かぎは ばっぐの なかに ある はずです。" },
+            { icon: "📅❌", en: "Tomorrow should not be a holiday.", it: "Domani non dovrebbe essere festa.", kanji: "明日は休みじゃないはずです。", kana: "あしたは やすみじゃない はずです。" },
+            { icon: "🗣️💡", en: "The explanation should be easy.", it: "La spiegazione dovrebbe essere facile.", kanji: "説明は簡単なはずです。", kana: "せつめいは かんたんな はずです。" }
         ];
 
-        let currentMode = 'appear';
+        let currentMode = 'tokoro';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -181,7 +181,7 @@
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
             
-            const modes = ['appear', 'anti', 'go'];
+            const modes = ['tokoro', 'bakari', 'hazu'];
             modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
                 if(m === mode) {
@@ -194,15 +194,15 @@
             });
 
             const instr = document.getElementById('instruction');
-            if(mode === 'appear') instr.innerText = "Appearance (~sou): Judging by sight (Adj)";
-            else if(mode === 'anti') instr.innerText = "Anticipation (~sou): Predicting an event (Verb)";
-            else instr.innerText = "Go & Come back (~te kimasu): Go do something and return";
+            if(mode === 'tokoro') instr.innerText = "Time Points (~tokoro): Specific moments (Before/During/After)";
+            else if(mode === 'bakari') instr.innerText = "Just Finished (~bakari): Actions done very recently";
+            else instr.innerText = "Expectation (~hazu): Strong logical probability";
             
             updateView();
         }
 
         function updateView() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { tokoro: tokoroData, bakari: bakariData, hazu: hazuData };
             const questions = data[currentMode];
             const q = questions[currentIndex];
             const promptContent = document.getElementById('prompt-content');
@@ -217,7 +217,7 @@
             promptContent.innerHTML = `
                 <div class="item-icon mb-4">${q.icon}</div>
                 <div class="text-center px-6">
-                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Situation</div>
+                    <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Target Meaning / Scenario</div>
                     <div class="text-3xl font-black text-gray-800 leading-tight italic px-4">${q.en}</div>
                 </div>
             `;
@@ -234,7 +234,7 @@
         }
 
         function speakJapanese() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { tokoro: tokoroData, bakari: bakariData, hazu: hazuData };
             const text = data[currentMode][currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
@@ -243,7 +243,7 @@
         }
 
         function nextQuestion() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { tokoro: tokoroData, bakari: bakariData, hazu: hazuData };
             const questions = data[currentMode];
             
             if (isFlipped && currentIndex === questions.length - 1) {
@@ -261,7 +261,7 @@
         }
 
         function prevQuestion() {
-            const data = { appear: appearData, anti: antiData, go: goData };
+            const data = { tokoro: tokoroData, bakari: bakariData, hazu: hazuData };
             const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
