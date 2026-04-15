@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japanese Practice: Lesson 49 Master</title>
+    <title>Japanese Practice: Lesson 48 Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-container { perspective: 1000px; }
@@ -24,28 +24,28 @@
 <body class="bg-gray-50 min-h-screen font-sans flex flex-col">
 
     <header class="bg-amber-500 text-white p-6 shadow-md text-center">
-        <h1 class="text-2xl font-bold italic">L49: Respectful Honorifics</h1>
+        <h1 class="text-2xl font-bold italic">L48: Causative Forms</h1>
         <p class="text-sm opacity-90 font-black tracking-widest uppercase">Result Prep System</p>
     </header>
 
     <main class="flex-grow flex flex-col items-center p-6 max-w-2xl mx-auto w-full">
         <!-- Mode Selector (English Tabs) -->
         <div class="flex space-x-1 mb-8 bg-gray-200 p-1 rounded-xl w-full overflow-x-auto shadow-inner border border-gray-300">
-            <button id="mode-special" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('special')">
-                Special Verbs
+            <button id="mode-intrans" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition bg-white shadow-sm text-amber-600 text-xs" onclick="switchMode('intrans')">
+                Intransitive (o)
             </button>
-            <button id="mode-standard" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('standard')">
-                O-V-ni naru
+            <button id="mode-trans" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('trans')">
+                Transitive (ni)
             </button>
-            <button id="mode-passive" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('passive')">
-                Passive Form
+            <button id="mode-permit" class="flex-1 whitespace-nowrap px-2 py-3 rounded-lg font-bold transition text-gray-600 text-xs" onclick="switchMode('permit')">
+                Permission
             </button>
         </div>
 
         <!-- Question Area -->
         <div id="game-view" class="w-full flex flex-col items-center">
             <div id="instruction" class="text-gray-400 mb-6 text-center text-xs font-black uppercase tracking-[0.2em]">
-                Use special honorific verbs...
+                Make someone do an action...
             </div>
 
             <!-- Card Container -->
@@ -94,7 +94,7 @@
         <div id="finished-view" class="hidden w-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] shadow-2xl border-4 border-amber-100 text-center">
             <div class="text-7xl mb-8">Finished‼️</div>
             <p class="text-gray-500 font-black uppercase tracking-[0.3em] mb-4 text-sm">Pratica completata!</p>
-            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 49 Honorific Mastery Complete.</p>
+            <p class="text-lg text-amber-600 font-bold mb-10 italic text-center">Lesson 48 Causative Mastery Complete.</p>
             <button onclick="location.reload()" class="w-full py-5 bg-amber-500 text-white rounded-2xl font-black shadow-xl active:scale-95 transition-all text-xl tracking-widest uppercase">
                 Restart
             </button>
@@ -106,70 +106,70 @@
     </footer>
 
     <script>
-        // Mode 1: Special Honorific Verbs
-        const specialData = [
-            { icon: "👨‍🏫🏠", en: "The teacher is at home.", it: "Il professore è a casa (gentile).", kanji: "先生はうちにいらっしゃいます。", kana: "せんせいは うちに いらっしゃいます。" },
-            { icon: "🍱😋", en: "What will you eat?", it: "Cosa mangerà? (gentile).", kanji: "何を召し上がりますか。", kana: "なにを めしあがりますか。" },
-            { icon: "🗣️💬", en: "What did the president say?", it: "Cosa ha detto il presidente? (gentile).", kanji: "社長は何とおっしゃいましたか。", kana: "しゃちょうは なんと おっしゃいましたか。" },
-            { icon: "👁️📺", en: "Have you seen the news?", it: "Ha visto le notizie? (gentile).", kanji: "ニュースをご覧になりましたか。", kana: "にゅーすを ごらんになられましたか。" },
-            { icon: "🎾🤝", en: "Do you play tennis?", it: "Pratica il tennis? (gentile).", kanji: "テニスをなさいますか。", kana: "てにすを なさいますか。" },
-            { icon: "👨‍🏫🎓", en: "The teacher came to the school.", it: "Il professore è venuto a scuola (gentile).", kanji: "先生は学校にいらっしゃいました。", kana: "せんせいは がっこうに いらっしゃいました。" },
-            { icon: "🧠❓", en: "Do you know that person?", it: "Conosce quella persona? (gentile).", kanji: "あの方をご存じですか。", kana: "あのかたを ごぞんじですか。" },
-            { icon: "🥤🍵", en: "Please drink some tea.", it: "Per favore beva del tè (gentile).", kanji: "お茶を召し上がってください。", kana: "おちゃを めしあがって ください。" },
-            { icon: "🏢🤵", en: "Where is the president going?", it: "Dove va il presidente? (gentile).", kanji: "社長はどちらへいらっしゃいますか。", kana: "しゃちょうは どちらへ いらっしゃいますか。" },
-            { icon: "🗣️💡", en: "He said it was true.", it: "Ha detto che è vero (gentile).", kanji: "本当だとおっしゃいました。", kana: "ほんとうだと おっしゃいました。" },
-            { icon: "👁️🎨", en: "Did you see the exhibition?", it: "Ha visto la mostra? (gentile).", kanji: "展覧会をご覧になりましたか。", kana: "てんらんかいを ごらんになりましたか。" },
-            { icon: "🤝✨", en: "What are you doing now?", it: "Cosa sta facendo ora? (gentile).", kanji: "今何をなさっていますか。", kana: "いま なにを なさっていますか。" },
-            { icon: "🍣🇯🇵", en: "Do you eat Japanese food?", it: "Mangia cibo giapponese? (gentile).", kanji: "日本料理を召し上がりますか。", kana: "にほんりょうりを めしあがりますか。" },
-            { icon: "👨‍🏫💤", en: "Is the teacher sleeping?", it: "Il professore sta dormendo? (gentile).", kanji: "先生は寝ていらっしゃいますか。", kana: "せんせいは ねていらっしゃいますか。" },
-            { icon: "🧠📍", en: "Do you know the way?", it: "Conosce la strada? (gentile).", kanji: "道をご存じですか。", kana: "みちを ごぞんじですか。" },
-            { icon: "🍷🥂", en: "Would you like to drink wine?", it: "Vorrebbe bere del vino? (gentile).", kanji: "ワインを召し上がりますか。", kana: "わいんを めしあがりますか。" },
-            { icon: "👨‍💼🏢", en: "The boss is in the office.", it: "Il capo è in ufficio (gentile).", kanji: "部長は事務所にいらっしゃいます。", kana: "ぶちょうは じむしょに いらっしゃいます。" }
+        // Mode 1: Intransitive Causative (Person o V-causative)
+        const intransData = [
+            { icon: "🧒🏃", en: "I made the child run.", it: "Ho fatto correre il bambino.", kanji: "子供を走らせました。", kana: "こどもを はしらせました。" },
+            { icon: "🤝🏠", en: "I let my friend come to my house.", it: "Ho lasciato che il mio amico venisse a casa mia.", kanji: "友達をうちへ来させました。", kana: "ともだちを うちへ こさせました。" },
+            { icon: "🧒🌳", en: "I let the child play in the park.", it: "Ho lasciato giocare il bambino al parco.", kanji: "子供を公園で遊ばせました。", kana: "こどもを こうえんで あそばせました。" },
+            { icon: "👨‍🏫🎓", en: "The teacher made the students attend the meeting.", it: "L'insegnante ha fatto partecipare gli studenti alla riunione.", kanji: "先生は学生を出席させました。", kana: "せんせいは がくせいを しゅっせき させました。" },
+            { icon: "🤝🏃‍♂️", en: "I let him go first.", it: "L'ho fatto andare per primo.", kanji: "彼を先に行かせました。", kana: "かれを さきに いかせました。" },
+            { icon: "🧒🏫", en: "The mother made the child go to school.", it: "La madre ha fatto andare il bambino a scuola.", kanji: "母は子供を学校へ行かせました。", kana: "ははは こどもを がっこうへ いかせました。" },
+            { icon: "🧒🛀", en: "I made the child take a bath.", it: "Ho fatto fare il bagno al bambino.", kanji: "子供をお風呂に入らせました。", kana: "こどもを おふろに はいらせました。" },
+            { icon: "🤝🚪", en: "I made the friend wait outside.", it: "Ho fatto aspettare l'amico fuori.", kanji: "友達を外で待たせました。", kana: "ともだちを そとで またせました。" },
+            { icon: "🧒💤", en: "I let the child sleep until late.", it: "Ho lasciato dormire il bambino fino a tardi.", kanji: "子供を遅くまで寝させました。", kana: "こどもを おそくまで ねさせました。" },
+            { icon: "🏃‍♂️💨", en: "I made him hurry.", it: "L'ho fatto affrettare.", kanji: "彼を急がせました。", kana: "かれを いそがせました。" },
+            { icon: "🧒🛒", en: "I let the child go shopping.", it: "Ho lasciato che il bambino andasse a fare la spesa.", kanji: "子供を買い物に行かせました。", kana: "こどもを かいものに いかせました。" },
+            { icon: "👨‍💼🏢", en: "I made the subordinate go to the branch office.", it: "Ho fatto andare il subordinato alla filiale.", kanji: "部下を支店へ行かせました。", kana: "ぶかを してんへ いかせました。" },
+            { icon: "🤝🥂", en: "I let my friend drink alcohol.", it: "Ho lasciato bere alcol al mio amico.", kanji: "友達をお酒を飲ませました。(自動詞的用法)", kana: "ともだちを おさけを のませました。" },
+            { icon: "🧒🥣", en: "I made the child sit down.", it: "Ho fatto sedere il bambino.", kanji: "子供を座らせました。", kana: "こどもを すわらせました。" },
+            { icon: "🤝🛤️", en: "I let him choose the way.", it: "L'ho lasciato scegliere la strada.", kanji: "彼を歩かせました。(道を)", kana: "かれを あるかせました。" },
+            { icon: "🧒🎒", en: "I let the child walk to the station.", it: "Ho lasciato camminare il bambino fino in stazione.", kanji: "子供を駅まで歩かせました。", kana: "こどもを えきまで あるかせました。" },
+            { icon: "🤝📞", en: "I made him answer the phone.", it: "L'ho fatto rispondere al telefono.", kanji: "彼を電話に出させました。", kana: "かれを でんわに ださせました。" }
         ];
 
-        // Mode 2: Standard Honorific (O-V-ni narimasu)
-        const standardData = [
-            { icon: "🏠🚶‍♂️", en: "The boss has returned home.", it: "Il capo è tornato a casa (gentile).", kanji: "部長はお帰りになりました。", kana: "ぶちょうは おかえりに なりました。" },
-            { icon: "✍️📄", en: "Did the teacher write the letter?", it: "Il professore ha scritto la lettera? (gentile).", kanji: "先生は手紙をお書きになりましたか。", kana: "せんせいは てがみを おかきに なりましたか。" },
-            { icon: "📖💡", en: "Have you read this book?", it: "Ha letto questo libro? (gentile).", kanji: "この本をお読みになりましたか。", kana: "この ほんを およみに なりましたか。" },
-            { icon: "🕙🛑", en: "The meeting has ended.", it: "La riunione è terminata (gentile).", kanji: "会議はお終わりになりました。", kana: "かいぎは おおわりに なりました。" },
-            { icon: "👔✨", en: "The president wore a new tie.", it: "Il presidente ha messo una cravatta nuova (gentile).", kanji: "社長は新しいネクタイをお締めになりました。", kana: "しゃちょうは あたらしい ねくたいを おしめに なりました。" },
-            { icon: "📸🌳", en: "Did you take a photo?", it: "Ha scattato una foto? (gentile).", kanji: "写真をお撮りになりましたか。", kana: "しゃしんを おとりに なりましたか。" },
-            { icon: "🛒🥚", en: "Did you buy the eggs?", it: "Ha comprato le uova? (gentile).", kanji: "卵をお買いになりましたか。", kana: "たまごを おかいに なりましたか。" },
-            { icon: "🏨🛌", en: "Did you stay at the hotel?", it: "Ha alloggiato in hotel? (gentile).", kanji: "ホテルにお泊まりになりましたか。", kana: "ほてるに おとまりに なりましたか。" },
-            { icon: "🎨🖌️", en: "Did you draw this picture?", it: "Ha disegnato questo quadro? (gentile).", kanji: "この絵をお描きになりましたか。", kana: "このえを おかきに なりましたか。" },
-            { icon: "🚶‍♂️💨", en: "Did you hurry?", it: "Si è affrettato? (gentile).", kanji: "お急ぎになりましたか。", kana: "おいそぎに なりましたか。" },
-            { icon: "🧴🚿", en: "Did you take a bath?", it: "Ha fatto il bagno? (gentile).", kanji: "お風呂にお入りになりましたか。", kana: "おふろに おはいりに なりましたか。" },
-            { icon: "🗣️🤝", en: "Did you talk with him?", it: "Ha parlato con lui? (gentile).", kanji: "彼とお話しになりましたか。", kana: "かれと おはなしに なりましたか。" },
-            { icon: "🎁🎀", en: "Did you send the present?", it: "Ha inviato il regalo? (gentile).", kanji: "プレゼントをお送りになりましたか。", kana: "ぷれぜんとを おおくりに なりましたか。" },
-            { icon: "🎾✨", en: "Did you play tennis?", it: "Ha giocato a tennis? (gentile).", kanji: "テニスをお楽しみになりましたか。", kana: "てにすを おたのしみに なりましたか。" },
-            { icon: "🚶‍♂️🏞️", en: "Did you take a walk?", it: "Ha fatto una passeggiata? (gentile).", kanji: "お散歩になりましたか。", kana: "おさんぽに なりましたか。" },
-            { icon: "📜🧠", en: "Did you remember the words?", it: "Ha ricordato le parole? (gentile).", kanji: "言葉をお覚えになりましたか。", kana: "ことばを おおぼえに なりましたか。" },
-            { icon: "🚅💨", en: "Did you take the Shinkansen?", it: "Ha preso lo Shinkansen? (gentile).", kanji: "新幹線にお乗りになりましたか。", kana: "しんかんせんに おのりに なりましたか。" }
+        // Mode 2: Transitive Causative (Person ni Obj o V-causative)
+        const transData = [
+            { icon: "🧒📖", en: "I let the child read a book.", it: "Ho lasciato leggere un libro al bambino.", kanji: "子供に本を読ませました。", kana: "こどもに ほんを よませました。" },
+            { icon: "🧒🥦", en: "I made the child eat vegetables.", it: "Ho fatto mangiare le verdure al bambino.", kanji: "子供に野菜を食べさせました。", kana: "こどもに やさいを たべさせました。" },
+            { icon: "👨‍🏫✍️", en: "The teacher made the students write an essay.", it: "L'insegnante ha fatto scrivere un tema agli studenti.", kanji: "先生は学生に作文を書かせました。", kana: "せんせいは がくせいに さくぶんを かかせました。" },
+            { icon: "🧒🧼", en: "I made the child wash the car.", it: "Ho fatto lavare l'auto al bambino.", kanji: "子供に車を洗わせました。", kana: "こどもに くるまを あらわせました。" },
+            { icon: "👨‍💼📁", en: "I made the subordinate copy the documents.", it: "Ho fatto fotocopiare i documenti al subordinato.", kanji: "部下に書類をコピーさせました。", kana: "ぶかに しょるいを こぴー させました。" },
+            { icon: "🤝🧺", en: "I let my friend carry the luggage.", it: "Ho lasciato portare i bagagli al mio amico.", kanji: "友達に荷物を持たせました。", kana: "ともだちに にもつを もたせました。" },
+            { icon: "🧒🧥", en: "I made the child wear a coat.", it: "Ho fatto indossare il cappotto al bambino.", kanji: "子供にコートを着せました。", kana: "こどもに こーとを きせました。" },
+            { icon: "🤝📸", en: "I let my friend take a photo.", it: "Ho lasciato scattare una foto al mio amico.", kanji: "友達に写真を撮らせました。", kana: "ともだちに しゃしんを とらせました。" },
+            { icon: "👨‍🏫❓", en: "The teacher let the student ask a question.", it: "L'insegnante ha lasciato che lo studente facesse una domanda.", kanji: "先生は学生に質問させました。", kana: "せんせいは がくせいに しつもん させました。" },
+            { icon: "🧒🦷", en: "I made the child brush their teeth.", it: "Ho fatto lavare i denti al bambino.", kanji: "子供に歯を磨かせました。", kana: "こどもに はを みがかぜました。" },
+            { icon: "👨‍💼👔", en: "I made the subordinate wear a tie.", it: "Ho fatto mettere la cravatta al subordinato.", kanji: "部下にネクタイを締めさせました。", kana: "ぶかに ねくたいを しめさせました。" },
+            { icon: "🤝🚲", en: "I let my friend use the bicycle.", it: "Ho lasciato usare la bicicletta al mio amico.", kanji: "友達に自転車を使わせました。", kana: "ともだちに じてんしゃを つかわせました。" },
+            { icon: "🧒🍳", en: "I let the child help with cooking.", it: "Ho lasciato che il bambino aiutasse a cucinare.", kanji: "子供に料理を手伝わせました。", kana: "こどもに りょうりを てつだわせました。" },
+            { icon: "🤝💬", en: "I let him say his opinion.", it: "L'ho lasciato dire la sua opinione.", kanji: "彼に意見を言わせました。", kana: "かれに いけんを いわせました。" },
+            { icon: "👨‍💼📞", en: "I made the subordinate make a phone call.", it: "Ho fatto fare una telefonata al subordinato.", kanji: "部下に電話をかけさせました。", kana: "ぶかに でんわを かけさせました。" },
+            { icon: "🧒🎨", en: "I let the child draw a picture.", it: "Ho lasciato disegnare un quadro al bambino.", kanji: "子供に絵を描かせました。", kana: "こどもに えを かかせました。" },
+            { icon: "🤝🎹", en: "I let my friend play the piano.", it: "Ho lasciato suonare il pianoforte al mio amico.", kanji: "友達にピアノを弾かせました。", kana: "ともだちに ぴあのを ひかせました。" }
         ];
 
-        // Mode 3: Passive Form (Honorific)
-        const passiveData = [
-            { icon: "👨‍🏫📖", en: "The teacher read the magazine.", it: "Il professore ha letto la rivista (gentile/passivo).", kanji: "先生は雑誌を読まれました。", kana: "せんせいは ざっしを よまれました。" },
-            { icon: "👨‍💼🏢", en: "The boss came to the office.", it: "Il capo è venuto in ufficio (gentile/passivo).", kanji: "部長は事務所に来られました。", kana: "ぶちょうは じむしょに こられました。" },
-            { icon: "🏙️🚶", en: "Did you go to Tokyo?", it: "È andato a Tokyo? (gentile/passivo).", kanji: "東京へ行かれましたか。", kana: "とうきょうへ いかれましたか。" },
-            { icon: "🍱😋", en: "Did you eat lunch?", it: "Ha pranzato? (gentile/passivo).", kanji: "昼ご飯を食べられましたか。", kana: "ひるごはんを たべられましたか。" },
-            { icon: "🗣️💬", en: "What did you say?", it: "Cosa ha detto? (gentile/passivo).", kanji: "何と言われましたか。", kana: "なんと いわれましたか。" },
-            { icon: "👔✨", en: "The president wore a suit.", it: "Il presidente ha indossato un completo (gentile/passivo).", kanji: "社長はスーツを着られました。", kana: "しゃちょうは すーつを きられました。" },
-            { icon: "🏠🚶", en: "Did you return home?", it: "È tornato a casa? (gentile/passivo).", kanji: "帰られましたか。", kana: "かえられましたか。" },
-            { icon: "🛒🥚", en: "Did you buy the eggs?", it: "Ha comprato le uova? (gentile/passivo).", kanji: "卵を買われましたか。", kana: "たまごを かわれましたか。" },
-            { icon: "📞🤝", en: "Did you make a call?", it: "Ha fatto una chiamata? (gentile/passivo).", kanji: "電話をかけられましたか。", kana: "でんわを かけられましたか。" },
-            { icon: "😴🛌", en: "Did the teacher sleep?", it: "Il professore ha dormito? (gentile/passivo).", kanji: "先生は寝られましたか。", kana: "せんせいは ねられましたか。" },
-            { icon: "🚶💨", en: "Did you hurry?", it: "Si è affrettato? (gentile/passivo).", kanji: "急がれましたか。", kana: "いそがれましたか。" },
-            { icon: "🎥🍿", en: "Did you see the movie?", it: "Ha visto il film? (gentile/passivo).", kanji: "映画を見られましたか。", kana: "えいがを みられましたか。" },
-            { icon: "🤝💬", en: "Did you talk with the manager?", it: "Ha parlato con il manager? (gentile/passivo).", kanji: "課長と話されましたか。", kana: "かちょうと はなされましたか。" },
-            { icon: "📸🌳", en: "Did you take a photo?", it: "Ha scattato una foto? (gentile/passivo).", kanji: "写真を撮られましたか。", kana: "しゃしんを とられましたか。" },
-            { icon: "🚉🏃", en: "Did you take the train?", it: "Ha preso il treno? (gentile/passivo).", kanji: "電車に乗られましたか。", kana: "でんしゃに のられましたか。" },
-            { icon: "🏢🧱", en: "Did you enter the building?", it: "È entrato nell'edificio? (gentile/passivo).", kanji: "ビルに入られましたか。", kana: "びるに はいられましたか。" },
-            { icon: "✍️📄", en: "Did you write the report?", it: "Ha scritto il rapporto? (gentile/passivo).", kanji: "レポートを書かれましたか。", kana: "れぽーとを かかれましたか。" }
+        // Mode 3: Permission (~sasete itadakimasen ka)
+        const permitData = [
+            { icon: "🏠🏃‍♂️", en: "Could you let me leave early today?", it: "Potrebbe lasciarmi andare a casa presto oggi?", kanji: "今日は早く帰らせていただけませんか。", kana: "きょうは はやく かえらせて いただけませんか。" },
+            { icon: "📱✨", en: "Could you let me use the phone?", it: "Potrebbe lasciarmi usare il telefono?", kanji: "電話を使わせていただけませんか。", kana: "でんわを つかわせて いただけませんか。" },
+            { icon: "📸🌳", en: "Could you let me take a photo here?", it: "Potrebbe lasciarmi scattare una foto qui?", kanji: "ここで写真を撮らせていただけませんか。", kana: "ここで しゃしんを とらせて いただけませんか。" },
+            { icon: "🤔💬", en: "Could you let me think about it for a while?", it: "Potrebbe lasciarmi pensare per un po'?", kanji: "少し考えさせていただけませんか。", kana: "すこし かんがえさせて いただけませんか。" },
+            { icon: "🤝💼", en: "Could you let me help with that work?", it: "Potrebbe lasciarmi aiutare con quel lavoro?", kanji: "その仕事を手伝わせていただけませんか。", kana: "その しごとを てつだわせて いただけませんか。" },
+            { icon: "🚉🚶", en: "Could you let me go to the station?", it: "Potrebbe lasciarmi andare in stazione?", kanji: "駅へ行かせていただけませんか。", kana: "えきへ いかせて いただけませんか。" },
+            { icon: "📅❌", en: "Could you let me take a holiday tomorrow?", it: "Potrebbe lasciarmi prendere un giorno di ferie domani?", kanji: "明日休ませていただけませんか。", kana: "あした やすませて いただけませんか。" },
+            { icon: "📖💡", en: "Could you let me read that book?", it: "Potrebbe lasciarmi leggere quel libro?", kanji: "その本を読ませていただけませんか。", kana: "その ほんを よませて いただけませんか。" },
+            { icon: "📞🤝", en: "Could you let me call my family?", it: "Potrebbe lasciarmi chiamare la mia famiglia?", kanji: "家族に電話させさせていただけませんか。", kana: "かぞくに でんわ させさせて いただけませんか。" },
+            { icon: "🤝✍️", en: "Could you let me write my name here?", it: "Potrebbe lasciarmi scrivere il mio nome qui?", kanji: "ここに名前を書かせていただけませんか。", kana: "ここに なまえを かかせて いただけませんか。" },
+            { icon: "👥💬", en: "Could you let me explain the reason?", it: "Potrebbe lasciarmi spiegare il motivo?", kanji: "理由を説明させていただけませんか。", kana: "りゆうを せつめい させて いただけませんか。" },
+            { icon: "🤝🏠", en: "Could you let me enter the room?", it: "Potrebbe lasciarmi entrare nella stanza?", kanji: "部屋に入らせていただけませんか。", kana: "へやに はいらせて いただけませんか。" },
+            { icon: "💻✨", en: "Could you let me use this computer?", it: "Potrebbe lasciarmi usare questo computer?", kanji: "このパソコンを使わせていただけませんか。", kana: "この ぱそこんを つかわせて いただけませんか。" },
+            { icon: "🥩😋", en: "Could you let me eat this?", it: "Potrebbe lasciarmi mangiare questo?", kanji: "これを食べさせていただけませんか。", kana: "これを たべさせて いただけませんか。" },
+            { icon: "👔✨", en: "Could you let me see that tie?", it: "Potrebbe lasciarmi vedere quella cravatta?", kanji: "そのネクタイを見させていただけませんか。", kana: "その ねくたいを みさせて いただけませんか。" },
+            { icon: "🚶💨", en: "Could you let me go out for a moment?", it: "Potrebbe lasciarmi uscire un momento?", kanji: "ちょっと出かけさせていただけませんか。", kana: "ちょっと でかけさせて いただけませんか。" },
+            { icon: "🗣️💡", en: "Could you let me hear your story?", it: "Potrebbe lasciarmi sentire la sua storia?", kanji: "お話を聞かせていただけませんか。", kana: "おはなしを きかせて いただけませんか。" }
         ];
 
-        let currentMode = 'special';
+        let currentMode = 'intrans';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -181,7 +181,7 @@
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('finished-view').classList.add('hidden');
             
-            const modes = ['special', 'standard', 'passive'];
+            const modes = ['intrans', 'trans', 'permit'];
             modes.forEach(m => {
                 const btn = document.getElementById(`mode-${m}`);
                 if(m === mode) {
@@ -194,15 +194,15 @@
             });
 
             const instr = document.getElementById('instruction');
-            if(mode === 'special') instr.innerText = "Special Verbs: Irasshaimasu, Meshiagarimasu, etc.";
-            else if(mode === 'standard') instr.innerText = "Standard Honorific: O + V-masu + ni narimasu";
-            else instr.innerText = "Passive Honorific: ~reru / ~rareru (Same as passive)";
+            if(mode === 'intrans') instr.innerText = "Intransitive (o): Person o V-causative";
+            else if(mode === 'trans') instr.innerText = "Transitive (ni): Person ni Obj o V-causative";
+            else instr.innerText = "Permission: V-causative-te itadakimasen ka";
             
             updateView();
         }
 
         function updateView() {
-            const data = { special: specialData, standard: standardData, passive: passiveData };
+            const data = { intrans: intransData, trans: transData, permit: permitData };
             const questions = data[currentMode];
             const q = questions[currentIndex];
             const promptContent = document.getElementById('prompt-content');
@@ -234,7 +234,7 @@
         }
 
         function speakJapanese() {
-            const data = { special: specialData, standard: standardData, passive: passiveData };
+            const data = { intrans: intransData, trans: transData, permit: permitData };
             const text = data[currentMode][currentIndex].kana;
             const ut = new SpeechSynthesisUtterance(text);
             ut.lang = 'ja-JP';
@@ -243,7 +243,7 @@
         }
 
         function nextQuestion() {
-            const data = { special: specialData, standard: standardData, passive: passiveData };
+            const data = { intrans: intransData, trans: transData, permit: permitData };
             const questions = data[currentMode];
             
             if (isFlipped && currentIndex === questions.length - 1) {
@@ -261,7 +261,7 @@
         }
 
         function prevQuestion() {
-            const data = { special: specialData, standard: standardData, passive: passiveData };
+            const data = { intrans: intransData, trans: transData, permit: permitData };
             const questions = data[currentMode];
             isFlipped = false;
             document.getElementById('practice-card').classList.remove('is-flipped');
