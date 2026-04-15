@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MikaT 日本語練習ポータル</title>
+    <style>
+        body { 
+            font-family: sans-serif; 
+            background: #f0f4f8; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            margin: 0; 
+        }
+        .welcome-card { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            text-align: center; 
+            max-width: 500px; 
+            width: 90%; 
+        }
+        h1 { color: #4A90E2; margin-bottom: 10px; }
+        p { color: #666; margin-bottom: 30px; font-weight: bold; }
+        .choice-btn { 
+            display: block; 
+            text-decoration: none; 
+            padding: 25px; 
+            margin: 15px 0; 
+            border-radius: 15px; 
+            font-weight: bold; 
+            color: white; 
+            transition: 0.3s; 
+            font-size: 1.3rem; 
+        }
+        .btn-blue { background: #4A90E2; }
+        .btn-purple { background: #6366f1; }
+        .choice-btn:hover { 
+            transform: translateY(-5px); 
+            opacity: 0.9; 
+        }
+        .choice-btn small { 
+            display: block; 
+            font-size: 0.8rem; 
+            margin-top: 5px; 
+            opacity: 0.8; 
+        }
+        .btn-blue:hover { box-shadow: 0 10px 20px rgba(74, 144, 226, 0.3); }
+        .btn-purple:hover { box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+    </style>
+</head>
+<body>
+
+<div class="welcome-card">
+    <h1>MikaT Online Practice</h1>
+    <p>どのコースを勉強しますか？<br>Which book are you studying?</p>
+    
+    <a href="shokyu1.html" class="choice-btn btn-blue">
+        📘 初級 I
+        <small>Lesson 1 - Lesson 25</small>
+    </a>
+    
+    <a href="shokyu2.html" class="choice-btn btn-purple">
+        🔮 初級 II
+        <small>Lesson 26 - Lesson 50</small>
+    </a>
+</div>
+
+</body>
+</html>
