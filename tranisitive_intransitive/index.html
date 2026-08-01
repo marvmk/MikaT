@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>自動詞・他動詞 練習ドリル</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #3498db;
+      --correct-color: #2ecc71;
+      --incorrect-color: #e74c3c;
+      --bg-color: #f0f4f8;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: #333;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ヘッダー */
+    header {
+      background: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+
+    .title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .progress {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    /* メインコンテナ（横スクロール） */
+    .slider-container {
+      flex: 1;
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .slider-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* 各質問カード */
+    .slide {
+      flex: 0 0 100vw;
+      width: 100vw;
+      height: 100%;
+      scroll-snap-align: start;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: #fff;
+      width: 100%;
+      max-width: 500px;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .q-num {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      text-transform: uppercase;
+    }
+
+    .q-text {
+      font-size: 1.15rem;
+      line-height: 1.8;
+      min-height: 60px;
+    }
+
+    ruby {
+      ruby-position: over;
+    }
+
+    rt {
+      font-size: 0.65em;
+      color: #666;
+    }
+
+    /* 選択ボタン */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-opt {
+      width: 100%;
+      padding: 14px;
+      border: 1.5px solid #e1e8ed;
+      background: #fff;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-opt.correct {
+      background-color: var(--correct-color) !important;
+      color: #fff;
+      border-color: var(--correct-color);
+    }
+
+    .btn-opt.incorrect {
+      background-color: var(--incorrect-color) !important;
+      color: #fff;
+      border-color: var(--incorrect-color);
+    }
+
+    /* 入力フォーム */
+    .input-wrap {
+      display: flex;
+      gap: 8px;
+    }
+
+    .text-input {
+      flex: 1;
+      padding: 12px;
+      border: 1.5px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .btn-check {
+      padding: 12px 20px;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* フィードバック表示 */
+    .feedback {
+      min-height: 24px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    /* ボトムナビゲーション */
+    footer {
+      background: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .nav-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .score-badge {
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="title">自動詞・他動詞ドリル</div>
+  <div class="progress" id="progress">1 / 40</div>
+</header>
+
+<div class="slider-container" id="slider"></div>
+
+<footer>
+  <button class="nav-btn" id="btn-prev" onclick="prevSlide()" disabled>← 前へ</button>
+  <div class="score-badge">正解: <span id="score">0</span></div>
+  <button class="nav-btn" id="btn-next" onclick="nextSlide()">次へ →</button>
+</footer>
+
+<script>
+const quizData = [
+  // --- Set 1: 選択問題 (1~20) ---
+  { q: "1. 寒（さむ）いので、窓（まど）を（   ）。", opts: ["あけます", "あきます"], ans: 0 },
+  { q: "2. 暗（くら）くなったので、電気（でんき）を（   ）。", opts: ["つけます", "つきます"], ans: 0 },
+  { q: "3. 部屋（へや）を出（で）るとき、火（ひ）を（   ）。", opts: ["けします", "きえます"], ans: 0 },
+  { q: "4. 風（かぜ）でドアが（   ）。", opts: ["しめます", "しまります"], ans: 1 },
+  { q: "5. もうすぐ９時（くじ）ですから、映画（えいが）が（   ）。", opts: ["はじめます", "はじまります"], ans: 1 },
+  { q: "6. 危（あぶ）ないですから、ここに車（くるま）を（   ）ないでください。", opts: ["とめます", "とまります"], ans: 0 },
+  { q: "7. ボタンを押（お）すと、水（みず）が（   ）。", opts: ["だします", "でます"], ans: 1 },
+  { q: "8. コーヒーに砂糖（さとう）を（   ）。", opts: ["いれます", "はいります"], ans: 0 },
+  { q: "9. 公園（こうえん）にたくさんの人（ひと）が（   ）。", opts: ["あつめます", "あつまります"], ans: 1 },
+  { q: "10. スイッチを押（お）すと、おもちゃが（   ）。", opts: ["うごかします", "うごきます"], ans: 1 },
+  { q: "11. 毎朝（まいあさ）７時（しちじ）に子供（こども）を（   ）。", opts: ["おこします", "おきます"], ans: 0 },
+  { q: "12. 図書館（としょかん）へ本（ほん）を（   ）に行きます。", opts: ["かえします", "かえります"], ans: 0 },
+  { q: "13. 薬（くすり）を飲（の）んだので、怪我（けが）が（   ）。", opts: ["なおします", "なおります"], ans: 1 },
+  { q: "14. 大切（たいせつ）な財布（さいふ）を（   ）。", opts: ["なくしました", "なくなりました"], ans: 0 },
+  { q: "15. 引（ひ）っ越し（こし）をしたので、電話番号（でんわばんごう）が（   ）。", opts: ["かえます", "かわります"], ans: 1 },
+  { q: "16. はさみで紙（かみ）を（   ）。", opts: ["きります", "きれます"], ans: 0 },
+  { q: "17. つまみを（   ）と、音（おと）が大きくなります。", opts: ["まわします", "まわります"], ans: 0 },
+  { q: "18. 部屋（へや）の窓（まど）からきれいな月（つき）が（   ）。", opts: ["みます", "みえます"], ans: 1 },
+  { q: "19. 雨（あめ）が（   ）から、出かけましょう。", opts: ["やめました", "やみました"], ans: 1 },
+  { q: "20. 橋（はし）を（   ）と、駅（えき）があります。", opts: ["わたします", "わたります"], ans: 1 },
+
+  // --- Set 2 Part A: 助詞選択 (21~30) ---
+  { q: "21. 授業（じゅぎょう）のあとで、ドア〔  〕閉（し）めます。", opts: ["を", "が"], ans: 0 },
+  { q: "22. ５時（ごじ）に仕事（しごと）〔  〕終（お）わりました。", opts: ["を", "が"], ans: 1 },
+  { q: "23. 本屋（ほんや）で本（ほん）〔  〕売（う）ります。", opts: ["を", "が"], ans: 0 },
+  { q: "24. 電車（でんしゃ）〔  〕遅（おく）れました。", opts: ["を", "が"], ans: 1 },
+  { q: "25. 荷物（にもつ）〔  〕棚（たな）に載（の）せます。", opts: ["を", "が"], ans: 0 },
+  { q: "26. 間違（まちが）い〔  〕気（き）が付（つ）きました。", opts: ["に", "を"], ans: 0 },
+  { q: "27. 機械（きかい）で雪（ゆき）〔  〕降（ふ）らせます。", opts: ["を", "が"], ans: 0 },
+  { q: "28. 服（ふく）〔  〕汚（よ）ごれました。", opts: ["を", "が"], ans: 1 },
+  { q: "29. お湯（ゆ）〔  〕沸（わ）かします。", opts: ["を", "が"], ans: 0 },
+  { q: "30. これまでの経験（けいけん）〔  〕役（やく）に立（た）ちます。", opts: ["を", "が"], ans: 1 },
+
+  // --- Set 2 Part B: 記述問題 (31~40) ---
+  { q: "31. 「<ruby>子供<rt>こども</rt></ruby>を<ruby>寝<rt>ね</rt></ruby>かせます」 → 「<ruby>子供<rt>こども</rt></ruby>が（   ）」", type: "input", ans: ["ねます", "寝ます"] },
+  { q: "32. 「<ruby>服<rt>ふく</rt></ruby>を<ruby>乾<rt>かわ</rt></ruby>かします」 → 「<ruby>服<rt>ふく</rt></ruby>が（   ）」", type: "input", ans: ["かわきます", "乾きます"] },
+  { q: "33. 「<ruby>車<rt>くるま</rt></ruby>がぶつかりました」 → 「<ruby>車<rt>くるま</rt></ruby>を（   ）」", type: "input", ans: ["ぶつけました", "ぶつけます"] },
+  { q: "34. 「<ruby>店<rt>みせ</rt></ruby>が<ruby>閉<rt>し</rt></ruby>まります」 → 「<ruby>店<rt>みせ</rt></ruby>を（   ）」", type: "input", ans: ["しめます", "閉めます"] },
+  { q: "35. 「<ruby>荷物<rt>にもつ</rt></ruby>を<ruby>届<rt>とど</rt></ruby>けます」 → 「<ruby>荷物<rt>にもつ</rt></ruby>が（   ）」", type: "input", ans: ["とどきます", "届きます"] },
+  { q: "36. 「パンを<ruby>焼<rt>や</rt></ruby>きます」 → 「パンが（   ）」", type: "input", ans: ["やけます", "焼けます"] },
+  { q: "37. 「<ruby>紙<rt>かみ</rt></ruby>が<ruby>破<rt>やぶ</rt></ruby>れました」 → 「<ruby>紙<rt>かみ</rt></ruby>を（  parent）」", type: "input", ans: ["やぶりました", "破りました", "やぶります", "破ります"] },
+  { q: "38. 「スプーンを<ruby>曲<rt>ま</rt></ruby>げます」 → 「<ruby>道<rt>みち</rt></ruby>が（   ）」", type: "input", ans: ["まがります", "曲がります", "曲ります"] },
+  { q: "39. 「ゴミをまとめます」 → 「チームが（   ）」", type: "input", ans: ["まとまります", "纏まります"] },
+  { q: "40. 「<ruby>怪我<rt>けが</rt></ruby>が<ruby>治<rt>なお</rt></ruby>りました」 → 「<ruby>自転車<rt>じてんしゃ</rt></ruby>を（   ）」", type: "input", ans: ["なおします", "直します"] }
+];
+
+let currentIndex = 0;
+let score = 0;
+const slider = document.getElementById('slider');
+const progress = document.getElementById('progress');
+const scoreEl = document.getElementById('score');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+
+// カード生成
+quizData.forEach((item, index) => {
+  const slide = document.createElement('div');
+  slide.className = 'slide';
+
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const num = document.createElement('div');
+  num.className = 'q-num';
+  num.textContent = `Question ${index + 1}`;
+  card.appendChild(num);
+
+  const text = document.createElement('div');
+  text.className = 'q-text';
+  text.innerHTML = item.q;
+  card.appendChild(text);
+
+  const feedback = document.createElement('div');
+  feedback.className = 'feedback';
+
+  if (item.type === 'input') {
+    const wrap = document.createElement('div');
+    wrap.className = 'input-wrap';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'text-input';
+    input.placeholder = '答えを入力';
+
+    const btn = document.createElement('button');
+    btn.className = 'btn-check';
+    btn.textContent = '判定';
+
+    const check = () => {
+      if(btn.disabled) return;
+      const val = input.value.trim();
+      if(item.ans.includes(val)) {
+        input.style.borderColor = 'var(--correct-color)';
+        feedback.textContent = '⭕️ 正解！';
+        feedback.style.color = 'var(--correct-color)';
+        score++;
+      } else {
+        input.style.borderColor = 'var(--incorrect-color)';
+        feedback.textContent = `❌ 不正解 (正解: ${item.ans[0]})`;
+        feedback.style.color = 'var(--incorrect-color)';
+      }
+      btn.disabled = true;
+      input.disabled = true;
+      scoreEl.textContent = score;
+    };
+
+    btn.onclick = check;
+    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') check(); });
+
+    wrap.appendChild(input);
+    wrap.appendChild(btn);
+    card.appendChild(wrap);
+  } else {
+    const opts = document.createElement('div');
+    opts.className = 'options';
+
+    item.opts.forEach((optText, optIdx) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-opt';
+      btn.textContent = optText;
+
+      btn.onclick = () => {
+        const allBtns = opts.querySelectorAll('.btn-opt');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (optIdx === item.ans) {
+          btn.classList.add('correct');
+          feedback.textContent = '⭕️ 正解！';
+          feedback.style.color = 'var(--correct-color)';
+          score++;
+        } else {
+          btn.classList.add('incorrect');
+          allBtns[item.ans].classList.add('correct');
+          feedback.textContent = '❌ 不正解';
+          feedback.style.color = 'var(--incorrect-color)';
+        }
+        scoreEl.textContent = score;
+      };
+      opts.appendChild(btn);
+    });
+    card.appendChild(opts);
+  }
+
+  card.appendChild(feedback);
+  slide.appendChild(card);
+  slider.appendChild(slide);
+});
+
+// スワイプ・ボタン制御
+function updateNav() {
+  progress.textContent = `${currentIndex + 1} / ${quizData.length}`;
+  btnPrev.disabled = currentIndex === 0;
+  btnNext.disabled = currentIndex === quizData.length - 1;
+}
+
+function scrollToSlide(idx) {
+  currentIndex = idx;
+  slider.scrollTo({
+    left: window.innerWidth * idx,
+    behavior: 'smooth'
+  });
+  updateNav();
+}
+
+function nextSlide() {
+  if (currentIndex < quizData.length - 1) {
+    scrollToSlide(currentIndex + 1);
+  }
+}
+
+function prevSlide() {
+  if (currentIndex > 0) {
+    scrollToSlide(currentIndex - 1);
+  }
+}
+
+// 指でスワイプしたときのインデックス追従
+slider.addEventListener('scroll', () => {
+  const newIndex = Math.round(slider.scrollLeft / window.innerWidth);
+  if (newIndex !== currentIndex) {
+    currentIndex = newIndex;
+    updateNav();
+  }
+});
+</script>
+
+</body>
+</html>
