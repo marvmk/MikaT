@@ -86,7 +86,7 @@
                     <div class="text-center flex-1">
                         <h2 id="target-word" class="text-6xl md:text-8xl font-black text-slate-800 leading-tight"></h2>
                         <p id="target-reading" class="text-emerald-600 font-bold text-xl md:text-2xl mt-1"></p>
-                        <p id="target-meaning" class="text-slate-400 italic text-lg mt-1 font-medium"></p>
+                        <p id="target-meaning" class="text-slate-400 italic text-lg mt-1 font-medium min-h-[1.75rem]"></p>
                     </div>
 
                     <!-- Syllable Hint -->
@@ -155,7 +155,7 @@
                     { word: "見る", reading: "みる", meaning: { ja: "見る", en: "to see", it: "vedere" }, answers: ["見ます", "見ません", "見ました", "見ませんでした"], romaji: ["mimasu", "mimasen", "mimashita", "mimasen deshita"] }
                 ],
                 'adj-i': [
-                    { word: "暑い", reading: "あツイ", meaning: { ja: "暑い", en: "hot", it: "caldo" }, answers: ["暑いです", "暑くないです", "暑かったです", "暑くなかったです"], romaji: ["atsui desu", "atsuku nai desu", "atsukatta desu", "atsuku nakatta desu"] },
+                    { word: "暑い", reading: "あつい", meaning: { ja: "暑い", en: "hot", it: "caldo" }, answers: ["暑いです", "暑くないです", "暑かったです", "暑くなかったです"], romaji: ["atsui desu", "atsuku nai desu", "atsukatta desu", "atsuku nakatta desu"] },
                     { word: "高い", reading: "たかい", meaning: { ja: "高い", en: "high/pricey", it: "alto/caro" }, answers: ["高いです", "高くないです", "高かったです", "高くなかったです"], romaji: ["takai desu", "takaku nai desu", "takakatta desu", "takuku nakatta desu"] }
                 ],
                 'adj-na': [
@@ -234,7 +234,7 @@
             const currentWord = words[wordIndex];
             const t = translations[currentLang];
 
-            // Hint Logic for Polite Form (highlight i-column)
+            // Hint Logic for Polite Form
             const hintBox = document.getElementById('v1-hint-box');
             if (currentCategory === 'v1' && currentWord.row) {
                 hintBox.style.opacity = '1';
@@ -244,7 +244,6 @@
                 const html = syllables.map((s, idx) => {
                     let color = 'text-slate-200';
                     let scale = 'scale-90';
-                    // Highlight i-column (idx 1) for Polite Base and u-column (idx 2) for Root
                     if (idx === 1) { color = 'text-emerald-600'; scale = 'scale-110 font-black'; }
                     if (idx === 2) { color = 'text-slate-400'; scale = 'scale-100'; }
                     return `<div class="hint-syllable h-6 md:h-8 ${color} ${scale} ${isJa ? 'text-lg' : 'text-xs'} transition-all flex items-center justify-center relative">
@@ -260,7 +259,10 @@
 
             document.getElementById('target-word').innerText = currentWord.word;
             document.getElementById('target-reading').innerText = currentWord.reading;
-            document.getElementById('target-meaning').innerText = currentWord.meaning[currentLang];
+            
+            // 表示言語に応じた意味の切り替え（EN/IT選択時はその言語を表示、JP選択時は日本語の意味を表示）
+            document.getElementById('target-meaning').innerText = currentWord.meaning[currentLang] || currentWord.meaning.en || '';
+            
             document.getElementById('current-idx').innerText = wordIndex + 1;
             document.getElementById('total-idx').innerText = words.length;
 
