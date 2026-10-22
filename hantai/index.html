@@ -3,12 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>はんたいことばカード</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <style>
-/* Layout: one picture card at a time, two halves facing each other across a ↔ hinge; words hidden until tapped. */
 :root{
   --bg:#E7EDF2; --card:#FFFFFF; --half:#F3F6F9; --ink:#24313E; --muted:#6F7D8B; --line:#CDD6DF; --accent:#2D6BB0; --accent-soft:#DCE8F5;
   --chip-i:#E0533F; --chip-na:#2E8F84;
@@ -40,22 +38,4 @@ h1{margin:0;font-size:1.5rem;font-weight:900;letter-spacing:.04em;text-wrap:bala
 .side{all:unset;cursor:pointer;background:var(--half);border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 8px 12px;min-width:0}
 .side:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .side svg{width:100%;max-width:280px;aspect-ratio:1;display:block}
-.word{min-height:3.6em;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:900;font-size:clamp(1.1rem,4.2vw,1.7rem);letter-spacing:.06em}
-.word .q{width:2.2em;height:2.2em;border-radius:50%;border:2.5px dashed var(--line);color:var(--muted);display:grid;place-items:center;font-size:.8em}
-.word .w{display:none}
-.side.on .word .q{display:none}
-.side.on .word .w{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
-.jp{display:inline-flex;align-items:center;gap:6px}
-.ro{font-size:.6em;font-weight:700;color:var(--muted);letter-spacing:.05em}
-.seg{display:inline-flex;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:3px;gap:3px}
-.seg button{all:unset;cursor:pointer;font-family:var(--f);font-weight:900;font-size:1rem;padding:6px 12px;border-radius:99px;color:var(--muted)}
-.seg button small{font-weight:700;font-size:.7em;margin-left:2px}
-.seg button.cur{background:var(--accent);color:var(--card)}
-.seg button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
-.forms{display:flex;flex-direction:column;gap:6px;width:100%;font-size:clamp(.9rem,3.4vw,1.25rem);letter-spacing:.03em}
-.f{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 4px;border-radius:10px;background:var(--card);min-height:3.4em;justify-content:center}
-.lab{font-size:.62em;font-weight:900;letter-spacing:.1em;color:var(--accent)}
-.q2{color:var(--muted);font-weight:900}
-.v{display:none;flex-direction:column;align-items:center;gap:1px}
-.side.on .q2{display:none}.side.on .v{display:flex}
-.card.past::after{content:"かこ · Past";position:absolute;top:10px;left:14px;font-size:.75rem;font-weight:900;
+.word{min-height:3.6em;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:900;font-size:clamp(1
