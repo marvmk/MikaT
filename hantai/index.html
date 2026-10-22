@@ -38,4 +38,262 @@ h1{margin:0;font-size:1.5rem;font-weight:900;letter-spacing:.04em;text-wrap:bala
 .side{all:unset;cursor:pointer;background:var(--half);border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 8px 12px;min-width:0}
 .side:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .side svg{width:100%;max-width:280px;aspect-ratio:1;display:block}
-.word{min-height:3.6em;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:900;font-size:clamp(1
+.word{min-height:3.6em;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:900;font-size:clamp(1.1rem,4.2vw,1.7rem);letter-spacing:.06em}
+.word .q{width:2.2em;height:2.2em;border-radius:50%;border:2.5px dashed var(--line);color:var(--muted);display:grid;place-items:center;font-size:.8em}
+.word .w{display:none}
+.side.on .word .q{display:none}
+.side.on .word .w{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.jp{display:inline-flex;align-items:center;gap:6px}
+.ro{font-size:.6em;font-weight:700;color:var(--muted);letter-spacing:.05em}
+.seg{display:inline-flex;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{all:unset;cursor:pointer;font-family:var(--f);font-weight:900;font-size:1rem;padding:6px 12px;border-radius:99px;color:var(--muted)}
+.seg button small{font-weight:700;font-size:.7em;margin-left:2px}
+.seg button.cur{background:var(--accent);color:var(--card)}
+.seg button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.forms{display:flex;flex-direction:column;gap:6px;width:100%;font-size:clamp(.9rem,3.4vw,1.25rem);letter-spacing:.03em}
+.f{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 4px;border-radius:10px;background:var(--card);min-height:3.4em;justify-content:center}
+.lab{font-size:.62em;font-weight:900;letter-spacing:.1em;color:var(--accent)}
+.q2{color:var(--muted);font-weight:900}
+.v{display:none;flex-direction:column;align-items:center;gap:1px}
+.side.on .q2{display:none}.side.on .v{display:flex}
+.card.past::after{content:"かこ · Past";position:absolute;top:10px;left:14px;font-size:.75rem;font-weight:900;color:var(--card);background:var(--accent);border-radius:99px;padding:2px 10px}
+.chip{font-size:.55em;font-weight:900;width:1.7em;height:1.7em;border-radius:6px;display:grid;place-items:center;color:var(--card);letter-spacing:0}
+.chip.i{background:var(--chip-i)} .chip.na{background:var(--chip-na)}
+.hinge{display:flex;align-items:center;justify-content:center}
+.hinge span{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:900;font-size:1.2rem}
+.tag{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:.75rem;font-weight:700;color:var(--muted);background:var(--card);border:1.5px solid var(--line);border-radius:99px;padding:1px 10px}
+.controls{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:10px}
+button.btn{font-family:var(--f);font-weight:900;font-size:1.05rem;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:12px 10px;cursor:pointer}
+button.btn:hover{border-color:var(--accent)}
+button.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.btn.main{background:var(--accent);border-color:var(--accent);color:var(--card)}
+.dots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.dots button{all:unset;width:12px;height:12px;border-radius:50%;background:var(--line);cursor:pointer}
+.dots button.cur{background:var(--accent);transform:scale(1.25)}
+.dots button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.9rem}
+.foot button{font-size:.9rem;padding:8px 14px}
+.legend{display:flex;gap:12px;align-items:center}
+.legend .chip{font-size:.8rem}
+/* drawing styles */
+.s{stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.thin{stroke-width:2.5}.thick{stroke-width:11}.nf{fill:none}
+.ground{stroke:var(--line);stroke-width:4;stroke-linecap:round}
+.f-red{fill:var(--red)}.f-green{fill:var(--green)}.f-sun{fill:var(--sun)}.f-blue{fill:var(--blue)}.f-teal{fill:var(--teal)}.f-purple{fill:var(--purple)}.f-pink{fill:var(--pink)}
+.f-glass{fill:var(--glass)}.f-tire{fill:var(--tire)}.f-hub{fill:var(--hub)}.f-smoke{fill:var(--smoke)}.f-rust{fill:var(--rust)}.f-oldcar{fill:var(--oldcar)}.f-dim{fill:var(--dim)}
+.f-mug{fill:var(--mug)}.f-coffee{fill:var(--coffee)}.f-ice{fill:var(--ice);fill-opacity:.9}.f-drop{fill:var(--drop)}.f-board{fill:var(--board)}.f-wood{fill:var(--wood)}.f-skin{fill:var(--skin)}
+.f-mtn{fill:var(--mtn)}.f-snow{fill:var(--snow)}.f-catw{fill:var(--catw)}.f-catb{fill:var(--catb)}.f-sofa{fill:var(--sofa)}.f-paper{fill:var(--paper)}.f-pen{fill:var(--pen)}.f-ruler{fill:var(--ruler)}
+.f-shine{fill:#fff;opacity:.45}
+.s-red{stroke:var(--red);stroke-width:5;stroke-linecap:round}.s-blue{stroke:var(--blue);stroke-width:4;stroke-linecap:round}
+.s-faint{stroke:var(--faint);stroke-width:2.5;stroke-linecap:round}.s-pen{stroke:var(--pen);stroke-width:2;stroke-linecap:round}
+.s-sun{stroke:var(--sun);stroke-width:6;stroke-linecap:round}.s-heat{stroke:var(--red);stroke-width:3.5;opacity:.6;stroke-linecap:round}
+.s-snow{stroke:var(--blue);stroke-width:3.5;stroke-linecap:round}.s-steam{stroke:var(--muted);stroke-width:4;stroke-linecap:round}
+.s-straw{stroke:var(--red);stroke-width:7;stroke-linecap:round}.s-shine{stroke:#fff;opacity:.55;stroke-width:4;stroke-linecap:round}
+.s-tailo{stroke:var(--ink);stroke-width:17;stroke-linecap:round}.s-tailw{stroke:var(--catw);stroke-width:9;stroke-linecap:round}.s-tailb{stroke:var(--catb);stroke-width:9;stroke-linecap:round}
+.s-whiskl{stroke:#E6E6E6;stroke-width:2;stroke-linecap:round}.s-move{stroke:var(--muted);stroke-width:3.5;stroke-linecap:round}
+.score{font-family:var(--f);font-weight:900;font-size:40px;text-anchor:middle}
+.chalk{fill:var(--chalk);font-family:var(--f);font-weight:700;text-anchor:middle}
+.price{fill:var(--pen);font-family:var(--f);font-weight:900;font-size:16px;text-anchor:middle}
+.zz{fill:var(--accent);font-family:var(--f);font-weight:900}
+@media (max-width:480px){.card{padding:10px;gap:6px}.hinge span{width:28px;height:28px;font-size:1rem}.controls{grid-template-columns:1fr 1.2fr 1fr}button.btn{font-size:.95rem;padding:11px 6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>はんたいことば</h1>
+    <div class="seg" role="group" aria-label="じかん"><button id="mNow" class="cur" aria-pressed="true">いま <small>Now</small></button><button id="mPast" aria-pressed="false">かこ <small>Past</small></button></div>
+    <div class="seg" role="group" aria-label="けいようし"><button id="fAll" class="cur" aria-pressed="true">ぜんぶ</button><button id="fI" aria-pressed="false">い</button><button id="fNa" aria-pressed="false">な</button></div>
+    <div class="count" id="count"></div>
+  </header>
+
+  <div class="card" id="card">
+    <button class="side" id="sideA" aria-label="ひだりの え（タップで こたえ）"><span class="tag" id="tagA" hidden></span><svg viewBox="0 0 200 200" id="svgA"></svg><div class="word" id="wordA"></div></button>
+    <div class="hinge"><span>⇄</span></div>
+    <button class="side" id="sideB" aria-label="みぎの え（タップで こたえ）"><span class="tag" id="tagB" hidden></span><svg viewBox="0 0 200 200" id="svgB"></svg><div class="word" id="wordB"></div></button>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="prev">‹ まえ</button>
+    <button class="btn main" id="reveal">こたえ ▸</button>
+    <button class="btn" id="next">つぎ ›</button>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="foot">
+    <div class="legend"><span class="chip i">い</span>いけいようし <span class="chip na">な</span>なけいようし</div>
+    <button class="btn" id="shuffle">まぜる</button>
+  </div>
+</div>
+
+<script>
+const ground=(y=188)=>`<line x1="14" y1="${y}" x2="186" y2="${y}" class="ground"/>`;
+const star=(x,y,s=10)=>`<path d="M${x} ${y-s}L${x+s*.3} ${y-s*.3}L${x+s} ${y}L${x+s*.3} ${y+s*.3}L${x} ${y+s}L${x-s*.3} ${y+s*.3}L${x-s} ${y}L${x-s*.3} ${y-s*.3}Z" class="f-sun"/>`;
+
+function apple(r,cy){const t=cy-r;return ground()+
+ `<path d="M100 ${t+4} Q98 ${t-r*.25} 106 ${t-r*.4}" class="s nf"/>
+  <path d="M104 ${t-r*.1} Q${104+r*.35} ${t-r*.45} ${104+r*.6} ${t-r*.2} Q${104+r*.3} ${t+r*.1} 104 ${t-r*.1}Z" class="f-green s"/>
+  <circle cx="100" cy="${cy}" r="${r}" class="f-red s"/>
+  <ellipse cx="${100-r*.4}" cy="${cy-r*.35}" rx="${r*.17}" ry="${r*.28}" class="f-shine" transform="rotate(25 ${100-r*.4} ${cy-r*.35})"/>`}
+
+function car(old){const c=old?'f-oldcar':'f-blue';let s=ground(166);
+ if(old)s+=`<circle cx="16" cy="130" r="7" class="f-smoke"/><circle cx="12" cy="114" r="9" class="f-smoke"/><circle cx="22" cy="97" r="6" class="f-smoke"/>`;
+ s+=`<path d="M60 100 L80 66 H126 L146 100 Z" class="${c} s"/>
+  <path d="M76 98 L88 76 H100 V98 Z" class="f-glass"/><path d="M108 98 V76 H122 L134 98 Z" class="f-glass"/>
+  <rect x="28" y="98" width="144" height="46" rx="14" class="${c} s"/>
+  <circle cx="164" cy="114" r="5" class="${old?'f-dim':'f-sun'}"/>
+  <circle cx="64" cy="148" r="17" class="f-tire s"/><circle cx="64" cy="148" r="6" class="f-hub"/>
+  <circle cx="136" cy="148" r="17" class="f-tire s"/><circle cx="136" cy="148" r="6" class="f-hub"/>`;
+ if(old)s+=`<path d="M112 79 l7 7 l-4 5 l8 6" class="s thin nf"/><circle cx="48" cy="124" r="6" class="f-rust"/><circle cx="104" cy="133" r="4" class="f-rust"/><circle cx="152" cy="128" r="5" class="f-rust"/><path d="M78 112 q6 6 12 0" class="s thin nf"/>`;
+ else s+=star(40,56,11)+star(160,46,9)+star(176,78,6)+`<path d="M40 110 H88" class="s-shine"/>`;
+ return s}
+
+function pencil(x1,x2){const y=70,h=26;return `<rect x="${x1}" y="${y}" width="16" height="${h}" rx="5" class="f-pink s"/><rect x="${x1+14}" y="${y}" width="10" height="${h}" class="f-hub s"/>
+ <rect x="${x1+24}" y="${y}" width="${x2-x1-52}" height="${h}" class="f-sun s"/><path d="M${x2-28} ${y} L${x2} ${y+h/2} L${x2-28} ${y+h} Z" class="f-wood s"/>
+ <path d="M${x2-9} ${y+h*.33} L${x2} ${y+h/2} L${x2-9} ${y+h*.67}Z" class="f-pen"/>
+ <rect x="14" y="128" width="172" height="30" rx="4" class="f-ruler s"/>`+
+ Array.from({length:17},(_,k)=>`<line x1="${22+k*9.75}" y1="128" x2="${22+k*9.75}" y2="${k%2?136:142}" class="s-pen"/>`).join('')}
+
+function test(good){let s=`<rect x="44" y="20" width="112" height="160" rx="6" class="f-paper s"/>`;
+ [120,140,160].forEach(y=>{s+=`<line x1="60" y1="${y}" x2="124" y2="${y}" class="s-faint"/>`;
+  s+=good?`<circle cx="138" cy="${y-4}" r="6" class="nf s-red" style="stroke-width:3"/>`:`<path d="M132 ${y-10} l12 12 M144 ${y-10} l-12 12" class="s-blue nf" style="stroke-width:3"/>`});
+ s+=good?`<circle cx="100" cy="70" r="38" class="nf s-red"/><text x="100" y="84" class="score f-red">100</text>`
+        :`<text x="100" y="84" class="score f-blue">10</text>`;
+ return s}
+
+function weather(hot){let s=ground();
+ if(hot){s+=`<g class="s-sun">${[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return `<line x1="${(70+38*Math.cos(r)).toFixed(1)}" y1="${(70+38*Math.sin(r)).toFixed(1)}" x2="${(70+52*Math.cos(r)).toFixed(1)}" y2="${(70+52*Math.sin(r)).toFixed(1)}"/>`}).join('')}</g>
+  <circle cx="70" cy="70" r="28" class="f-sun s"/>
+  <path d="M26 150 q8 -8 16 0 t16 0 t16 0 t16 0" class="nf s-heat"/><path d="M36 168 q8 -8 16 0 t16 0 t16 0" class="nf s-heat"/>`}
+ else{const flake=(x,y,r)=>[0,60,120].map(a=>{const t=a*Math.PI/180;return `<line x1="${(x-r*Math.cos(t)).toFixed(1)}" y1="${(y-r*Math.sin(t)).toFixed(1)}" x2="${(x+r*Math.cos(t)).toFixed(1)}" y2="${(y+r*Math.sin(t)).toFixed(1)}" class="s-snow"/>`}).join('');
+  s+=flake(52,52,16)+flake(98,96,11)+flake(40,122,12)+flake(108,32,9)+
+  `<path d="M14 188 Q50 166 92 184 Q130 168 186 188Z" class="f-snow s"/>`}
+ s+=`<rect x="138" y="24" width="24" height="136" rx="12" class="f-paper s"/>
+  <rect x="145" y="${hot?36:128}" width="10" height="${hot?124:32}" rx="5" class="${hot?'f-red':'f-blue'}"/>
+  <circle cx="150" cy="162" r="18" class="${hot?'f-red':'f-blue'} s"/>`;
+ return s}
+
+function drink(hot){if(hot){return `<path d="M138 96 Q170 96 170 122 Q170 148 138 148" class="nf s thick"/>
+  <path d="M48 78 H138 V148 Q138 176 110 176 H76 Q48 176 48 148 Z" class="f-mug s"/>
+  <ellipse cx="93" cy="81" rx="41" ry="6" class="f-coffee"/>`+
+  [70,93,116].map(x=>`<path d="M${x} 64 q-10 -10 0 -20 q10 -10 0 -20" class="nf s-steam"/>`).join('')+ground()}
+ return `<path d="M58 38 H142 L132 182 H68 Z" class="f-ice s"/>
+  <rect x="74" y="70" width="26" height="26" rx="5" class="f-paper s thin" transform="rotate(14 87 83)"/>
+  <rect x="102" y="88" width="24" height="24" rx="5" class="f-paper s thin" transform="rotate(-10 114 100)"/>
+  <rect x="82" y="110" width="24" height="24" rx="5" class="f-paper s thin" transform="rotate(8 94 122)"/>
+  <path d="M120 16 L110 120" class="s-straw"/>
+  <path d="M152 70 q6 10 0 14 q-6 -4 0 -14z" class="f-drop"/><path d="M158 110 q5 9 0 12 q-5 -3 0 -12z" class="f-drop"/><path d="M44 96 q5 9 0 12 q-5 -3 0 -12z" class="f-drop"/>`+ground()}
+
+function face(hard){let s=`<circle cx="100" cy="168" r="22" class="f-skin s"/><circle cx="92" cy="164" r="2.8" class="f-pen"/><circle cx="108" cy="164" r="2.8" class="f-pen"/>`;
+ s+=hard?`<path d="M90 178 q5 -5 10 0 q5 5 10 0" class="nf s thin"/><path d="M130 146 q6 10 0 14 q-6 -4 0 -14z" class="f-drop"/>`
+        :`<path d="M88 174 Q100 186 112 174" class="nf s thin"/><circle cx="84" cy="173" r="4" class="f-pink"/><circle cx="116" cy="173" r="4" class="f-pink"/>`;
+ return s}
+function board(hard){return `<rect x="14" y="20" width="172" height="112" rx="8" class="f-board s"/>`+
+ (hard?`<text x="100" y="68" class="chalk" style="font-size:27px">x²−5x+6</text><text x="100" y="108" class="chalk" style="font-size:27px">= 0 ?</text>`
+      :`<text x="100" y="90" class="chalk" style="font-size:40px">1+1=?</text>`)+face(hard)}
+
+function shirt(p){return `<path d="M58 48 L84 36 Q100 50 116 36 L142 48 L170 76 L150 94 L140 84 V176 H60 V84 L50 94 L30 76 Z" class="f-teal s"/>
+ <path d="M134 112 L146 128" class="s thin"/>
+ <g transform="rotate(-8 160 142)"><rect x="122" y="124" width="72" height="36" rx="6" class="f-paper s"/><circle cx="131" cy="142" r="3" class="f-pen"/><text x="164" y="148" class="price">${p}</text></g>`}
+
+function mountain(tall){return tall?`<path d="M18 188 L100 22 L182 188 Z" class="f-mtn s"/><path d="M100 22 L124 70 L112 64 L100 76 L88 64 L76 70 Z" class="f-snow s thin"/>`+ground()
+ :`<path d="M18 188 Q100 120 182 188 Z" class="f-mtn s"/><circle cx="150" cy="40" r="16" class="f-sun"/>`+ground()}
+
+function cat(black){const c=black?'f-catb':'f-catw',e=black?'f-sun':'f-pen',w=black?'s-whiskl':'s-pen';
+ return ground()+`<path d="M138 172 Q186 166 172 116" class="nf s-tailo"/><path d="M138 172 Q186 166 172 116" class="nf ${black?'s-tailb':'s-tailw'}"/>
+ <ellipse cx="100" cy="146" rx="46" ry="40" class="${c} s"/>
+ <path d="M70 72 L72 34 L98 54 Z" class="${c} s"/><path d="M130 72 L128 34 L102 54 Z" class="${c} s"/>
+ <circle cx="100" cy="84" r="36" class="${c} s"/>
+ <ellipse cx="87" cy="80" rx="4.5" ry="7" class="${e}"/><ellipse cx="113" cy="80" rx="4.5" ry="7" class="${e}"/>
+ <path d="M96 93 H104 L100 98 Z" class="f-pink"/>
+ <path d="M62 92 H82 M62 101 L82 97 M138 92 H118 M138 101 L118 97" class="nf ${w}"/>`}
+
+function guy(x,y,col,up,sing){return (up?`<path d="M${x-11} ${y+8} L${x-23} ${y-14} M${x+11} ${y+8} L${x+23} ${y-14}" class="nf s"/>`:'')+
+ `<rect x="${x-14}" y="${y}" width="28" height="42" rx="12" class="${col} s"/><circle cx="${x}" cy="${y-14}" r="13" class="f-skin s"/>
+ <circle cx="${x-4.5}" cy="${y-17}" r="2" class="f-pen"/><circle cx="${x+4.5}" cy="${y-17}" r="2" class="f-pen"/>`+
+ (sing?`<ellipse cx="${x}" cy="${y-9}" rx="3" ry="3.5" class="f-pen"/>`:'')}
+const note=(x,y)=>`<ellipse cx="${x}" cy="${y}" rx="7" ry="5" class="f-pen" transform="rotate(-20 ${x} ${y})"/><path d="M${x+6} ${y-2} V${y-26} q8 4 12 12" class="nf s-pen" style="stroke-width:3"/>`;
+function crowd(){return ground()+note(28,46)+note(96,30)+note(160,44)+
+ `<rect x="58" y="58" width="7" height="7" class="f-sun" transform="rotate(20 61 61)"/><rect x="136" y="70" width="7" height="7" class="f-pink" transform="rotate(-15 139 73)"/>`+
+ guy(40,110,'f-red',1,1)+guy(100,102,'f-blue',1,1)+guy(160,110,'f-sun',1,1)+guy(70,142,'f-teal',1,1)+guy(130,142,'f-purple',1,1)}
+function quiet(){return ground()+`<path d="M160 22 a22 22 0 1 0 16 38 a17 17 0 1 1 -16 -38z" class="f-sun"/>
+ <rect x="40" y="146" width="120" height="10" rx="3" class="f-wood s"/><path d="M52 156 V188 M148 156 V188" class="s"/>
+ <path d="M92 146 V182 M108 146 V182" class="s"/>`+guy(100,106,'f-blue',0,0)+
+ `<rect x="85" y="114" width="30" height="20" rx="2" class="f-paper s thin"/><path d="M100 114 V134" class="s-pen"/>`}
+
+function busy(){let s=ground();
+ for(let k=0;k<7;k++)s+=`<rect x="${16+(k%2)*4}" y="${168-k*14}" width="52" height="13" rx="2" class="f-paper s thin"/>`;
+ s+=`<circle cx="160" cy="42" r="24" class="f-paper s"/><path d="M160 42 V26 M160 42 L172 50" class="s thin"/>`+
+ `<path d="M112 120 L84 100 M136 120 L160 98" class="nf s"/>`+guy(124,112,'f-red',0,0)+
+ `<rect x="150" y="84" width="16" height="24" rx="3" class="f-tire s thin"/>
+ <path d="M140 84 q6 10 0 14 q-6 -4 0 -14z" class="f-drop"/><path d="M104 88 q5 9 0 12 q-5 -3 0 -12z" class="f-drop"/>
+ <path d="M176 120 H190 M174 132 H188 M178 144 H192" class="s-move"/>
+ <path d="M110 160 V186 M138 160 V186" class="s"/>`;return s}
+function free(){return `<rect x="22" y="94" width="156" height="40" rx="14" class="f-sofa s"/><rect x="22" y="124" width="156" height="40" rx="12" class="f-sofa s"/>
+ <rect x="34" y="164" width="10" height="20" class="f-wood"/><rect x="156" y="164" width="10" height="20" class="f-wood"/>`+ground()+
+ `<rect x="62" y="100" width="98" height="26" rx="12" class="f-blue s"/><circle cx="50" cy="110" r="14" class="f-skin s"/>
+ <path d="M42 108 q3 3 6 0 M52 108 q3 3 6 0" class="nf s-pen"/>
+ <text x="68" y="78" class="zz" style="font-size:16px">z</text><text x="84" y="62" class="zz" style="font-size:22px">z</text><text x="104" y="42" class="zz" style="font-size:28px">Z</text>`}
+
+const ROMAJI={'おおきい':'ookii','ちいさい':'chiisai','ふるい':'furui','あたらしい':'atarashii','ながい':'nagai','みじかい':'mijikai','いい':'ii','わるい':'warui','あつい':'atsui','さむい':'samui','つめたい':'tsumetai','むずかしい':'muzukashii','やさしい':'yasashii','たかい':'takai','やすい':'yasui','ひくい':'hikui','しろい':'shiroi','くろい':'kuroi','にぎやか':'nigiyaka','しずか':'shizuka','いそがしい':'isogashii','ひま':'hima'};
+const pairs=[
+  [['おおきい','i',apple(66,120)],['ちいさい','i',apple(22,164)]],
+  [['ふるい','i',car(true)],['あたらしい','i',car(false)]],
+  [['ながい','i',pencil(15,185),'だい16か'],['みじかい','i',pencil(62,138),'だい16か']],
+  [['いい','i',test(true)],['わるい','i',test(false)]],
+  [['あつい','i',weather(true)],['さむい','i',weather(false)]],
+  [['あつい','i',drink(true)],['つめたい','i',drink(false)]],
+  [['むずかしい','i',board(true)],['やさしい','i',board(false)]],
+  [['たかい','i',shirt('¥9,800')],['やすい','i',shirt('¥500')]],
+  [['たかい','i',mountain(true)],['ひくい','i',mountain(false)]],
+  [['しろい','i',cat(false)],['くろい','i',cat(true)]],
+  [['にぎやか','na',crowd()],['しずか','na',quiet()]],
+  [['いそがしい','i',busy()],['ひま','na',free()]]
+];
+function forms(w,t,past){const r=ROMAJI[w];
+ if(t==='na')return past?[[w+'でした',r+' deshita'],[w+'じゃなかった',r+' ja nakatta'],[w+'じゃありませんでした',r+' ja arimasen deshita']]
+                         :[[w+'です',r+' desu'],[w+'じゃない',r+' ja nai'],[w+'じゃありません',r+' ja arimasen']];
+ const s=w==='いい'?'よ':w.slice(0,-1),rs=w==='いい'?'yo':r.slice(0,-1);
+ if(past)return[[s+'かったです',rs+'katta desu'],[s+'くなかった',rs+'kunakatta'],[s+'くなかったです',rs+'kunakatta desu']];
+ return[[w+'です',r+' desu'],[s+'くない',rs+'kunai'],[s+'くないです',rs+'kunai desu']]}
+
+let mode='now',shownA=false,shownB=false;
+try{if(localStorage.getItem('adj-mode')==='past')mode='past'}catch(e){}
+const $=id=>document.getElementById(id), card=$('card'), sideA=$('sideA'), sideB=$('sideB');
+let filter='all', list=[], i=0;
+
+function build(){list=pairs.map((_,k)=>k).filter(k=>filter==='all'||pairs[k][0][1]===filter||pairs[k][1][1]===filter);i=0;
+ const d=$('dots');d.innerHTML='';list.forEach((_,k)=>{const b=document.createElement('button');b.setAttribute('aria-label',`${k+1}`);b.onclick=()=>{i=k;render(true)};d.appendChild(b)});render(true)}
+function chip(t){return `<span class="chip ${t}">${t==='i'?'い':'な'}</span>`}
+function wordHtml(w,t){const f=forms(w,t,mode==='past');
+ return `<span class="q">？</span><span class="w"><span class="jp">${chip(t)}${w}</span><span class="ro">${ROMAJI[w]}</span><span class="forms"><span class="f"><span class="lab">Polite ◯</span>${f[0][0]}</span><span class="f"><span class="lab">Casual ✕</span>${f[1][0]}</span><span class="f"><span class="lab">Polite ✕</span>${f[2][0]}</span></span></span>`}
+function render(anim){const [a,b]=pairs[list[i]];
+ $('svgA').innerHTML=a[2];$('svgB').innerHTML=b[2];
+ const tgA=$('tagA'),tgB=$('tagB');
+ tgA.hidden=!a[3]; tgA.textContent=a[3]||'';
+ tgB.hidden=!b[3]; tgB.textContent=b[3]||'';
+ $('wordA').innerHTML=wordHtml(a[0],a[1]);$('wordB').innerHTML=wordHtml(b[0],b[1]);
+ shownA=false; shownB=false;
+ sideA.classList.remove('on'); sideB.classList.remove('on');
+ card.classList.toggle('past',mode==='past'); syncBtn();
+ $('count').textContent=`${i+1} / ${list.length}`;
+ [...$('dots').children].forEach((d,k)=>d.classList.toggle('cur',k===i));
+ if(anim){card.classList.remove('swap');void card.offsetWidth;card.classList.add('swap')}}
+function syncBtn(){const both=shownA&&shownB; $('reveal').textContent=both?'かくす':'こたえ ▸'}
+function toggleA(state){shownA=state??!shownA; sideA.classList.toggle('on',shownA); syncBtn()}
+function toggleB(state){shownB=state??!shownB; sideB.classList.toggle('on',shownB); syncBtn()}
+function toggleBoth(){if(shownA&&shownB){toggleA(false);toggleB(false)}else{toggleA(true);toggleB(true)}}
+function go(d){i=(i+d+list.length)%list.length;render(true)}
+
+sideA.onclick=()=>toggleA(); sideB.onclick=()=>toggleB(); $('reveal').onclick=toggleBoth;
+$('prev').onclick=()=>go(-1); $('next').onclick=()=>go(1);$('shuffle').onclick=()=>{for(let k=list.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[list[k],list[j]]=[list[j],list[k]]}i=0;render(true)};
+[['fAll','all'],['fI','i'],['fNa','na']].forEach(([id,f])=>$(id).onclick=()=>{filter=f;['fAll','fI','fNa'].forEach(x=>{const on=x===id;$(x).classList.toggle('cur',on);$(x).setAttribute('aria-pressed',on)});build()});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);else if(e.key==='ArrowLeft')go(-1);else if(e.key===' '&&e.target===document.body){e.preventDefault();toggleBoth()}});
+let sx=null;card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+card.addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>50)go(dx<0?1:-1)});
+function setMode(m){mode=m;try{localStorage.setItem('adj-mode',m)}catch(e){}
+ ['mNow','mPast'].forEach(id=>{const on=(id==='mPast')===(m==='past');$(id).classList.toggle('cur',on);$(id).setAttribute('aria-pressed',on)});render(true)}
+$('mNow').onclick=()=>setMode('now');$('mPast').onclick=()=>setMode('past');
+build(); setMode(mode);
+</script>
+</body>
+</html>
