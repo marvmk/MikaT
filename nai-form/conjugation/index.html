@@ -92,7 +92,6 @@
     </div>
 
     <script>
-        // 単語データ（タイポを修正）
         const verbs = [
             { group: 1, en: "Go", it: "Andare", nai: { kanji: "行かない", kana: "いかない" } },
             { group: 1, en: "Drink", it: "Bere", nai: { kanji: "飲まない", kana: "のまない" } },
@@ -112,24 +111,24 @@
             { group: 3, en: "Come", it: "Venire", nai: { kanji: "こない", kana: "こない" } }
         ];
 
-        // 音声認識で変換されやすい同音異義語・揺れをすべてカバー
+        // 漢字変換や表記の揺れを全網羅する拡張辞書
         const homophoneMap = {
-            "いかない": ["行かない", "居かない", "逝かない", "いかない"],
-            "のまない": ["飲まない", "のまない"],
-            "かえらない": ["帰らない", "返らない", "変えられない", "かえらない"],
-            "よまない": ["読まない", "詠まない", "よまない"],
-            "かかない": ["書かない", "描かない", "掻かない", "かかない"],
-            "きかない": ["聞かない", "効かない", "利かない", "聴かない", "きかない"],
-            "かわない": ["買わない", "飼わない", "かわない"],
-            "あわない": ["会わない", "合わない", "遭わない", "あわない"],
-            "またない": ["待たない", "跨がない", "またない"],
-            "はなさない": ["話さない", "離さない", "放さない", "はなさない"],
-            "たべない": ["食べない", "たべない"],
-            "みない": ["見ない", "診ない", "みない"],
-            "ねない": ["寝ない", "ねない"],
-            "おきない": ["起きない", "おきない"],
-            "しない": ["しない"],
-            "こない": ["来ない", "こない"]
+            "いかない": ["行かない", "居かない", "逝かない", "いかない", "イカナイ"],
+            "のまない": ["飲まない", "のまない", "ノマナイ"],
+            "かえらない": ["帰らない", "返らない", "変えられない", "買えらない", "かえらない", "カエラナイ"],
+            "よまない": ["読まない", "詠まない", "よまない", "ヨマナイ"],
+            "かかない": ["書かない", "描かない", "掻かない", "かかない", "カカナイ"],
+            "きかない": ["聞かない", "効かない", "利かない", "聴かない", "きかない", "キカナイ"],
+            "かわない": ["買わない", "飼わない", "かわない", "カワナイ"],
+            "あわない": ["会わない", "合わない", "遭わない", "あわない", "アワナイ"],
+            "またない": ["待たない", "跨がない", "またない", "マタナイ"],
+            "はなさない": ["話さない", "離さない", "放さない", "はなさない", "ハナサナイ"],
+            "たべない": ["食べない", "たべない", "タベナイ"],
+            "みない": ["見ない", "診ない", "みない", "ミナイ"],
+            "ねない": ["寝ない", "ねない", "ネナイ"],
+            "おきない": ["起きない", "おきない", "オキナイ"],
+            "しない": ["しない", "シナイ"],
+            "こない": ["来ない", "こない", "コナイ"]
         };
 
         let shuffledVerbs = [...verbs].sort(() => Math.random() - 0.5);
@@ -140,6 +139,14 @@
         // Web Speech API の取得（Safari / iOS対応）
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null, isListening = false;
+
+        // カタカナをひらがなに変換する関数
+        function katakanaToHiragana(src) {
+            return src.replace(/[\u30a1-\u30f6]/g, function(match) {
+                var chr = match.charCodeAt(0) - 0x60;
+                return String.fromCharCode(chr);
+            });
+        }
 
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
@@ -198,8 +205,8 @@
 
         function checkAnswer() {
             if (isChecking) return;
-            const userInput = document.getElementById('user-input').value.trim();
-            if (!userInput) return;
+            const userInputRaw = document.getElementById('user-input').value.trim();
+            if (!userInputRaw) return;
             
             isChecking = true;
             if (isListening && recognition) recognition.stop();
@@ -207,11 +214,15 @@
             const currentVerb = shuffledVerbs[currentIndex];
             const correctData = currentVerb.nai;
 
-            // 判定ロジック：漢字完全一致・ひらがな完全一致・または漢字変換揺れ辞書との一致
+            // ひらがな・カタカナ正規化
+            const userInput = katakanaToHiragana(userInputRaw);
+
+            // 1. 完全一致（漢字・ひらがな）
             let isCorrect = (userInput === correctData.kanji || userInput === correctData.kana);
 
+            // 2. 辞書比較（同音異義語・揺れ）
             if (!isCorrect && homophoneMap[correctData.kana]) {
-                if (homophoneMap[correctData.kana].includes(userInput)) {
+                if (homophoneMap[correctData.kana].includes(userInputRaw) || homophoneMap[correctData.kana].includes(userInput)) {
                     isCorrect = true;
                 }
             }
