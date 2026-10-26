@@ -111,16 +111,36 @@
             { group: 3, en: "Come", it: "Venire", nai: { kanji: "こない", kana: "こない" } }
         ];
 
+        // 音声入力の漢字変換揺れ（同音異義語）を吸収する辞書
+        const homophoneMap = {
+            "いかない": ["行かない", "居かない", "逝かない"],
+            "のまない": ["飲まない"],
+            "かえらない": ["帰らない", "返らない"],
+            "よまない": ["読まない"],
+            "かかない": ["書かない", "描かない", "掻かない"],
+            "きかない": ["聞かない", "効かない", "利かない", "聴かない"],
+            "かわない": ["買わない", "飼わない"],
+            "あわない": ["会わない", "合わない", "遭わない"],
+            "またない": ["待たない", "跨がない"],
+            "はなさない": ["話さない", "離さない"],
+            "たべない": ["食べない"],
+            "みない": ["見ない", "診ない"],
+            "ねない": ["寝ない"],
+            "おきない": ["起きない"],
+            "しない": ["しない"],
+            "こない": ["来ない", "こない"]
+        };
+
         let shuffledVerbs = [...verbs].sort(() => Math.random() - 0.5);
         let currentIndex = 0;
         let score = 0;
         
-        // Web Speech API の取得（Safari対応）
+        // Web Speech API の取得（Safari / iOS対応）
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null, isListening = false;
 
         if (SpeechRecognition) {
-            recognition = new SpeechRecognition(); // 修正点：変数を正しくインスタンス化
+            recognition = new SpeechRecognition();
             recognition.lang = 'ja-JP';
             recognition.continuous = false;
             recognition.interimResults = false;
@@ -141,7 +161,6 @@
                 isListening = false;
                 document.getElementById('mic-btn').classList.remove('mic-active');
                 document.getElementById('listening-status').classList.add('hidden');
-                console.error("Speech Recognition Error:", event.error);
             };
 
             recognition.onresult = (event) => { 
@@ -171,9 +190,19 @@
         function checkAnswer() {
             const userInput = document.getElementById('user-input').value.trim();
             if (!userInput && !isListening) return;
+            
             const currentVerb = shuffledVerbs[currentIndex];
             const correctData = currentVerb.nai;
-            const isCorrect = (userInput === correctData.kanji || userInput === correctData.kana);
+
+            // 1. 完全一致（漢字またはひらがな）
+            let isCorrect = (userInput === correctData.kanji || userInput === correctData.kana);
+
+            // 2. 漢字揺れ（同音異義語）チェック：「きかない」に対して「効かない」などで入力されても正解にする
+            if (!isCorrect && homophoneMap[correctData.kana]) {
+                if (homophoneMap[correctData.kana].includes(userInput)) {
+                    isCorrect = true;
+                }
+            }
 
             if (isCorrect) {
                 score += 10;
@@ -190,6 +219,7 @@
                 document.getElementById('game-card').classList.add('shake');
                 setTimeout(() => document.getElementById('game-card').classList.remove('shake'), 500);
             }
+
             document.getElementById('score-val').innerText = score;
             document.getElementById('display-kanji').innerText = correctData.kanji;
             document.getElementById('display-kana').innerText = correctData.kana;
