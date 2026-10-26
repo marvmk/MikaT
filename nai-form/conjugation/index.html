@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nai-form Specialist (16 Qs)</title>
+    <title>Nai-form Specialist (16 Qs) v5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
@@ -75,5 +75,291 @@
         <div id="feedback" class="hidden mt-4 w-full text-center space-y-4">
             <div id="result-icon" class="text-5xl"></div>
             <div id="result-msg" class="font-black text-xl uppercase tracking-tighter"></div>
+            <!-- 【追加】聞き取られた文字を表示（発音の問題か認識の問題かを確認できる） -->
+            <div id="heard-text" class="text-xs text-slate-500 font-bold"></div>
             <div class="bg-slate-50 p-5 rounded-2xl border-2 border-slate-100">
-                <div id="display-kan
+                <div id="display-kanji" class="text-3xl font-black text-slate-700 mb-1"></div>
+                <div id="display-kana" class="text-xl font-bold text-rose-500 mb-2"></div>
+                <div id="meanings-it" class="text-[10px] text-slate-400 border-t border-slate-200 pt-3 font-bold uppercase italic"></div>
+            </div>
+            <button id="next-btn" onclick="nextQuestion()" class="w-full py-4 bg-slate-800 text-white rounded-2xl font-black text-lg shadow-md transition-all">NEXT / 次へ →</button>
+        </div>
+    </main>
+
+    <!-- Finished Screen -->
+    <div id="finish-screen" class="hidden w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 flex flex-col items-center text-center">
+        <div class="text-6xl mb-6">Finished‼️</div>
+        <p class="text-slate-500 font-bold uppercase tracking-widest mb-2 text-sm">Ottimo lavoro!</p>
+        <div class="text-4xl font-black text-rose-700 mb-8">Score: <span id="final-score">0</span></div>
+        <button onclick="location.reload()" class="w-full py-5 bg-rose-600 text-white rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all">RESTART / もう一度</button>
+    </div>
+
+    <script>
+        const verbs = [
+            { group: 1, en: "Go", it: "Andare", nai: { kanji: "行かない", kana: "いかない" } },
+            { group: 1, en: "Drink", it: "Bere", nai: { kanji: "飲まない", kana: "のまない" } },
+            { group: 1, en: "Return", it: "Tornare", nai: { kanji: "帰らない", kana: "かえらない" } },
+            { group: 1, en: "Read", it: "Leggere", nai: { kanji: "読まない", kana: "よまない" } },
+            { group: 1, en: "Write", it: "Scrivere", nai: { kanji: "書かない", kana: "かかない" } },
+            { group: 1, en: "Listen", it: "Ascoltare", nai: { kanji: "聞かない", kana: "きかない" } },
+            { group: 1, en: "Buy", it: "Comprare", nai: { kanji: "買わない", kana: "かわない" } },
+            { group: 1, en: "Meet", it: "Incontrare", nai: { kanji: "会わない", kana: "あわない" } },
+            { group: 1, en: "Wait", it: "Aspettare", nai: { kanji: "待たない", kana: "またない" } },
+            { group: 1, en: "Speak", it: "Parlare", nai: { kanji: "話さない", kana: "はなさない" } },
+            { group: 2, en: "Eat", it: "Mangiare", nai: { kanji: "食べない", kana: "たべない" } },
+            { group: 2, en: "See", it: "Vedere", nai: { kanji: "見ない", kana: "みない" } },
+            { group: 2, en: "Sleep", it: "Dormire", nai: { kanji: "寝ない", kana: "ねない" } },
+            { group: 2, en: "Get up", it: "Alzarsi", nai: { kanji: "起きない", kana: "おきない" } },
+            { group: 3, en: "Do", it: "Fare", nai: { kanji: "しない", kana: "しない" } },
+            { group: 3, en: "Come", it: "Venire", nai: { kanji: "来ない", kana: "こない" } }
+        ];
+
+        // 【修正】同音の別表記・よくある誤変換を追加。
+        // 読みが違うもの（跨がない＝またがない、変えられない、買えらない）は削除。
+        // ひらがな・カタカナは normalize() で吸収するので不要。
+        const homophoneMap = {
+            "いかない": ["行かない", "逝かない", "以下ない", "烏賊ない"],
+            "のまない": ["飲まない", "呑まない"],
+            "かえらない": ["帰らない", "返らない", "還らない"],
+            "よまない": ["読まない", "詠まない"],
+            "かかない": ["書かない", "描かない", "掻かない", "欠かない"],
+            "きかない": ["聞かない", "効かない", "利かない", "聴かない", "訊かない"],
+            "かわない": ["買わない", "飼わない", "川ない", "皮ない"],
+            "あわない": ["会わない", "合わない", "遭わない", "逢わない"],
+            "またない": ["待たない"],
+            "はなさない": ["話さない", "離さない", "放さない"],
+            "たべない": ["食べない"],
+            "みない": ["見ない", "診ない", "観ない", "看ない", "皆"],
+            "ねない": ["寝ない", "練らない"],
+            "おきない": ["起きない", "置きない", "沖ない"],
+            "しない": ["為ない", "市内", "死ない"],
+            "こない": ["来ない", "粉い", "子ない"]
+        };
+
+        let shuffledVerbs = [...verbs].sort(() => Math.random() - 0.5);
+        let currentIndex = 0;
+        let score = 0;
+        let isChecking = false;
+        
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+        let latestCandidates = [];
+        let silenceTimer = null;
+        let maxTimer = null;
+
+        // 音声の候補から判定する
+        function finishVoice(candidates) {
+            if (isChecking) return;
+            const verb = shuffledVerbs[currentIndex];
+            const hit = candidates.find(c => isMatch(c, verb));
+            const chosen = (hit || candidates[0] || "").replace(/[\s\u3000。、？！.?!]/g, "");
+            document.getElementById('user-input').value = chosen;
+            latestCandidates = [];
+            checkAnswer(candidates);
+        }
+
+        function katakanaToHiragana(src) {
+            return src.replace(/[\u30a1-\u30f6]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x60));
+        }
+
+        // 【追加】比較用に文字列を正規化：全角スペース・記号を除去し、カタカナ→ひらがな
+        function normalize(str) {
+            return katakanaToHiragana(
+                (str || "").normalize("NFKC").replace(/[\s\u3000。、，,．.？?！!・「」『』（）()〜~ー-]/g, "")
+            );
+        }
+
+        // 【追加】1つの候補が正解かどうかを判定
+        function isMatch(candidate, verb) {
+            const c = normalize(candidate);
+            if (!c) return false;
+            const accepted = [verb.nai.kana, verb.nai.kanji, ...(homophoneMap[verb.nai.kana] || [])].map(normalize);
+            // 完全一致
+            if (accepted.includes(c)) return true;
+            // 「飲まないです」「えっと、飲まない」のように前後に余分な語が付いた場合も正解に
+            //（ただし2文字以下の短い候補は誤判定を防ぐため対象外）
+            return accepted.some(a => a.length >= 3 && c.includes(a));
+        }
+
+        function initSpeech() {
+            if (!SpeechRecognition) return;
+            try {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'ja-JP';
+                // 【修正 v5】Safari は continuous=false だと語尾（「ない」）を切って終了することがあるため、
+                // 連続モードで聞き続け、正解が出た時か、無音が続いた時にこちらで止める
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 10;
+
+                recognition.onstart = () => { 
+                    isListening = true; 
+                    latestCandidates = [];
+                    document.getElementById('mic-btn').classList.add('mic-active'); 
+                    document.getElementById('listening-status').classList.remove('hidden'); 
+                    // 何も話さなかった場合などに備えて、最大8秒で止める
+                    clearTimeout(maxTimer);
+                    maxTimer = setTimeout(() => { if (isListening) recognition.stop(); }, 8000);
+                };
+
+                // 聞き取りが終わった時点で判定する
+                recognition.onend = () => { 
+                    isListening = false; 
+                    clearTimeout(silenceTimer);
+                    clearTimeout(maxTimer);
+                    document.getElementById('mic-btn').classList.remove('mic-active'); 
+                    document.getElementById('listening-status').classList.add('hidden');
+                    if (!isChecking && latestCandidates.length > 0) {
+                        finishVoice(latestCandidates);
+                    }
+                };
+                recognition.onerror = (e) => {
+                    console.error(e);
+                };
+
+                recognition.onresult = (event) => { 
+                    if (isChecking) return;
+                    // 複数に分かれた結果（「書か」+「ない」）をつなげる
+                    let prefix = "";
+                    for (let i = 0; i < event.results.length - 1; i++) prefix += event.results[i][0].transcript;
+                    const last = event.results[event.results.length - 1];
+                    const candidates = [];
+                    for (let i = 0; i < last.length; i++) candidates.push(prefix + last[i].transcript);
+                    latestCandidates = candidates;
+
+                    // 入力欄には途中経過を表示
+                    document.getElementById('user-input').value = candidates[0].replace(/[\s\u3000。、？！.?!]/g, "");
+
+                    // 正解が出たらすぐ止めて判定
+                    const verb = shuffledVerbs[currentIndex];
+                    if (candidates.some(c => isMatch(c, verb))) {
+                        clearTimeout(silenceTimer);
+                        finishVoice(candidates);
+                        recognition.stop();
+                        return;
+                    }
+                    // まだ正解でなければ、1.5秒間新しい音声がなければ終了して判定
+                    clearTimeout(silenceTimer);
+                    silenceTimer = setTimeout(() => { if (isListening) recognition.stop(); }, 1500);
+                };
+            } catch (err) {
+                console.error("Speech recognition error:", err);
+            }
+        }
+
+        function toggleVoiceInput() { 
+            if (!recognition) initSpeech();
+            if (!recognition) {
+                alert("Speech recognition is not available. Please open in Safari or Chrome via https.");
+                return; 
+            } 
+            if (isListening) {
+                recognition.stop(); 
+            } else {
+                document.getElementById('user-input').value = ""; 
+                try {
+                    recognition.start();
+                } catch (e) {
+                    recognition.stop();
+                    setTimeout(() => recognition.start(), 200);
+                }
+            }
+        }
+
+        function updateDisplay() {
+            const currentVerb = shuffledVerbs[currentIndex];
+            document.getElementById('progress-val').innerText = currentIndex + 1;
+            document.getElementById('progress-bar').style.width = ((currentIndex + 1) / 16 * 100) + "%";
+            document.getElementById('target-group').innerText = `Group ${currentVerb.group}`;
+            document.getElementById('base-verb-en').innerText = currentVerb.en;
+        }
+
+        // candidates: 音声入力の場合は認識候補の配列、キーボード入力の場合は undefined
+        function checkAnswer(candidates) {
+            if (isChecking) return;
+            const userInputRaw = document.getElementById('user-input').value.trim();
+            if (!userInputRaw) return;
+            
+            isChecking = true;
+            if (isListening && recognition) recognition.stop();
+
+            const currentVerb = shuffledVerbs[currentIndex];
+            const correctData = currentVerb.nai;
+            const isVoice = Array.isArray(candidates);
+
+            const isCorrect = isMatch(userInputRaw, currentVerb);
+
+            if (isCorrect) {
+                score += 10;
+                document.getElementById('result-icon').innerText = "✅";
+                document.getElementById('result-msg').innerText = "Correct!";
+                document.getElementById('result-msg').className = "font-black text-xl text-green-600 uppercase tracking-tighter";
+                document.getElementById('game-card').classList.add('correct-pop');
+                setTimeout(() => document.getElementById('game-card').classList.remove('correct-pop'), 400);
+                speak(correctData.kana);
+            } else {
+                document.getElementById('result-icon').innerText = "❌";
+                document.getElementById('result-msg').innerText = "Try Again";
+                document.getElementById('result-msg').className = "font-black text-xl text-red-600 uppercase tracking-tighter";
+                document.getElementById('game-card').classList.add('shake');
+                setTimeout(() => document.getElementById('game-card').classList.remove('shake'), 500);
+            }
+
+            // 【追加】音声入力時は「何と聞き取られたか」を表示
+            // 音声入力時は、認識エンジンが返した全候補を表示（原因調査用）
+            document.getElementById('heard-text').innerText = isVoice
+                ? `🎙️ Heard / 聞き取り: ${candidates.map(c => c.trim()).join(" / ")}`
+                : "";
+
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('display-kanji').innerText = correctData.kanji;
+            document.getElementById('display-kana').innerText = correctData.kana;
+            document.getElementById('meanings-it').innerText = `Italian: ${currentVerb.it}`;
+            document.getElementById('feedback').classList.remove('hidden');
+            document.getElementById('input-container').classList.add('hidden');
+        }
+
+        function nextQuestion() {
+            isChecking = false;
+            currentIndex++;
+            if (currentIndex >= 16) {
+                document.getElementById('game-card').classList.add('hidden');
+                document.getElementById('finish-screen').classList.remove('hidden');
+                document.getElementById('final-score').innerText = score;
+                speak("お疲れ様でした。練習が終わりました。");
+                return;
+            }
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('input-container').classList.remove('hidden');
+            document.getElementById('user-input').value = "";
+            document.getElementById('user-input').focus();
+            updateDisplay();
+        }
+
+        function speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            setTimeout(() => {
+                const ut = new SpeechSynthesisUtterance(text);
+                ut.lang = 'ja-JP'; 
+                ut.rate = 0.85;
+                ut.pitch = 1.0;
+                window.speechSynthesis.speak(ut);
+            }, 50);
+        }
+
+        document.getElementById('user-input').addEventListener('keypress', (e) => { 
+            if (e.key === 'Enter') {
+                if (document.getElementById('feedback').classList.contains('hidden')) checkAnswer();
+                else nextQuestion();
+            }
+        });
+
+        window.onload = () => {
+            initSpeech();
+            updateDisplay();
+        };
+    </script>
+</body>
+</html>
