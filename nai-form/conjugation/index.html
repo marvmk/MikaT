@@ -134,6 +134,7 @@
         let shuffledVerbs = [...verbs].sort(() => Math.random() - 0.5);
         let currentIndex = 0;
         let score = 0;
+        let isChecking = false; // 二重チェック防止フラグ
         
         // Web Speech API の取得（Safari / iOS対応）
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -142,8 +143,8 @@
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.lang = 'ja-JP';
-            recognition.continuous = false;     // 単発入力に固定
-            recognition.interimResults = false; // 確定した結果のみ取得（「た、た」防止）
+            recognition.continuous = false;
+            recognition.interimResults = false;
 
             recognition.onstart = () => { 
                 isListening = true; 
@@ -154,29 +155,22 @@
             recognition.onend = () => { 
                 isListening = false; 
                 document.getElementById('mic-btn').classList.remove('mic-active'); 
-                document.getElementById('listening-status').classList.hidden = true;
                 document.getElementById('listening-status').classList.add('hidden');
             };
             
-            recognition.onerror = (event) => {
+            recognition.onerror = () => {
                 isListening = false;
                 document.getElementById('mic-btn').classList.remove('mic-active');
                 document.getElementById('listening-status').classList.add('hidden');
             };
 
             recognition.onresult = (event) => { 
-                // 確定した最後の結果のみを取得してセット
+                if (isChecking) return;
                 const lastIndex = event.results.length - 1;
                 let transcript = event.results[lastIndex][0].transcript.replace(/[。、？！.?! ]/g, "");
                 
                 document.getElementById('user-input').value = transcript;
-                
-                // 音声入力確定後、少し間を置いて1度だけチェック
-                setTimeout(() => {
-                    if (!document.getElementById('input-container').classList.contains('hidden')) {
-                        checkAnswer();
-                    }
-                }, 300);
+                checkAnswer();
             };
         }
 
@@ -188,7 +182,7 @@
             if (isListening) {
                 recognition.stop(); 
             } else {
-                document.getElementById('user-input').value = ""; // 入力欄を一度リセット
+                document.getElementById('user-input').value = ""; 
                 recognition.start(); 
             }
         }
@@ -202,16 +196,20 @@
         }
 
         function checkAnswer() {
+            if (isChecking) return;
             const userInput = document.getElementById('user-input').value.trim();
-            if (!userInput && !isListening) return;
+            if (!userInput) return;
             
+            isChecking = true; // 処理重複ガード
+            if (isListening && recognition) recognition.stop();
+
             const currentVerb = shuffledVerbs[currentIndex];
             const correctData = currentVerb.nai;
 
             // 1. 完全一致（漢字またはひらがな）
             let isCorrect = (userInput === correctData.kanji || userInput === correctData.kana);
 
-            // 2. 漢字揺れ（同音異義語）チェック：「きかない」に対して「効かない」などで入力されても正解にする
+            // 2. 漢字揺れ（同音異義語）チェック
             if (!isCorrect && homophoneMap[correctData.kana]) {
                 if (homophoneMap[correctData.kana].includes(userInput)) {
                     isCorrect = true;
@@ -225,7 +223,7 @@
                 document.getElementById('result-msg').className = "font-black text-xl text-green-600 uppercase tracking-tighter";
                 document.getElementById('game-card').classList.add('correct-pop');
                 setTimeout(() => document.getElementById('game-card').classList.remove('correct-pop'), 400);
-                speak(correctData.kana);
+                speak(correctData.kana); // クリアな音声で1回だけ再生
             } else {
                 document.getElementById('result-icon').innerText = "❌";
                 document.getElementById('result-msg').innerText = "Try Again";
@@ -243,6 +241,7 @@
         }
 
         function nextQuestion() {
+            isChecking = false; // ガード解除
             currentIndex++;
             if (currentIndex >= 16) {
                 document.getElementById('game-card').classList.add('hidden');
@@ -258,11 +257,19 @@
             updateDisplay();
         }
 
+        // 音声を完全に1度だけキレイに発声させる処理
         function speak(text) {
-            if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel();
-            const ut = new SpeechSynthesisUtterance(text);
-            ut.lang = 'ja-JP'; ut.rate = 0.8; window.speechSynthesis.speak(ut);
+            if (!('speechSynthesis' in window)) return;
+            
+            window.speechSynthesis.cancel(); // 進行中の音声を一旦クリア
+            
+            setTimeout(() => {
+                const ut = new SpeechSynthesisUtterance(text);
+                ut.lang = 'ja-JP'; 
+                ut.rate = 0.85;
+                ut.pitch = 1.0;
+                window.speechSynthesis.speak(ut);
+            }, 50); // わずかなディレイを挟んで重複再生を防止
         }
 
         function testSound() { speak("準備ができました。"); alert("音が出ますか？"); }
