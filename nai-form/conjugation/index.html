@@ -98,7 +98,7 @@
             { group: 1, en: "Return", it: "Tornare", nai: { kanji: "帰らない", kana: "かえらない" } },
             { group: 1, en: "Read", it: "Leggere", nai: { kanji: "読まない", kana: "よまない" } },
             { group: 1, en: "Write", it: "書かない", nai: { kanji: "かかない", kana: "かかない" } },
-            { group: 1, en: "Listen", it: "聞かない", nai: { kanji: "聞かない", kana: "きかない" } },
+            { group: 1, en: "Listen", it: "聞かない", nai: { kanji: "きかない", kana: "きかない" } },
             { group: 1, en: "Buy", it: "Comprare", nai: { kanji: "買わない", kana: "かわない" } },
             { group: 1, en: "Meet", it: "Incontrare", nai: { kanji: "会わない", kana: "あわない" } },
             { group: 1, en: "Wait", it: "Aspettare", nai: { kanji: "待たない", kana: "またない" } },
@@ -114,14 +114,36 @@
         let shuffledVerbs = [...verbs].sort(() => Math.random() - 0.5);
         let currentIndex = 0;
         let score = 0;
+        
+        // Web Speech API の取得（Safari対応）
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null, isListening = false;
 
         if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
+            recognition = new SpeechRecognition(); // 修正点：変数を正しくインスタンス化
             recognition.lang = 'ja-JP';
-            recognition.onstart = () => { isListening = true; document.getElementById('mic-btn').classList.add('mic-active'); document.getElementById('listening-status').classList.remove('hidden'); };
-            recognition.onend = () => { isListening = false; document.getElementById('mic-btn').classList.remove('mic-active'); document.getElementById('listening-status').classList.add('hidden'); };
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => { 
+                isListening = true; 
+                document.getElementById('mic-btn').classList.add('mic-active'); 
+                document.getElementById('listening-status').classList.remove('hidden'); 
+            };
+            
+            recognition.onend = () => { 
+                isListening = false; 
+                document.getElementById('mic-btn').classList.remove('mic-active'); 
+                document.getElementById('listening-status').classList.add('hidden'); 
+            };
+            
+            recognition.onerror = (event) => {
+                isListening = false;
+                document.getElementById('mic-btn').classList.remove('mic-active');
+                document.getElementById('listening-status').classList.add('hidden');
+                console.error("Speech Recognition Error:", event.error);
+            };
+
             recognition.onresult = (event) => { 
                 let transcript = event.results[0][0].transcript.replace(/[。、？！.?! ]/g, "");
                 document.getElementById('user-input').value = transcript;
@@ -129,7 +151,14 @@
             };
         }
 
-        function toggleVoiceInput() { if (!recognition) return; if (isListening) recognition.stop(); else recognition.start(); }
+        function toggleVoiceInput() { 
+            if (!recognition) {
+                alert("お使いのブラウザ・環境は音声入力に対応していないか、https接続されていません。Safariで開いてみてください。");
+                return; 
+            } 
+            if (isListening) recognition.stop(); 
+            else recognition.start(); 
+        }
 
         function updateDisplay() {
             const currentVerb = shuffledVerbs[currentIndex];
@@ -204,4 +233,3 @@
     </script>
 </body>
 </html>
-
