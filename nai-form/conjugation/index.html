@@ -142,8 +142,8 @@
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.lang = 'ja-JP';
-            recognition.continuous = false;
-            recognition.interimResults = false;
+            recognition.continuous = false;     // 単発入力に固定
+            recognition.interimResults = false; // 確定した結果のみ取得（「た、た」防止）
 
             recognition.onstart = () => { 
                 isListening = true; 
@@ -154,7 +154,8 @@
             recognition.onend = () => { 
                 isListening = false; 
                 document.getElementById('mic-btn').classList.remove('mic-active'); 
-                document.getElementById('listening-status').classList.add('hidden'); 
+                document.getElementById('listening-status').classList.hidden = true;
+                document.getElementById('listening-status').classList.add('hidden');
             };
             
             recognition.onerror = (event) => {
@@ -164,9 +165,18 @@
             };
 
             recognition.onresult = (event) => { 
-                let transcript = event.results[0][0].transcript.replace(/[。、？！.?! ]/g, "");
+                // 確定した最後の結果のみを取得してセット
+                const lastIndex = event.results.length - 1;
+                let transcript = event.results[lastIndex][0].transcript.replace(/[。、？！.?! ]/g, "");
+                
                 document.getElementById('user-input').value = transcript;
-                setTimeout(checkAnswer, 400); 
+                
+                // 音声入力確定後、少し間を置いて1度だけチェック
+                setTimeout(() => {
+                    if (!document.getElementById('input-container').classList.contains('hidden')) {
+                        checkAnswer();
+                    }
+                }, 300);
             };
         }
 
@@ -175,8 +185,12 @@
                 alert("お使いのブラウザ・環境は音声入力に対応していないか、https接続されていません。Safariで開いてみてください。");
                 return; 
             } 
-            if (isListening) recognition.stop(); 
-            else recognition.start(); 
+            if (isListening) {
+                recognition.stop(); 
+            } else {
+                document.getElementById('user-input').value = ""; // 入力欄を一度リセット
+                recognition.start(); 
+            }
         }
 
         function updateDisplay() {
