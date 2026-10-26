@@ -92,13 +92,14 @@
     </div>
 
     <script>
+        // 単語データ（タイポを修正）
         const verbs = [
             { group: 1, en: "Go", it: "Andare", nai: { kanji: "行かない", kana: "いかない" } },
             { group: 1, en: "Drink", it: "Bere", nai: { kanji: "飲まない", kana: "のまない" } },
             { group: 1, en: "Return", it: "Tornare", nai: { kanji: "帰らない", kana: "かえらない" } },
             { group: 1, en: "Read", it: "Leggere", nai: { kanji: "読まない", kana: "よまない" } },
-            { group: 1, en: "Write", it: "書かない", nai: { kanji: "かかない", kana: "かかない" } },
-            { group: 1, en: "Listen", it: "聞かない", nai: { kanji: "きかない", kana: "きかない" } },
+            { group: 1, en: "Write", it: "Scrivere", nai: { kanji: "書かない", kana: "かかない" } },
+            { group: 1, en: "Listen", it: "Ascoltare", nai: { kanji: "聞かない", kana: "きかない" } },
             { group: 1, en: "Buy", it: "Comprare", nai: { kanji: "買わない", kana: "かわない" } },
             { group: 1, en: "Meet", it: "Incontrare", nai: { kanji: "会わない", kana: "あわない" } },
             { group: 1, en: "Wait", it: "Aspettare", nai: { kanji: "待たない", kana: "またない" } },
@@ -111,22 +112,22 @@
             { group: 3, en: "Come", it: "Venire", nai: { kanji: "こない", kana: "こない" } }
         ];
 
-        // 音声入力の漢字変換揺れ（同音異義語）を吸収する辞書
+        // 音声認識で変換されやすい同音異義語・揺れをすべてカバー
         const homophoneMap = {
-            "いかない": ["行かない", "居かない", "逝かない"],
-            "のまない": ["飲まない"],
-            "かえらない": ["帰らない", "返らない"],
-            "よまない": ["読まない"],
-            "かかない": ["書かない", "描かない", "掻かない"],
-            "きかない": ["聞かない", "効かない", "利かない", "聴かない"],
-            "かわない": ["買わない", "飼わない"],
-            "あわない": ["会わない", "合わない", "遭わない"],
-            "またない": ["待たない", "跨がない"],
-            "はなさない": ["話さない", "離さない"],
-            "たべない": ["食べない"],
-            "みない": ["見ない", "診ない"],
-            "ねない": ["寝ない"],
-            "おきない": ["起きない"],
+            "いかない": ["行かない", "居かない", "逝かない", "いかない"],
+            "のまない": ["飲まない", "のまない"],
+            "かえらない": ["帰らない", "返らない", "変えられない", "かえらない"],
+            "よまない": ["読まない", "詠まない", "よまない"],
+            "かかない": ["書かない", "描かない", "掻かない", "かかない"],
+            "きかない": ["聞かない", "効かない", "利かない", "聴かない", "きかない"],
+            "かわない": ["買わない", "飼わない", "かわない"],
+            "あわない": ["会わない", "合わない", "遭わない", "あわない"],
+            "またない": ["待たない", "跨がない", "またない"],
+            "はなさない": ["話さない", "離さない", "放さない", "はなさない"],
+            "たべない": ["食べない", "たべない"],
+            "みない": ["見ない", "診ない", "みない"],
+            "ねない": ["寝ない", "ねない"],
+            "おきない": ["起きない", "おきない"],
             "しない": ["しない"],
             "こない": ["来ない", "こない"]
         };
@@ -134,7 +135,7 @@
         let shuffledVerbs = [...verbs].sort(() => Math.random() - 0.5);
         let currentIndex = 0;
         let score = 0;
-        let isChecking = false; // 二重チェック防止フラグ
+        let isChecking = false;
         
         // Web Speech API の取得（Safari / iOS対応）
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -200,16 +201,15 @@
             const userInput = document.getElementById('user-input').value.trim();
             if (!userInput) return;
             
-            isChecking = true; // 処理重複ガード
+            isChecking = true;
             if (isListening && recognition) recognition.stop();
 
             const currentVerb = shuffledVerbs[currentIndex];
             const correctData = currentVerb.nai;
 
-            // 1. 完全一致（漢字またはひらがな）
+            // 判定ロジック：漢字完全一致・ひらがな完全一致・または漢字変換揺れ辞書との一致
             let isCorrect = (userInput === correctData.kanji || userInput === correctData.kana);
 
-            // 2. 漢字揺れ（同音異義語）チェック
             if (!isCorrect && homophoneMap[correctData.kana]) {
                 if (homophoneMap[correctData.kana].includes(userInput)) {
                     isCorrect = true;
@@ -223,7 +223,7 @@
                 document.getElementById('result-msg').className = "font-black text-xl text-green-600 uppercase tracking-tighter";
                 document.getElementById('game-card').classList.add('correct-pop');
                 setTimeout(() => document.getElementById('game-card').classList.remove('correct-pop'), 400);
-                speak(correctData.kana); // クリアな音声で1回だけ再生
+                speak(correctData.kana);
             } else {
                 document.getElementById('result-icon').innerText = "❌";
                 document.getElementById('result-msg').innerText = "Try Again";
@@ -241,7 +241,7 @@
         }
 
         function nextQuestion() {
-            isChecking = false; // ガード解除
+            isChecking = false;
             currentIndex++;
             if (currentIndex >= 16) {
                 document.getElementById('game-card').classList.add('hidden');
@@ -257,11 +257,10 @@
             updateDisplay();
         }
 
-        // 音声を完全に1度だけキレイに発声させる処理
         function speak(text) {
             if (!('speechSynthesis' in window)) return;
             
-            window.speechSynthesis.cancel(); // 進行中の音声を一旦クリア
+            window.speechSynthesis.cancel();
             
             setTimeout(() => {
                 const ut = new SpeechSynthesisUtterance(text);
@@ -269,7 +268,7 @@
                 ut.rate = 0.85;
                 ut.pitch = 1.0;
                 window.speechSynthesis.speak(ut);
-            }, 50); // わずかなディレイを挟んで重複再生を防止
+            }, 50);
         }
 
         function testSound() { speak("準備ができました。"); alert("音が出ますか？"); }
